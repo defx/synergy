@@ -1,6 +1,6 @@
 {
   "name": "synergy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The simple and declarative way to build user interfaces for the web.",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
