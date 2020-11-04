@@ -60,7 +60,7 @@ Using unpkg CDN:
 
 ## API
 
-Render into an existing element inside the document:
+Render into a DOM element node:
 
 ```js
 synergy.render(
