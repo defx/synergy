@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mocha Tests</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <style>
+      html {
+        font-size: 62.5%;
+      }
+      body {
+        font-size: 1.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="markup"></div>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script>
+      mocha.setup('bdd');
+      let assert = chai.assert;
+      window.onload = function () {
+        mocha.run();
+      };
+
+      const html = (strings, ...values) =>
+        strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
+
+      const mount = (html) => {
+        let node = document.getElementById('markup');
+        node.innerHTML = html;
+        return node.firstChild;
+      };
+
+      const nextUpdate = () =>
+        new Promise((resolve) => requestAnimationFrame(resolve));
+
+      const textContent = (node) => node.textContent.trim();
+
+      window.mount = mount;
+      window.html = html;
+
+      window.nextUpdate = nextUpdate;
+      window.assert = assert;
+      window.textContent = textContent;
+    </script>
+    <script type="module">
+      import synergy from '../src/index.js';
+      window.synergy = synergy;
+    </script>
+    <script type="module" src="./define.js"></script>
+    <script type="module" src="./todo-app.js"></script>
+    <script type="module" src="./scope.js"></script>
+    <script type="module" src="./user-input.js"></script>
+    <script type="module" src="./arrays.js"></script>
+    <script type="module" src="./iterations.js"></script>
+    <script type="module" src="./interpolations.js"></script>
+    <script type="module" src="./hydrate.js"></script>
+    <script type="module" src="./context.js"></script>
+  </body>
+</html>

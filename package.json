@@ -1,0 +1,61 @@
+{
+  "name": "synergy",
+  "version": "1.0.0",
+  "description": "Declarative data and event binding for the DOM.",
+  "main": "dist/synergy.min.js",
+  "browser": "dist/synergy.min.js",
+  "unpkg": "dist/synergy.min.js",
+  "directories": {
+    "test": "test"
+  },
+  "module": "src/index.js",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "test": "karma start --coverage",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "build": "rm -rf dist && rollup -c && npm run size",
+    "size": "gzip -c9 ./dist/synergy.min.js | wc -c",
+    "coveralls": "cat ./coverage/chrome/lcov.info | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/defx/synergy.git"
+  },
+  "keywords": [
+    "simple",
+    "declarative",
+    "data",
+    "binding",
+    "dom",
+    "ui",
+    "interface",
+    "interaction",
+    "template",
+    "render",
+    "vue",
+    "react",
+    "alternative"
+  ],
+  "author": "Matt Donkin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/defx/synergy/issues"
+  },
+  "homepage": "https://github.com/defx/synergy#readme",
+  "devDependencies": {
+    "@open-wc/karma-esm": "^3.0.5",
+    "@open-wc/testing-karma": "^4.0.5",
+    "chai": "^4.2.0",
+    "coveralls": "^3.1.0",
+    "karma": "^5.1.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "mocha": "^8.1.1",
+    "rollup": "^2.26.4",
+    "rollup-plugin-terser": "^7.0.1"
+  }
+}
