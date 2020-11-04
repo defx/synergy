@@ -31,8 +31,6 @@ function render(mountNode, model, template, options = {}) {
 
   subscribe(mountNode, subscribers, proxy);
 
-  if (proxy.connectedCallback) proxy.connectedCallback(mountNode);
-
   return proxy;
 }
 
