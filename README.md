@@ -142,7 +142,7 @@ You can also use the _spread_ syntax to apply multiple attributes to an element 
 
 ### Style attribute
 
-The [style] attribute is a special case and handled slightly differently to other attributes; If the bound property is a plain object, then keys will be converted from Pascal casing before keys and values are joined together, separated by semi-colons.
+The [style] attribute is a special case and handled slightly differently to other attributes; If the bound property is a plain object, then keys will be converted from Pascal to Kebab case before keys and values are joined together, separated by semi-colons.
 
 ```js
 {
