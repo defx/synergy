@@ -86,7 +86,7 @@ Use the double curly braces to bind named properties from your JavaScript object
 <p style="background-color: {{ bgColor }}">{{ message }}</p>
 ```
 
-> Unlike many other libraries and frameworks, Synergy only supports the binding of named properties, and not JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML template and your JavaScript object.
+> Unlike many other libraries and frameworks, Synergy only supports the binding of named properties, and not JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML and JavaScript.
 
 ### Attributes
 
@@ -122,7 +122,7 @@ If a bound property is a plain object, then each key with a corresponding [truth
 </section>
 ```
 
-You can also use the _spread_ syntax to apply multiple attributes to an element using a single object.
+Use the _spread_ syntax to apply multiple attributes to an element using a single object.
 
 ```js
       {
@@ -157,7 +157,7 @@ The [style] attribute is a special case and handled slightly differently to othe
 
 ## Getters
 
-We can define any property as a standard JavaScript [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) when we want to derive the property value from _other_ property values on the object.
+Define any property as a standard JavaScript [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) when you want to derive the property value from _other_ property values on your object.
 
 ```js
 {
@@ -208,7 +208,7 @@ The key can be any primitive value, as long as it is unique to that item within 
 
 By default, if the list item is an object, then Synergy will look for an `id` property and assume that to be the key if you haven't said otherwise.
 
-If you want to override the default behaviour, then just use the [key] attribute....
+Use the [key] attribute when you want to override the default behaviour...
 
 ```html
 <ul>
