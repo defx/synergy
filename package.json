@@ -1,7 +1,7 @@
 {
   "name": "synergy",
   "version": "1.0.0",
-  "description": "Declarative data and event binding for the DOM.",
+  "description": "The simple and declarative way to build user interfaces for the web.",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
   "unpkg": "dist/synergy.min.js",
