@@ -2,7 +2,7 @@
 
 ## [![npm](https://img.shields.io/npm/v/synergy.svg)](http://npm.im/synergy) [![Build Status](https://travis-ci.com/defx/synergy.svg?branch=master)](https://travis-ci.com/defx/synergy) [![Coverage Status](https://coveralls.io/repos/github/defx/synergy/badge.svg?branch=master)](https://coveralls.io/github/defx/synergy?branch=master) [![gzip size](https://img.badgesize.io/https://unpkg.com/synergy/dist/synergy.min.js?compression=gzip&label=gzip)]()
 
-The simple and declarative way to build user interfaces for the web.
+Simple and declarative data binding for the DOM.
 
 ## Table of Contents
 
@@ -86,7 +86,7 @@ Use the double curly braces to bind named properties from your JavaScript object
 <p style="background-color: {{ bgColor }}">{{ message }}</p>
 ```
 
-> Unlike many other libraries and frameworks, Synergy only supports the binding of named properties, and not JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML and JavaScript.
+> Unlike many other libraries and frameworks, Synergy templates _don't_ support arbitrary JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML and JavaScript.
 
 ### Attributes
 
@@ -374,5 +374,3 @@ Pre-rendering is useful when you need to get content rendered immediately as par
 Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. Here's how it works...
 
 When Synergy is ready to mount to the DOM, it first checks to see if the target elements _existing_ HTML content matches what the content that is about to be rendered. If the two contents match _exactly_, then the existing DOM will be preserved, and the bindings will be transferred from the newly created (and yet unmounted) DOM across to the existing DOM. The newly created DOM is then left for the Garbage Collector, and the existing DOM is effectively _hydrated_ with all of its event and data bindings, thus becoming interactive.
-
-It's important to understand that there's no difference between the code required to pre-render the view and the code required to hydrate the view. Pre-rendering and hydrating essentially involves running the same code twice, but saving the rendered HTML from the first run, and then serving that same HTML in the second run.
