@@ -57,17 +57,10 @@ const proxy = (obj, callback) => {
     set: function (target, property, value) {
       if (value === target[property]) return true;
 
-      let descriptor = Object.getOwnPropertyDescriptor(target, property);
-
-      if (descriptor && descriptor.set) {
-        descriptor.set.call(proxyCache.get(target), value);
-      } else {
-        target[property] = value;
-      }
       getPaths(target, property).forEach((path) =>
         scheduleCallback(path, value)
       );
-      return true;
+      return Reflect.set(...arguments);
     },
     deleteProperty: function (target, property) {
       delete target[property];
