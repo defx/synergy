@@ -12,6 +12,7 @@ Simple and declarative data binding for the DOM.
 - [Install](#install)
 - [API](#api)
 - [Data Binding](#data-binding)
+  - [Logical NOT](#logical-not)
   - [Attributes](#attributes)
   - [Getters](#getters)
 - [Lists](#lists)
@@ -28,7 +29,7 @@ Simple and declarative data binding for the DOM.
 ## Features
 
 - Simple and declarative way to bind data, events, and markup
-- Small footprint (~3.5k)
+- Small footprint (~3.6k)
 - No special tooling required (e.g., compilers, plugins)
 - Minimal learning curve (almost entirely standard HTML, JS, and CSS!)
 
@@ -88,6 +89,14 @@ Use the double curly braces to bind named properties from your JavaScript object
 ```
 
 > Unlike many other libraries and frameworks, Synergy templates _don't_ support arbitrary JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML and JavaScript.
+
+### Logical NOT
+
+You can prefix the property name with the logical NOT operator (!) to flip a truthy value to `false`, or a falsy value to `true`
+
+```html
+<section hidden="{{ !expanded }}"></section>
+```
 
 ### Attributes
 

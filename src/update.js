@@ -54,10 +54,17 @@ const resolve = (path, ctx) => {
 };
 
 const getValue = (path, ctx, target) => {
+  let negated = path.charAt(0) === '!';
+
+  if (negated) path = path.slice(1);
+
   const realPath = resolve(path, ctx);
 
-  const index = lastNumericSegment(realPath);
-  return realPath.match(/.KEY$/) ? index : getValueAtPath(realPath, target);
+  if (realPath.match(/.KEY$/)) return lastNumericSegment(realPath);
+
+  let value = getValueAtPath(realPath, target);
+
+  return negated ? !value : value;
 };
 
 const parseStyles = (value) => {

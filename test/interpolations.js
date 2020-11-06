@@ -177,4 +177,22 @@ describe('attributes', () => {
     assert.equal($('p').getAttribute('name'), 'red');
     assert.equal(textContent($('p')), 'green');
   });
+
+  it('should support negation', async () => {
+    view = synergy.render(
+      rootNode,
+      {
+        foo: true,
+      },
+      html` <p hidden="{{ !foo }}">boo!</p>`
+    );
+
+    assert.notOk($('p').hidden);
+
+    view.foo = false;
+
+    await nextUpdate();
+
+    assert.ok($('p').hidden);
+  });
 });
