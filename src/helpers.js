@@ -1,7 +1,5 @@
-import { TEXT_NODE } from './constants.js';
-
-const isWhitespace = (node) =>
-  node.nodeType === TEXT_NODE && node.nodeValue.match(/^\s+$/);
+export const isWhitespace = (node) =>
+  node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
 
 export function walk(node, callback, path = [0], rootNode = node) {
   if (!(node.isSameNode(rootNode) && node.__skip__)) callback(node, path);
@@ -22,12 +20,12 @@ export const last = (v = []) => v[v.length - 1];
 export const resolve = (path, context) => {
   let i = context.length;
   while (i--) {
-    let { key, identifier, prop } = context[i];
+    let { indexIdentifier, valueIdentifier, prop } = context[i];
     path = path
       .split('.')
       .map((v) => {
-        if (v === identifier) return `${prop}.*`;
-        if (v === key) return `${prop}.*.KEY`;
+        if (v === valueIdentifier) return `${prop}.*`;
+        if (v === indexIdentifier) return `${prop}.*.KEY`;
         return v;
       })
       .join('.');
@@ -59,7 +57,7 @@ export const getParts = (value, context) =>
 
 export const debounce = (fn) => {
   let t;
-  return function debounced() {
+  return function () {
     if (t) return;
     t = requestAnimationFrame(() => {
       fn();
@@ -80,36 +78,37 @@ const parseEach = (str) => {
 
   let match = left.match(/\[([^\[\]]+)\]/);
 
-  if (!match) return { identifier: left, prop };
+  if (!match) return { valueIdentifier: left, prop };
 
   let parts = match[1].split(',').map((v) => v.trim());
 
-  let [key, identifier] = parts;
+  let [indexIdentifier, valueIdentifier] = parts;
   return {
-    key,
-    identifier,
+    indexIdentifier,
+    valueIdentifier,
     prop,
   };
 };
 
-export const parseEachDeclaration = (str, context) => {
+const parseArgs = (args) =>
+  args
+    ? args
+        .split(',')
+        .map((v) => v.split('='))
+        .reduce((a, [k, v]) => {
+          a[k] = v;
+          return a;
+        }, {})
+    : {};
+
+export const parseEachDeclaration = (str, context, args) => {
   let v = parseEach(str);
+
   return {
+    ...parseArgs(args),
     ...v,
     prop: resolve(v.prop, context),
   };
-};
-
-export const replaceLastArrayIndex = (path, index) => {
-  let parts = path.split('.');
-  let i = parts.length;
-  while (i--) {
-    if (parts[i] === '*') {
-      parts[i] = index;
-      return parts;
-    }
-  }
-  return parts;
 };
 
 export const getValueAtPath = (path, target) =>
@@ -133,3 +132,6 @@ const negatives = [undefined, null, false];
 export const negative = (v) => negatives.includes(v);
 
 export const positive = (v) => !negative(v);
+
+export const removeNodes = (nodes) =>
+  nodes.forEach((node) => node.parentNode.removeChild(node));

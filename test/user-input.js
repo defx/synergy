@@ -52,10 +52,12 @@ describe('input[name]', () => {
       },
       html`
         <ul>
-          <li each="todo in todos">
+          <!-- #each todo in todos -->
+          <li>
             {{todo.title}}
             <input type="checkbox" name="todo.done" />
           </li>
+          <!-- /each -->
         </ul>
       `
     );

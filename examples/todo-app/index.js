@@ -135,9 +135,9 @@ export const markup = html`
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
+      <!-- #each todo in filteredTodos -->
       <li
         class="todo"
-        each="todo in filteredTodos"
         is-done="{{todo.completed}}"
         editing="{{todo.editing}}"
         key="id"
@@ -152,15 +152,18 @@ export const markup = html`
         />
         <button class="delete" onclick="deleteTodo">[delete]</button>
       </li>
+      <!-- /each -->
     </ul>
   </main>
   <footer hidden="{{noTodos}}">
     <p id="count">{{itemsLeft}}</p>
     <ul id="filterList">
-      <li each="filter in filters">
+      <!-- #each filter in filters -->
+      <li>
         <input type="radio" name="activeFilter" value="{{filter}}" />
         <label>{{filter}}</label>
       </li>
+      <!-- /each -->
     </ul>
     <button
       id="clearCompleted"

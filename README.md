@@ -177,7 +177,7 @@ Define any property as a standard JavaScript [getter](https://developer.mozilla.
 
 ## Lists
 
-Iterate using the **[each]** attribute
+Iterate using the `#each` comment block
 
 ```js
 {
@@ -187,7 +187,9 @@ Iterate using the **[each]** attribute
 
 ```html
 <ul>
-  <li each="name in names">Hello {{ name }}</li>
+  <!-- #each name in names -->
+  <li>Hello {{ name }}</li>
+  <!-- /each -->
 </ul>
 ```
 
@@ -195,10 +197,27 @@ Access the index using square bracket notation
 
 ```html
 <ul>
-  <li each="[index, todo] in todos">
+  <!-- #each [index, todo] in todos -->
+  <li>
     <p>todo {{ index }} of {{ todos.length }}</p>
   </li>
+  <!-- /each -->
 </ul>
+```
+
+Repeated blocks can have multiple top-level nodes
+
+```html
+<!-- #each drawer in accordion.drawers -->
+<h2>
+  <button id="{{ drawer.id }}" aria-expanded="{{ drawer.expanded }}">
+    {{ drawer.title }}
+  </button>
+</h2>
+<section aria-labelledby="{{ drawer.id }}" hidden="{{ !drawer.expanded }}">
+  <!-- ... -->
+</section>
+<!-- /each -->
 ```
 
 ### Keyed Lists
@@ -209,11 +228,13 @@ The key can be any primitive value, as long as it is unique to that item within 
 
 By default, if the list item is an object, then Synergy will look for an `id` property and assume that to be the key if you haven't said otherwise.
 
-Use the [key] attribute when you want to override the default behaviour...
+Set the `key` parameter if you need to override the default behaviour...
 
 ```html
 <ul>
-  <li each="person in people" key="yourCustomKey">Hello {{ person.name }}</li>
+  <!-- #each person in people (key=whatever) -->
+  <li>Hello {{ person.name }}</li>
+  <!-- /each -->
 </ul>
 ```
 
@@ -263,9 +284,11 @@ If the target of the event is a list element, then the second argument to your h
 
 ```html
 <ul>
-  <li each="todo in todos">
+  <!-- #each todo in todos -->
+  <li>
     <h3 onclick="todoClicked">{{ todo.title }}</h3>
   </li>
+  <!-- /each -->
 </ul>
 ```
 

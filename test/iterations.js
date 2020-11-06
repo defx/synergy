@@ -25,9 +25,11 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <li each="todo in todos" style="background-color: {{todo.colour}}">
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
             <p>{{todo.title}}</p>
           </li>
+          <!-- /each -->
         </ul>
       `
     );
@@ -47,10 +49,12 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <li each="[key, colour] in colours">
+          <!-- #each [key, colour] in colours -->
+          <li>
             <p>{{key}}</p>
             <p>{{colour}}</p>
           </li>
+          <!-- /each -->
         </ul>
       `
     );
@@ -79,9 +83,11 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <li each="todo in todos" style="background-color: {{todo.colour}}">
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
             <p>{{todo.title}}</p>
           </li>
+          <!-- /each -->
         </ul>
       `
     );
@@ -112,12 +118,11 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <li
-            each="[key, todo] in todos"
-            style="background-color: {{todo.colour}}"
-          >
+          <!-- #each [key, todo] in todos -->
+          <li style="background-color: {{todo.colour}}">
             <p>{{key}}</p>
           </li>
+          <!-- /each -->
         </ul>
       `
     );
@@ -141,9 +146,9 @@ describe('iterations', () => {
       },
       html`
         <select name="chosenName">
-          <option each="name in names" value="{{name}}" onclick="handleClick">
-            {{name}}
-          </option>
+          <!-- #each name in names -->
+          <option value="{{name}}" onclick="handleClick">{{name}}</option>
+          <!-- /each -->
         </select>
       `
     );
@@ -167,7 +172,11 @@ describe('iterations', () => {
           },
         ],
       },
-      html`<p each="colour in colours">{{colour.name}}</p> `
+      html`
+        <!-- #each colour in colours -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
     let previousNodes = $$('p');
@@ -212,7 +221,11 @@ describe('iterations', () => {
           },
         ],
       },
-      html`<p each="colour in colours ">{{colour.name}}</p>`
+      html`
+        <!-- #each colour in colours -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
     let previousNodes = $$('p');
@@ -260,7 +273,11 @@ describe('iterations', () => {
           },
         ],
       },
-      html`<p each="colour in colours" key="foo">{{colour.name}}</p> `
+      html`
+        <!-- #each colour in colours (key=foo) -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
     let previousNodes = $$('p');
@@ -287,5 +304,41 @@ describe('iterations', () => {
     assert.ok(previousNodes[0].isSameNode(currentNodes[1]));
     assert.ok(previousNodes[1].isSameNode(currentNodes[0]));
     assert.ok(previousNodes[2].isSameNode(currentNodes[2]));
+  });
+
+  it('should support multiple top-level nodes', () => {
+    view = synergy.render(
+      rootNode,
+      {
+        colours: [
+          {
+            name: 'red',
+            id: 1,
+          },
+          {
+            name: 'green',
+            id: 2,
+          },
+          {
+            name: 'gold',
+            id: 3,
+          },
+        ],
+      },
+      html`
+        <div>
+          <!-- #each colour in colours -->
+          <p>{{colour.name}}</p>
+          <p>{{colour.id}}</p>
+          <!-- /each -->
+        </div>
+      `
+    );
+
+    assert.ok(
+      rootNode.innerHTML.includes(
+        `<p>red</p><p>1</p><p>green</p><p>2</p><p>gold</p><p>3</p>`
+      )
+    );
   });
 });

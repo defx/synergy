@@ -27,10 +27,12 @@ describe('context', () => {
       },
       html` <h1 first>{{todo}}</h1>
         <ul>
-          <li each="todo in todos" style="background-color: {{todo.colour}}">
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
             <p>{{todo.title}}</p>
             <p>{{message}}</p>
           </li>
+          <!-- /each -->
         </ul>
         <h1 second>{{todo}}</h1>`
     );
@@ -59,12 +61,16 @@ describe('context', () => {
         ],
       },
       html`
-        <article each="artist in artists">
+        <!-- #each artist in artists -->
+        <article>
           <h4>{{artist.name}}</h4>
           <ul>
-            <li each="tag in artist.tags">{{tag}}</li>
+            <!-- #each tag in artist.tags -->
+            <li>{{tag}}</li>
+            <!-- /each -->
           </ul>
         </article>
+        <!-- /each -->
       `
     );
   });
@@ -91,12 +97,16 @@ describe('context', () => {
         ],
       },
       html`
-        <article each="artist in artists">
+        <!-- #each artist in artists -->
+        <article>
           <h4>{{artist.name}}</h4>
           <ul>
-            <li each="tag in artist.tags">{{tag}}</li>
+            <!-- #each tag in artist.tags -->
+            <li>{{tag}}</li>
+            <!-- /each -->
           </ul>
         </article>
+        <!-- /each -->
       `
     );
 

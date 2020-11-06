@@ -1,12 +1,6 @@
-export const ELEMENT_NODE = 1;
-export const TEXT_NODE = 3;
-export const REPEAT = 'list';
 export const ATTRIBUTE = 'ATTRIBUTE';
 export const ATTRIBUTE_SPREAD = 'ATTRIBUTE_SPREAD';
 export const TEXT = 'TEXT';
 export const INPUT = 'INPUT';
-export const BIND = 'bindings';
-export const SUBSCRIBE = 'subscribers';
-export const EACH = 'each';
 export const LIST = 'list';
 export const LIST_ITEM = 'list node';

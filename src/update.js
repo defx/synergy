@@ -1,13 +1,19 @@
 import {
   LIST,
   LIST_ITEM,
-  TEXT_NODE,
   TEXT,
   ATTRIBUTE,
   ATTRIBUTE_SPREAD,
   INPUT,
 } from './constants.js';
-import { getValueAtPath, walk, typeOf, copy, negative } from './helpers.js';
+import {
+  getValueAtPath,
+  walk,
+  typeOf,
+  copy,
+  negative,
+  removeNodes,
+} from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
 
@@ -18,18 +24,22 @@ const lastNumericSegment = (parts) => {
   }
 };
 
-const updateList = (templateNode, binding, delta) => {
-  let lastNode = templateNode;
-  let listNodes = binding.nodes;
-  listNodes.forEach((node) => node.parentNode.removeChild(node));
-  binding.nodes = delta.map((i, newIndex) => {
-    let el = i === -1 ? cloneNode(binding.node) : listNodes[i];
-    el.__bindings__[0].type = LIST_ITEM;
-    el.__index__ = newIndex;
-    lastNode.after(el);
-    lastNode = el;
-    return el;
+const updateList = (placeholder, binding, delta) => {
+  let listItems = binding.listItems;
+  let fragment = document.createDocumentFragment();
+  listItems.forEach(removeNodes);
+  binding.listItems = delta.map((i, newIndex) => {
+    let nodes =
+      i === -1 ? binding.nodes.map((node) => cloneNode(node)) : listItems[i];
+
+    nodes.forEach((el) => {
+      el.__index__ = newIndex;
+      fragment.appendChild(el);
+    });
+
+    return nodes;
   });
+  placeholder.after(fragment);
 };
 
 const resolve = (path, ctx) => {
@@ -45,6 +55,7 @@ const resolve = (path, ctx) => {
 
 const getValue = (path, ctx, target) => {
   const realPath = resolve(path, ctx);
+
   const index = lastNumericSegment(realPath);
   return realPath.match(/.KEY$/) ? index : getValueAtPath(realPath, target);
 };
@@ -150,9 +161,7 @@ const Updater = () => {
     let ctx = {};
 
     walk(rootNode, (node) => {
-      if (!node.__bindings__ || node.__bindings__.length === 0) {
-        return;
-      }
+      if (!node.__bindings__) return;
 
       let p = copy(data);
 
@@ -178,9 +187,10 @@ const Updater = () => {
           if (binding.type === LIST) {
             const delta = compareKeyedLists(binding.uid, oldValue, newValue);
             if (delta) updateList(node, binding, delta);
-            ctx[path] = -1;
             return;
           }
+
+          if (oldValue === newValue) return;
 
           if (binding.type === INPUT) {
             if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
