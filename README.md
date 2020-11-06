@@ -22,6 +22,7 @@ Simple and declarative data binding for the DOM.
   - [Submitting Form Data](#submitting-form-data)
   - [Select](#select)
   - [Radio](#radio)
+- [Side Effects](#side-effects)
 - [Pre-rendering](#pre-rendering)
 
 ## Features
@@ -290,7 +291,11 @@ As with any other binding, you can use dot notation to target nested properties.
 
 ### Submitting Form Data
 
-By default, a HTML form will browse to a new page when the user submits the form. If you want to handle the submission of the form using JavaScript, then you would do that by binding to the forms submit event.
+By default, a HTML form will browse to a new page when the user submits the form. Submission happens when the user actives either a) an input[type="submit"], or b) a button[type="submit"].
+
+> In some browsers, a button _without_ a [type] will be assumed to be [type="submit"] if it resides within a form element, so you should _always_ set a buttons `type` attribute when it lives within a form.
+
+If you wish to override the browsers default behaviour, perhaps to execute some JavaScript before submitting the form data, then you would do that by binding to the forms submit event, and calling `preventDefault` on the event object inside your handler function to stop the browser from submitting the form.
 
 ```html
 <form onsubmit="handleForm">
@@ -366,6 +371,25 @@ As with `<select>`, the value of the named property will reflect the value of th
   filter: 'active';
 }
 ```
+
+## Side Effects
+
+### propertyChangedCallback
+
+You can implement a `propertyChangedCallback` method on your object to trigger side effects whenever there are changes to values on your object.
+
+```js
+{
+  todos: [],
+  propertyChangedCallback(path) {
+    if (path.match(/^todos.?/)) {
+      localStorage.setItem('todos', JSON.stringify(this.todos));
+    }
+  }
+}
+```
+
+> Invocations of `propertyChangedCallback` are already debounced with [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame), so you'll only get one invocation per property _per_ animation frame.
 
 ## Pre-rendering
 
