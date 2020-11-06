@@ -7,7 +7,6 @@ Simple and declarative data binding for the DOM.
 ## Table of Contents
 
 - [Features](#features)
-- [Use Cases](#use-cases)
 - [Browser Support](#browser-support)
 - [Install](#install)
 - [API](#api)
@@ -15,10 +14,9 @@ Simple and declarative data binding for the DOM.
   - [Logical NOT](#logical-not)
   - [Attributes](#attributes)
   - [Getters](#getters)
-- [Lists](#lists)
+- [Repeated Blocks](#repeated-blocks)
+- [Keyed Arrays](#keyed-arrays)
 - [Events](#events)
-  - [List Events](#list-events)
-  - [Keyed Lists](#keyed-lists)
 - [Forms](#forms)
   - [Submitting Form Data](#submitting-form-data)
   - [Select](#select)
@@ -32,13 +30,6 @@ Simple and declarative data binding for the DOM.
 - Small footprint (~3.6k)
 - No special tooling required (e.g., compilers, plugins)
 - Minimal learning curve (almost entirely standard HTML, JS, and CSS!)
-
-## Use Cases
-
-- partially and/or progressively enhance server rendered pages
-- use together with Custom Elements for a component-based workflow
-- build reactive, data-intensive browser-based applications
-- rapid browser-based prototyping
 
 ## Browser Support
 
@@ -184,9 +175,9 @@ Define any property as a standard JavaScript [getter](https://developer.mozilla.
 }
 ```
 
-## Lists
+## Repeated blocks
 
-Iterate using the `#each` comment block
+Repeat a block of HTML for each item in an Array or Set using the `#each` comment block
 
 ```js
 {
@@ -229,13 +220,13 @@ Repeated blocks can have multiple top-level nodes
 <!-- /each -->
 ```
 
-### Keyed Lists
+### Keyed Arrays
 
-Keys help Synergy identify which items in a list have changed. Using keys improves performance and avoids unexpected behaviour when re-rendering lists.
+Keys help Synergy identify which items in an Array have changed. Using keys improves performance and avoids unexpected behaviour when re-rendering.
 
-The key can be any primitive value, as long as it is unique to that item within the collection.
+The key can be any primitive value, as long as it is unique to that item within the Array.
 
-By default, if the list item is an object, then Synergy will look for an `id` property and assume that to be the key if you haven't said otherwise.
+By default, if the Array item is an object, then Synergy will look for an `id` property and assume that to be the key if you haven't said otherwise.
 
 Set the `key` parameter if you need to override the default behaviour...
 
@@ -247,7 +238,7 @@ Set the `key` parameter if you need to override the default behaviour...
 </ul>
 ```
 
-Note that **[each]** works the same with both Arrays and Sets.
+Note that `#each` works the same for Arrays and Sets.
 
 ## Events
 
@@ -276,9 +267,7 @@ The first argument to your event handler is always a native DOM Event object
 };
 ```
 
-### List Events
-
-If the target of the event is a list element, then the second argument to your handler will be the data for that particular item.
+If the target of the event is within a repeated block, then the second argument to your handler will be the datum for that particular item.
 
 ```js
 {
