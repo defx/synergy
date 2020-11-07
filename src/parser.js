@@ -44,7 +44,7 @@ export default (rootNode) => {
       closeBlock(openingComment, nodes, closingComment) {
         removeNodes(nodes);
 
-        let { key, keyIdentifier, prop } = last(stack);
+        let { key, prop } = last(stack);
         let path = resolve(prop, stack);
 
         let binding = {
@@ -54,7 +54,6 @@ export default (rootNode) => {
               value: path,
             },
           ],
-          key: keyIdentifier,
           uid: key,
           path,
         };

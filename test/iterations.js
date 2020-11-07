@@ -49,9 +49,9 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <!-- #each [key, colour] in colours -->
+          <!-- #each colour in colours -->
           <li>
-            <p>{{key}}</p>
+            <p>{{.}}</p>
             <p>{{colour}}</p>
           </li>
           <!-- /each -->
@@ -118,9 +118,9 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <!-- #each [key, todo] in todos -->
+          <!-- #each todo in todos -->
           <li style="background-color: {{todo.colour}}">
-            <p>{{key}}</p>
+            <p>{{.}}</p>
           </li>
           <!-- /each -->
         </ul>

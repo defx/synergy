@@ -13,16 +13,10 @@ import {
   copy,
   negative,
   removeNodes,
+  last,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
-
-const lastNumericSegment = (parts) => {
-  let i = parts.length;
-  while (i--) {
-    if (!isNaN(parts[i])) return +parts[i];
-  }
-};
 
 const updateList = (placeholder, binding, delta) => {
   let listItems = binding.listItems;
@@ -53,16 +47,14 @@ const resolve = (path, ctx) => {
   return parts.join('.');
 };
 
-const getValue = (path, ctx, target) => {
+const getValue = (path, ctx, target, binding) => {
+  if (path === '.') return ctx[last(binding.context).prop];
+
   let negated = path.charAt(0) === '!';
 
   if (negated) path = path.slice(1);
 
-  const realPath = resolve(path, ctx);
-
-  if (realPath.match(/.KEY$/)) return lastNumericSegment(realPath);
-
-  let value = getValueAtPath(realPath, target);
+  let value = getValueAtPath(resolve(path, ctx), target);
 
   return negated ? !value : value;
 };
@@ -187,7 +179,8 @@ const Updater = () => {
 
         if (binding.path) {
           const { path, key } = binding;
-          const newValue = getValue(path, ctx, p);
+
+          const newValue = getValue(path, ctx, p, binding);
 
           binding.data = newValue;
 
@@ -235,7 +228,7 @@ const Updater = () => {
 
           if (binding.type === ATTRIBUTE_SPREAD) {
             oldValue = oldValue || {};
-            const newValue = getValue(path, ctx, p);
+            const newValue = getValue(path, ctx, p, binding);
 
             for (let k in newValue) {
               let v = newValue[k];
@@ -255,9 +248,12 @@ const Updater = () => {
 
         const newValue =
           parts.length === 1
-            ? getValue(parts[0].value, ctx, p)
+            ? getValue(parts[0].value, ctx, p, binding)
             : parts.reduce((a, { type, value }) => {
-                return a + (type === 'key' ? getValue(value, ctx, p) : value);
+                return (
+                  a +
+                  (type === 'key' ? getValue(value, ctx, p, binding) : value)
+                );
               }, '');
 
         if (newValue === oldValue) return;

@@ -20,12 +20,13 @@ export const last = (v = []) => v[v.length - 1];
 export const resolve = (path, context) => {
   let i = context.length;
   while (i--) {
-    let { indexIdentifier, valueIdentifier, prop } = context[i];
+    let { valueIdentifier, prop } = context[i];
+
     path = path
       .split('.')
       .map((v) => {
         if (v === valueIdentifier) return `${prop}.*`;
-        if (v === indexIdentifier) return `${prop}.*.KEY`;
+
         return v;
       })
       .join('.');
@@ -75,19 +76,7 @@ export const copy = (v) => v && JSON.parse(JSON.stringify(v, replacer));
 
 const parseEach = (str) => {
   let [left, prop] = str.split(/\s+in\s+/).map((v) => v.trim());
-
-  let match = left.match(/\[([^\[\]]+)\]/);
-
-  if (!match) return { valueIdentifier: left, prop };
-
-  let parts = match[1].split(',').map((v) => v.trim());
-
-  let [indexIdentifier, valueIdentifier] = parts;
-  return {
-    indexIdentifier,
-    valueIdentifier,
-    prop,
-  };
+  return { valueIdentifier: left, prop };
 };
 
 const parseArgs = (args) =>
