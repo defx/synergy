@@ -113,13 +113,12 @@ export default (rootNode) => {
 
   let parseAttributeNode = ({ name, value }, node, context) => {
     if (name.charAt(0) === '{') {
-      let res = name.match(/{{\.{3}([^{}]+)}}/);
-      let match = res && res[1];
+      let match = name.match(/{{\.{3}([^{}]+)}}/);
       if (match) {
         node.removeAttribute(name);
         node.__bindings__.push({
           name,
-          path: resolve(match, context),
+          path: resolve(match[1], context),
           type: ATTRIBUTE_SPREAD,
         });
       }

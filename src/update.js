@@ -142,129 +142,108 @@ const applyAttribute = (node, name, value, previous) => {
   return node.setAttribute(name, v);
 };
 
-const Updater = () => {
-  const updateNode = (node, binding, newValue, oldValue) => {
-    switch (binding.type) {
-      case ATTRIBUTE: {
-        applyAttribute(node, binding.name, newValue, oldValue);
-        break;
-      }
-      case TEXT: {
-        node.textContent = newValue;
-        break;
-      }
+const updateNode = (node, binding, newValue, oldValue) =>
+  binding.type === ATTRIBUTE
+    ? applyAttribute(node, binding.name, newValue, oldValue)
+    : (node.textContent = newValue);
+
+const updateBindings = (node, ctx, p) =>
+  (node.__bindings__ || []).forEach((binding) =>
+    updateBinding(binding, node, ctx, p)
+  );
+
+const updateBinding = (binding, node, ctx, p) => {
+  if (binding.eventName)
+    return binding.path && (binding.realPath = resolve(binding.path, ctx));
+
+  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
+
+  let oldValue = binding.data;
+
+  if (binding.path) {
+    const { path, key } = binding;
+    const newValue = getValue(path, ctx, p, binding);
+
+    binding.data = newValue;
+
+    if (binding.type === LIST) {
+      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
+      return delta && updateList(node, binding, delta);
     }
-  };
 
-  const update = (rootNode, data) => {
-    let ctx = {};
+    if (oldValue === newValue) return;
 
-    walk(rootNode, (node) => {
-      if (!node.__bindings__) return;
+    if (binding.type === INPUT) {
+      if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
+        Array.from(node.querySelectorAll('option')).forEach((option) => {
+          option.selected = newValue.includes(option.value);
+        });
+        return;
+      }
 
-      let p = copy(data);
-
-      node.__bindings__.forEach((binding) => {
-        if (binding.eventName) {
-          if (binding.path) binding.realPath = resolve(binding.path, ctx);
-          return;
-        }
-
-        if (binding.type === LIST_ITEM) {
-          ctx[binding.path] = node.__index__;
-          return;
-        }
-
-        let oldValue = binding.data;
-
-        if (binding.path) {
-          const { path, key } = binding;
-
-          const newValue = getValue(path, ctx, p, binding);
-
-          binding.data = newValue;
-
-          if (binding.type === LIST) {
-            const delta = compareKeyedLists(binding.uid, oldValue, newValue);
-            if (delta) updateList(node, binding, delta);
-            return;
+      switch (node.getAttribute('type')) {
+        case 'checkbox':
+          node.checked = newValue;
+          if (node.checked) {
+            node.setAttribute('checked', '');
+          } else {
+            node.removeAttribute('checked');
           }
-
-          if (oldValue === newValue) return;
-
-          if (binding.type === INPUT) {
-            if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
-              Array.from(node.querySelectorAll('option')).forEach((option) => {
-                option.selected = newValue.includes(option.value);
-              });
-              return;
-            }
-
-            let inputType = node.getAttribute('type');
-
-            switch (inputType) {
-              case 'checkbox':
-                node.checked = newValue;
-                if (node.checked) {
-                  node.setAttribute('checked', '');
-                } else {
-                  node.removeAttribute('checked');
-                }
-                break;
-              case 'radio':
-                node.checked = newValue === node.getAttribute('value');
-                if (node.checked) {
-                  node.setAttribute('checked', '');
-                } else {
-                  node.removeAttribute('checked');
-                }
-                break;
-              default:
-                node.setAttribute('value', (node.value = newValue || ''));
-                break;
-            }
-            return;
+          break;
+        case 'radio':
+          node.checked = newValue === node.getAttribute('value');
+          if (node.checked) {
+            node.setAttribute('checked', '');
+          } else {
+            node.removeAttribute('checked');
           }
+          break;
+        default:
+          node.setAttribute('value', (node.value = newValue || ''));
+          break;
+      }
+      return;
+    }
 
-          if (binding.type === ATTRIBUTE_SPREAD) {
-            oldValue = oldValue || {};
-            const newValue = getValue(path, ctx, p, binding);
+    if (binding.type === ATTRIBUTE_SPREAD) {
+      oldValue = oldValue || {};
 
-            for (let k in newValue) {
-              let v = newValue[k];
-              if (v === oldValue[k]) continue;
-              if (negative(v)) {
-                node.removeAttribute(k);
-              } else {
-                node.setAttribute(k, v);
-              }
-            }
-
-            return;
-          }
+      for (let k in newValue) {
+        let v = newValue[k];
+        if (v === oldValue[k]) continue;
+        if (negative(v)) {
+          node.removeAttribute(k);
+        } else {
+          node.setAttribute(k, v);
         }
+      }
 
-        const { paths, parts } = binding;
+      return;
+    }
+  }
 
-        const newValue =
-          parts.length === 1
-            ? getValue(parts[0].value, ctx, p, binding)
-            : parts.reduce((a, { type, value }) => {
-                return (
-                  a +
-                  (type === 'key' ? getValue(value, ctx, p, binding) : value)
-                );
-              }, '');
+  const { paths, parts } = binding;
 
-        if (newValue === oldValue) return;
+  const newValue =
+    parts.length === 1
+      ? getValue(parts[0].value, ctx, p, binding)
+      : parts.reduce((a, { type, value }) => {
+          return (
+            a + (type === 'key' ? getValue(value, ctx, p, binding) : value)
+          );
+        }, '');
 
-        binding.data = newValue;
+  if (newValue === oldValue) return;
 
-        updateNode(node, binding, newValue, oldValue);
-      });
-    });
-  };
-  return update;
+  binding.data = newValue;
+
+  updateNode(node, binding, newValue, oldValue);
+};
+
+const Updater = () => (rootNode, data) => {
+  let ctx = {};
+  let p = copy(data);
+  walk(rootNode, (node) => updateBindings(node, ctx, p));
 };
 
 export default Updater;
