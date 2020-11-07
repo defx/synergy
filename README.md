@@ -193,13 +193,13 @@ Repeat a block of HTML for each item in an Array or Set using the `#each` commen
 </ul>
 ```
 
-Access the index using square bracket notation
+Access the current index with the dot character
 
 ```html
 <ul>
-  <!-- #each [index, todo] in todos -->
+  <!-- #each todo in todos -->
   <li>
-    <p>todo {{ index }} of {{ todos.length }}</p>
+    <p>todo {{ . }} of {{ todos.length }}</p>
   </li>
   <!-- /each -->
 </ul>
