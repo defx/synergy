@@ -73,9 +73,6 @@ export const TodoApp = () => ({
   get filteredTodos() {
     return filters[this.activeFilter](this.todos);
   },
-  get noTodos() {
-    return this.todos.length === 0;
-  },
   get numCompleted() {
     return this.todos.filter(({ completed }) => completed).length;
   },
@@ -131,7 +128,7 @@ export const markup = html`
       onkeydown="addTodo"
     />
   </header>
-  <main hidden="{{noTodos}}">
+  <main hidden="{{ !todos.length }}">
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
@@ -155,7 +152,7 @@ export const markup = html`
       <!-- /each -->
     </ul>
   </main>
-  <footer hidden="{{noTodos}}">
+  <footer hidden="{{ !todos.length }}">
     <p id="count">{{itemsLeft}}</p>
     <ul id="filterList">
       <!-- #each filter in filters -->
