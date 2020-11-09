@@ -202,4 +202,26 @@ describe('input[name]', () => {
 
     assert.equal($('#container textarea').value, 'ok');
   });
+
+  it('should resolve target bindings', async () => {
+    let clicked = false;
+
+    let view = synergy.render(
+      rootNode,
+      {
+        handleClick() {
+          clicked = true;
+        },
+      },
+      html`<button onclick="handleClick">
+        <p></p>
+      </button>`
+    );
+
+    $('button p').click();
+
+    await nextUpdate();
+
+    assert.ok(clicked);
+  });
 });
