@@ -9,8 +9,8 @@ Simple and declarative data binding for the DOM.
 - [Features](#features)
 - [Browser Support](#browser-support)
 - [Install](#install)
-- [API](#api)
-- [Data Binding](#data-binding)
+- [Render](#render)
+- [Template Syntax](#template-syntax)
   - [Logical NOT](#logical-not)
   - [Attributes](#attributes)
   - [Getters](#getters)
@@ -51,27 +51,35 @@ Using unpkg CDN:
 </script>
 ```
 
-## API
+## Render
 
-Render into a DOM element node:
+The `render()` method combines an HTML template with a JavaScript object and then mounts the rendered HTML into an existing DOM node.
+
+### Syntax
 
 ```js
-synergy.render(
-  document.getElementById('container'),
-  { message: 'Hello World!' },
-  '<p>{{ message }}</p>'
-);
+let view = synergy.render(templateId, viewmodel, targetNodeId);
 ```
 
-The `render` method returns a proxied version of your JavaScript object that will automatically update the UI whenever any of its values change
+### Parameters
+
+- `templateId` The id of an HTML template node.
+
+- `viewmodel` A plain JavaScript object that contains the data for your view.
+
+- `targetNodeId` The id of an existing HTML element node where the rendered HTML will be mounted.
+
+### Return value
+
+A proxied version of your JavaScript object that will automatically update the UI whenever any of its values change
 
 ```js
-const view = synergy.render(/*...*/);
+let view = synergy.render(/*...*/);
 
 view.message = '¡Hola Mundo!';
 ```
 
-## Data binding {{...}}
+## Template Syntax
 
 Use the double curly braces to bind named properties from your JavaScript object to text or attributes within your HTML template.
 
@@ -210,11 +218,9 @@ Repeated blocks can have multiple top-level nodes
 ```html
 <!-- #each drawer in accordion.drawers -->
 <h2>
-  <button id="{{ drawer.id }}" aria-expanded="{{ drawer.expanded }}">
-    {{ drawer.title }}
-  </button>
+  <button id="{{ id }}" aria-expanded="{{ expanded }}">{{ title }}</button>
 </h2>
-<section aria-labelledby="{{ drawer.id }}" hidden="{{ !drawer.expanded }}">
+<section aria-labelledby="{{ id }}" hidden="{{ !expanded }}">
   <!-- ... -->
 </section>
 <!-- /each -->
