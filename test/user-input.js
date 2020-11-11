@@ -11,11 +11,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     synergy.render(
-      node,
       {
         message: '?',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container span.message').textContent, '?');
@@ -33,13 +33,13 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     synergy.render(
-      node,
       {
         nested: {
           message: '??',
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container span.message').textContent, '??');
@@ -63,7 +63,6 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     synergy.render(
-      node,
       {
         todos: [
           {
@@ -75,7 +74,8 @@ describe('input[name]', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     const li = $$('#container li');
@@ -105,11 +105,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     synergy.render(
-      node,
       {
         filter: 'active',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let checked = $(`#container input[type="radio"]:checked`);
@@ -136,7 +136,7 @@ describe('input[name]', () => {
 
     let node = document.getElementById('container');
 
-    synergy.render(node, {}, 'x-template');
+    synergy.render({}, 'x-template', 'container');
 
     let checked = $(`#container input[type="radio"]:checked`);
     assert.equal(checked, null);
@@ -163,11 +163,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     let view = synergy.render(
-      node,
       {
         filter: 'active',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     $(`#container input[type="radio"][value="complete"]`).click();
@@ -195,11 +195,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     let view = synergy.render(
-      node,
       {
         pets: 'hamster',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container select option:checked').value, 'hamster');
@@ -225,11 +225,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     let view = synergy.render(
-      node,
       {
         pets: ['dog', 'hamster'],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.deepEqual(
@@ -249,11 +249,11 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     let view = synergy.render(
-      node,
       {
         text: 'ok',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container textarea').value, 'ok');
@@ -274,13 +274,13 @@ describe('input[name]', () => {
     let node = document.getElementById('container');
 
     let view = synergy.render(
-      node,
       {
         handleClick() {
           clicked = true;
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     $('#container button p').click();

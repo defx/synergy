@@ -4,27 +4,24 @@ import subscribe from './subscribe.js';
 import transferBindings from './transferBindings.js';
 import Updater from './update.js';
 
-function render(mountNode, model, templateId) {
+function render(viewmodel, templateId, targetNodeId) {
+  let mountNode = document.getElementById(targetNodeId);
   let template = document.getElementById(templateId);
+  let { subscribers, templateNode } = parse(template.cloneNode(true).content);
+  let update = Updater(templateNode);
 
-  let { subscribers, rootNode } = parse(template.cloneNode(true).content);
-  let update = Updater(rootNode);
+  update(templateNode, viewmodel);
 
-  update(rootNode, model);
-
-  if (rootNode.innerHTML === mountNode.innerHTML) {
-    transferBindings(rootNode, mountNode);
+  if (templateNode.innerHTML === mountNode.innerHTML) {
+    transferBindings(templateNode, mountNode);
   } else {
     mountNode.innerHTML = '';
-    // while (rootNode.childNodes.length > 0) {
-    //   mountNode.appendChild(rootNode.childNodes[0]);
-    // }
-    mountNode.appendChild(rootNode);
+    mountNode.appendChild(templateNode);
   }
 
-  let p = !!model.propertyChangedCallback;
+  let p = !!viewmodel.propertyChangedCallback;
 
-  let proxy = Proxy(model, (changeset) => {
+  let proxy = Proxy(viewmodel, (changeset) => {
     update(mountNode, proxy);
     p &&
       changeset.forEach(([path, value]) =>

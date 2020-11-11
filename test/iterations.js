@@ -13,10 +13,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         todos: [
           {
@@ -31,7 +28,8 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let todos = Array.from(view.todos);
@@ -56,14 +54,12 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         colours: ['gold', 'tomato'],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     $$('#container li').forEach((li, i) => {
@@ -85,10 +81,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         todos: new Set([
           {
@@ -103,7 +96,8 @@ describe('iterations', () => {
           },
         ]),
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let todos = Array.from(view.todos);
@@ -127,10 +121,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         todos: new Set([
           {
@@ -145,7 +136,8 @@ describe('iterations', () => {
           },
         ]),
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let todos = Array.from(view.todos);
@@ -167,10 +159,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         names: ['tim', 'john', 'kim'],
         handleClick: function (e, d) {
@@ -178,7 +167,8 @@ describe('iterations', () => {
           done();
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     $('#container option[value="john"]').click();
@@ -194,10 +184,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         colours: [
           {
@@ -211,7 +198,8 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let previousNodes = $$('#container p');
@@ -247,10 +235,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         colours: [
           {
@@ -267,7 +252,8 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let previousNodes = $$('#container p');
@@ -306,10 +292,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         colours: [
           {
@@ -326,7 +309,8 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let previousNodes = $$('#container p');
@@ -366,10 +350,7 @@ describe('iterations', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         colours: [
           {
@@ -386,13 +367,16 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.ok(
-      node.innerHTML.includes(
-        `<p>red</p><p>1</p><p>green</p><p>2</p><p>gold</p><p>3</p>`
-      )
+      document
+        .getElementById('container')
+        .innerHTML.includes(
+          `<p>red</p><p>1</p><p>green</p><p>2</p><p>gold</p><p>3</p>`
+        )
     );
   });
 });

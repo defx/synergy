@@ -18,13 +18,13 @@ import {
 
 import walk from './walk.js';
 
-export default (rootNode) => {
+export default (templateNode) => {
   let subscribers = new Set();
 
   let parse = (v) => {
     let stack = [];
 
-    walk(rootNode, {
+    walk(templateNode, {
       openBlock(expr, args) {
         stack.push(parseEachDeclaration(expr, stack, args));
       },
@@ -75,7 +75,7 @@ export default (rootNode) => {
     });
 
     return {
-      rootNode,
+      templateNode,
       subscribers: Array.from(subscribers),
     };
   };

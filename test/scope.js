@@ -1,11 +1,4 @@
 describe('context', () => {
-  // let view, rootNode, $$, $;
-  // beforeEach(() => {
-  //   rootNode = mount(html`<div id="container"></div>`);
-  //   $$ = (x) => Array.from(rootNode.querySelectorAll(x));
-  //   $ = (x) => rootNode.querySelector(x);
-  // });
-
   it('should observe context', () => {
     mount(html`
       <div id="container"></div>
@@ -23,10 +16,7 @@ describe('context', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         todo: 'feed the dog',
         message: 'Hej!',
@@ -43,7 +33,8 @@ describe('context', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container h1[first]').textContent, 'feed the dog');
@@ -69,10 +60,7 @@ describe('context', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         artists: [
           {
@@ -91,7 +79,8 @@ describe('context', () => {
           },
         ],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal($('#container h4').textContent, view.artists[0].name);

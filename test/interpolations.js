@@ -7,16 +7,15 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     synergy.render(
-      node,
       {
         c1: 'red',
         c2: 'green',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
+    let node = document.querySelector('#container');
     assert.equal(node.querySelector('p').textContent, 'red + green');
   });
 
@@ -28,16 +27,14 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     synergy.render(
-      node,
       {
         classes: ['one', 'two', 'three'],
       },
-      'x-template'
+      'x-template',
+      'container'
     );
-
+    let node = document.querySelector('#container');
     assert.equal(node.querySelector('section').className, 'one two three');
   });
 
@@ -49,10 +46,7 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     synergy.render(
-      node,
       {
         classes: {
           one: true,
@@ -63,9 +57,10 @@ describe('attributes', () => {
           six: 'ok',
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
-
+    let node = document.querySelector('#container');
     assert.equal(node.querySelector('section').className, 'one three six');
   });
 
@@ -77,10 +72,7 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     synergy.render(
-      node,
       {
         foo: {
           name: 'slider',
@@ -90,10 +82,11 @@ describe('attributes', () => {
           step: null,
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
-    let input = node.querySelector('input');
+    let input = document.querySelector('#container input');
 
     assert.equal(input.getAttribute('name'), 'slider');
     assert.equal(input.getAttribute('type'), 'range');
@@ -110,10 +103,7 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     synergy.render(
-      node,
       {
         foo: `
           background-color: gold;
@@ -122,11 +112,12 @@ describe('attributes', () => {
           height: 100px;
         `,
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     assert.equal(
-      node.querySelector('section').getAttribute('style'),
+      document.querySelector('#container section').getAttribute('style'),
       'background-color: gold; color: tomato; width: 100px; height: 100px;'
     );
   });
@@ -139,10 +130,7 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
-
     let view = synergy.render(
-      node,
       {
         foo: `
           background-color: gold;
@@ -151,10 +139,11 @@ describe('attributes', () => {
           height: 100px;
         `,
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
-    let section = node.querySelector('section');
+    let section = document.querySelector('#container section');
 
     section.style.opacity = '0.5';
 
@@ -186,9 +175,7 @@ describe('attributes', () => {
       </template>
     `);
 
-    let node = document.getElementById('container');
     synergy.render(
-      node,
       {
         foo: {
           'background-color': 'gold',
@@ -197,10 +184,11 @@ describe('attributes', () => {
           height: '100px',
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
-    let section = node.querySelector('section');
+    let section = document.querySelector('#container section');
 
     assert.equal(
       section.getAttribute('style'),
@@ -218,7 +206,6 @@ describe('attributes', () => {
 
     let node = document.getElementById('container');
     synergy.render(
-      node,
       {
         foo: {
           backgroundColor: 'gold',
@@ -227,7 +214,8 @@ describe('attributes', () => {
           height: '100px',
         },
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let section = node.querySelector('section');
@@ -248,12 +236,12 @@ describe('attributes', () => {
 
     let node = document.getElementById('container');
     synergy.render(
-      node,
       {
         c1: 'red',
         c2: 'green',
       },
-      'x-template'
+      'x-template',
+      'container'
     );
     let p = node.querySelector('p');
     assert.equal(p.getAttribute('name'), 'red');
@@ -270,11 +258,11 @@ describe('attributes', () => {
 
     let node = document.getElementById('container');
     let view = synergy.render(
-      node,
       {
         foo: true,
       },
-      'x-template'
+      'x-template',
+      'container'
     );
 
     let p = node.querySelector('p');
