@@ -18,16 +18,10 @@ import {
 
 import walk from './walk.js';
 
-const fromTemplate = (template) =>
-  new DOMParser().parseFromString(`<span>${template}</span>`, 'text/html').body
-    .firstChild;
-
 export default (rootNode) => {
   let subscribers = new Set();
 
   let parse = (v) => {
-    let rootNode = fromTemplate(v);
-
     let stack = [];
 
     walk(rootNode, {
@@ -182,5 +176,5 @@ export default (rootNode) => {
     }
   };
 
-  return parse(rootNode);
+  return parse();
 };

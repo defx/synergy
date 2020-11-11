@@ -1,38 +1,58 @@
 describe('attributes', () => {
-  let view, rootNode, $$, $;
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-    $$ = (x) => Array.from(rootNode.querySelectorAll(x));
-    $ = (x) => rootNode.querySelector(x);
-  });
-
   it('should support multiple bindings', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <p>{{c1}} + {{c2}}</p>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    synergy.render(
+      node,
       {
         c1: 'red',
         c2: 'green',
       },
-      html` <p>{{c1}} + {{c2}}</p> `
+      'x-template'
     );
-    assert.equal(textContent(rootNode.querySelector('p')), 'red + green');
+    assert.equal(node.querySelector('p').textContent, 'red + green');
   });
 
   it('should apply all the values', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section class="{{classes}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    synergy.render(
+      node,
       {
         classes: ['one', 'two', 'three'],
       },
-      html` <section class="{{classes}}"></section> `
+      'x-template'
     );
 
-    assert.equal($('section').className, 'one two three');
+    assert.equal(node.querySelector('section').className, 'one two three');
   });
 
   it('should apply all the keys with truthy values', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section class="{{classes}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    synergy.render(
+      node,
       {
         classes: {
           one: true,
@@ -43,15 +63,24 @@ describe('attributes', () => {
           six: 'ok',
         },
       },
-      html` <section class="{{classes}}"></section> `
+      'x-template'
     );
 
-    assert.equal($('section').className, 'one three six');
+    assert.equal(node.querySelector('section').className, 'one three six');
   });
 
   it('should spread attributes', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <input {{...foo}} />
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    synergy.render(
+      node,
       {
         foo: {
           name: 'slider',
@@ -61,17 +90,30 @@ describe('attributes', () => {
           step: null,
         },
       },
-      html`
-        <section>
-          <input {{...foo}} />
-        </section>
-      `
+      'x-template'
     );
+
+    let input = node.querySelector('input');
+
+    assert.equal(input.getAttribute('name'), 'slider');
+    assert.equal(input.getAttribute('type'), 'range');
+    assert.equal(input.getAttribute('min'), '0');
+    assert.equal(input.getAttribute('max'), '360');
+    assert.equal(input.hasAttribute('step'), false);
   });
 
   it('should apply styles', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section style="{{foo}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    synergy.render(
+      node,
       {
         foo: `
           background-color: gold;
@@ -80,18 +122,27 @@ describe('attributes', () => {
           height: 100px;
         `,
       },
-      html` <section style="{{foo}}"></section> `
+      'x-template'
     );
 
     assert.equal(
-      $('section').getAttribute('style'),
+      node.querySelector('section').getAttribute('style'),
       'background-color: gold; color: tomato; width: 100px; height: 100px;'
     );
   });
 
   it('should preserve browser styles', async () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section style="{{foo}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
+    let view = synergy.render(
+      node,
       {
         foo: `
           background-color: gold;
@@ -100,13 +151,15 @@ describe('attributes', () => {
           height: 100px;
         `,
       },
-      html` <section style="{{foo}}"></section> `
+      'x-template'
     );
 
-    $('section').style.opacity = '0.5';
+    let section = node.querySelector('section');
+
+    section.style.opacity = '0.5';
 
     assert.ok(
-      $('section').getAttribute('style').includes('background-color: gold;')
+      section.getAttribute('style').includes('background-color: gold;')
     );
 
     view.foo = `
@@ -119,15 +172,23 @@ describe('attributes', () => {
     await nextUpdate();
 
     assert.ok(
-      $('section').getAttribute('style').includes('background-color: tomato;')
+      section.getAttribute('style').includes('background-color: tomato;')
     );
 
-    assert.ok($('section').getAttribute('style').includes('opacity: 0.5;'));
+    assert.ok(section.getAttribute('style').includes('opacity: 0.5;'));
   });
 
   it('should apply styles (Object / kebab)', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section style="{{foo}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+    synergy.render(
+      node,
       {
         foo: {
           'background-color': 'gold',
@@ -136,18 +197,28 @@ describe('attributes', () => {
           height: '100px',
         },
       },
-      html` <section style="{{foo}}"></section> `
+      'x-template'
     );
 
+    let section = node.querySelector('section');
+
     assert.equal(
-      $('section').getAttribute('style'),
+      section.getAttribute('style'),
       'background-color: gold; color: tomato; width: 100px; height: 100px;'
     );
   });
 
   it('should apply styles (Object / pascal)', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <section style="{{foo}}"></section>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+    synergy.render(
+      node,
       {
         foo: {
           backgroundColor: 'gold',
@@ -156,43 +227,64 @@ describe('attributes', () => {
           height: '100px',
         },
       },
-      html` <section style="{{foo}}"></section> `
+      'x-template'
     );
 
+    let section = node.querySelector('section');
+
     assert.equal(
-      $('section').getAttribute('style'),
+      section.getAttribute('style'),
       'background-color: gold; color: tomato; width: 100px; height: 100px;'
     );
   });
 
   it('should allow whitespace formatting', () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <p name="{{ c1 }}">{{ c2 }}</p>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+    synergy.render(
+      node,
       {
         c1: 'red',
         c2: 'green',
       },
-      html` <p name="{{ c1 }}">{{ c2 }}</p> `
+      'x-template'
     );
-    assert.equal($('p').getAttribute('name'), 'red');
-    assert.equal(textContent($('p')), 'green');
+    let p = node.querySelector('p');
+    assert.equal(p.getAttribute('name'), 'red');
+    assert.equal(p.textContent, 'green');
   });
 
   it('should support negation', async () => {
-    view = synergy.render(
-      rootNode,
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <p hidden="{{ !foo }}">boo!</p>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+    let view = synergy.render(
+      node,
       {
         foo: true,
       },
-      html` <p hidden="{{ !foo }}">boo!</p>`
+      'x-template'
     );
 
-    assert.notOk($('p').hidden);
+    let p = node.querySelector('p');
+
+    assert.notOk(p.hidden);
 
     view.foo = false;
 
     await nextUpdate();
 
-    assert.ok($('p').hidden);
+    assert.ok(p.hidden);
   });
 });

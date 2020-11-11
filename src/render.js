@@ -4,8 +4,10 @@ import subscribe from './subscribe.js';
 import transferBindings from './transferBindings.js';
 import Updater from './update.js';
 
-function render(mountNode, model, template, options = {}) {
-  let { subscribers, rootNode } = parse(template);
+function render(mountNode, model, templateId) {
+  let template = document.getElementById(templateId);
+
+  let { subscribers, rootNode } = parse(template.cloneNode(true).content);
   let update = Updater(rootNode);
 
   update(rootNode, model);
@@ -14,9 +16,10 @@ function render(mountNode, model, template, options = {}) {
     transferBindings(rootNode, mountNode);
   } else {
     mountNode.innerHTML = '';
-    while (rootNode.childNodes.length > 0) {
-      mountNode.appendChild(rootNode.childNodes[0]);
-    }
+    // while (rootNode.childNodes.length > 0) {
+    //   mountNode.appendChild(rootNode.childNodes[0]);
+    // }
+    mountNode.appendChild(rootNode);
   }
 
   let p = !!model.propertyChangedCallback;

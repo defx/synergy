@@ -1,14 +1,32 @@
 describe('context', () => {
-  let view, rootNode, $$, $;
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-    $$ = (x) => Array.from(rootNode.querySelectorAll(x));
-    $ = (x) => rootNode.querySelector(x);
-  });
+  // let view, rootNode, $$, $;
+  // beforeEach(() => {
+  //   rootNode = mount(html`<div id="container"></div>`);
+  //   $$ = (x) => Array.from(rootNode.querySelectorAll(x));
+  //   $ = (x) => rootNode.querySelector(x);
+  // });
 
   it('should observe context', () => {
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
+        <h1 first>{{todo}}</h1>
+        <ul>
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
+            <p>{{todo.title}}</p>
+            <p>{{message}}</p>
+          </li>
+          <!-- /each -->
+        </ul>
+        <h1 second>{{todo}}</h1>
+      </template>
+    `);
+
+    let node = document.getElementById('container');
+
     let view = synergy.render(
-      rootNode,
+      node,
       {
         todo: 'feed the dog',
         message: 'Hej!',
@@ -25,42 +43,19 @@ describe('context', () => {
           },
         ],
       },
-      html` <h1 first>{{todo}}</h1>
-        <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{todo.title}}</p>
-            <p>{{message}}</p>
-          </li>
-          <!-- /each -->
-        </ul>
-        <h1 second>{{todo}}</h1>`
+      'x-template'
     );
 
-    assert.equal($('h1[first]').textContent.trim(), 'feed the dog');
-    assert.equal($('li p').textContent.trim(), 'walk the cat');
-    assert.equal($('li p:last-child').textContent.trim(), 'Hej!');
-    assert.equal($('h1[second]').textContent.trim(), 'feed the dog');
+    assert.equal($('#container h1[first]').textContent, 'feed the dog');
+    assert.equal($('#container li p').textContent, 'walk the cat');
+    assert.equal($('#container li p:last-child').textContent, 'Hej!');
+    assert.equal($('#container h1[second]').textContent, 'feed the dog');
   });
 
   it('should support nested scopes', async () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        artists: [
-          {
-            name: 'pablo picasso',
-            tags: [
-              'painter',
-              'sculptor',
-              'printmaker',
-              'ceramicist',
-              'theatre designer',
-            ],
-          },
-        ],
-      },
-      html`
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">
         <!-- #each artist in artists -->
         <article>
           <h4>{{artist.name}}</h4>
@@ -71,13 +66,13 @@ describe('context', () => {
           </ul>
         </article>
         <!-- /each -->
-      `
-    );
-  });
+      </template>
+    `);
 
-  it('should support nested scopes', async () => {
+    let node = document.getElementById('container');
+
     let view = synergy.render(
-      rootNode,
+      node,
       {
         artists: [
           {
@@ -96,35 +91,24 @@ describe('context', () => {
           },
         ],
       },
-      html`
-        <!-- #each artist in artists -->
-        <article>
-          <h4>{{artist.name}}</h4>
-          <ul>
-            <!-- #each tag in artist.tags -->
-            <li>{{tag}}</li>
-            <!-- /each -->
-          </ul>
-        </article>
-        <!-- /each -->
-      `
+      'x-template'
     );
 
-    assert.equal(textContent($('h4')), view.artists[0].name);
+    assert.equal($('#container h4').textContent, view.artists[0].name);
     assert.equal(
-      $$('article:nth-of-type(1) li').length,
+      $$('#container article:nth-of-type(1) li').length,
       view.artists[0].tags.length
     );
     assert.equal(
-      $$('article:nth-of-type(2) li').length,
+      $$('#container article:nth-of-type(2) li').length,
       view.artists[1].tags.length
     );
     assert.equal(
-      textContent($('article:nth-of-type(1) li')),
+      $('#container article:nth-of-type(1) li').textContent,
       view.artists[0].tags[0]
     );
     assert.equal(
-      textContent($('article:nth-of-type(2) li')),
+      $('#container article:nth-of-type(2) li').textContent,
       view.artists[1].tags[0]
     );
   });

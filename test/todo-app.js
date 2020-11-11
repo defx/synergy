@@ -1,12 +1,21 @@
 import { TodoApp, markup, storage } from '../examples/todo-app/index.js';
 
 describe('Todo List', () => {
-  let view, rootNode, $$, $;
+  let view;
+  // let view, rootNode, $$, $;
   beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-    $$ = (x) => Array.from(rootNode.querySelectorAll(x));
-    $ = (x) => rootNode.querySelector(x);
-    view = synergy.render(rootNode, TodoApp(), markup);
+    //   rootNode = mount(html`<div id="container"></div>`);
+    //   $$ = (x) => Array.from(rootNode.querySelectorAll(x));
+    //   $ = (x) => rootNode.querySelector(x);
+
+    mount(html`
+      <div id="container"></div>
+      <template id="x-template">${markup}</template>
+    `);
+
+    let node = document.getElementById('container');
+
+    view = synergy.render(node, TodoApp(), 'x-template');
   });
 
   const app = {
