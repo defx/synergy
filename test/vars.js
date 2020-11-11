@@ -12,11 +12,11 @@ const mount = (html) => {
 const nextUpdate = () =>
   new Promise((resolve) => requestAnimationFrame(resolve));
 
-const textContent = (node) => node.textContent.trim();
-
 window.synergy = synergy;
 window.mount = mount;
 window.html = html;
 window.nextUpdate = nextUpdate;
 window.assert = assert;
-window.textContent = textContent;
+
+window.$$ = (x) => Array.from(document.querySelectorAll(x));
+window.$ = (x) => document.querySelector(x);

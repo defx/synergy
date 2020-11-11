@@ -46,13 +46,13 @@ describe('Todo List', () => {
       return $$('li.todo button.delete');
     },
     get count() {
-      return textContent($('#count'));
+      return $('#count').textContent;
     },
     get clearCompleted() {
       return $('#clearCompleted');
     },
     get clearCompletedText() {
-      return textContent(this.clearCompleted);
+      return this.clearCompleted.textContent;
     },
     getFilterByValue(value) {
       return $(`#filterList input[value="${value}"]`);
@@ -355,7 +355,7 @@ describe('Todo List', () => {
       app.clearCompleted.click();
       await nextUpdate();
       assert.equal(app.todos.length, 1);
-      assert.equal(textContent(app.todoLabels[0]), 'second thing');
+      assert.equal(app.todoLabels[0].textContent, 'second thing');
     });
     it('should be hidden when there are no items that are completed', async () => {
       await addTodo('first thing');
