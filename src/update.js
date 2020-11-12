@@ -235,11 +235,13 @@ const updateBinding = (binding, node, ctx, p) => {
   updateNode(node, binding, newValue, oldValue);
 };
 
-const Updater = () => (rootNode, data, BINDING_KEY) => {
+const Updater = (BINDING_ID) => (rootNode, data) => {
   let ctx = {};
   let p = copy(data);
   walk(rootNode, (node) => {
-    let bindings = node[BINDING_KEY];
+    if (node.bindingId !== BINDING_ID) return;
+
+    let bindings = node.__bindings__;
 
     if (bindings)
       bindings.forEach((binding) => updateBinding(binding, node, ctx, p));

@@ -35,7 +35,9 @@ const getBlockInfo = (node) => {
 const stack = [];
 
 function walk(node, callback) {
-  let { openBlock, elementNode, textNode, closeBlock } = callback;
+  let { openBlock, elementNode, textNode, closeBlock, each } = callback;
+
+  each(node);
 
   switch (node.nodeType) {
     case node.COMMENT_NODE: {

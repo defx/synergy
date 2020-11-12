@@ -13,6 +13,7 @@ const cloneNodeWithBindings = (node) => {
 
   let i = fa.length;
   while (i--) {
+    fb[i].bindingId = fa[i].bindingId;
     if (fa[i].__bindings__) {
       fb[i].__bindings__ = fa[i].__bindings__.map((v) => ({ ...v }));
     }

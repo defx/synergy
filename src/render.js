@@ -7,14 +7,14 @@ import Updater from './update.js';
 let count = 0;
 
 function render(viewmodel, templateId, targetNodeId) {
-  const BINDING_KEY = `__bindings$${count++}__`;
+  const BINDING_ID = count++;
   let mountNode = document.getElementById(targetNodeId);
   let template = document.getElementById(templateId);
   let { subscribers, templateNode } = parse(
     template.cloneNode(true).content,
-    BINDING_KEY
+    BINDING_ID
   );
-  let update = Updater(templateNode, BINDING_KEY);
+  let update = Updater(BINDING_ID);
 
   update(templateNode, viewmodel);
 
@@ -35,7 +35,7 @@ function render(viewmodel, templateId, targetNodeId) {
       );
   });
 
-  subscribe(mountNode, subscribers, proxy, BINDING_KEY);
+  subscribe(mountNode, subscribers, proxy, BINDING_ID);
 
   return proxy;
 }

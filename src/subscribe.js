@@ -16,24 +16,25 @@ const inputValue = (node) => {
   }
 };
 
-const getEventBindings = (BINDING_KEY, type, node) => {
+const getEventBindings = (BINDING_ID, type, node) => {
   if (!node) return;
 
-  let bindings = (node[BINDING_KEY] || []).filter(
-    ({ eventName }) => eventName === type
-  );
+  let bindings = (
+    (node.bindingId === BINDING_ID && node.__bindings__) ||
+    []
+  ).filter(({ eventName }) => eventName === type);
 
   return bindings.length
     ? bindings
-    : getEventBindings(BINDING_KEY, type, node.parentNode);
+    : getEventBindings(BINDING_ID, type, node.parentNode);
 };
 
-const subscribe = (rootNode, subscribers, proxy, BINDING_KEY) => {
+const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
   subscribers.forEach((type) => {
     rootNode.addEventListener(
       type,
       (e) => {
-        let bindings = getEventBindings(BINDING_KEY, type, e.target);
+        let bindings = getEventBindings(BINDING_ID, type, e.target);
 
         if (!bindings) return;
 

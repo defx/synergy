@@ -1,11 +1,4 @@
 describe('hydrate', () => {
-  // let view, rootNode, $$, $;
-  // beforeEach(() => {
-  //   rootNode = mount(html`<div id="container"></div>`);
-  //   $$ = (x) => Array.from(rootNode.querySelectorAll(x));
-  //   $ = (x) => rootNode.querySelector(x);
-  // });
-
   it('should not replace the DOM', async () => {
     mount(html`
       <div id="container"></div>

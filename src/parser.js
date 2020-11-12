@@ -18,13 +18,16 @@ import {
 
 import walk from './walk.js';
 
-export default (templateNode, BINDING_KEY) => {
+export default (templateNode, BINDING_ID) => {
   let subscribers = new Set();
 
   let parse = (v) => {
     let stack = [];
 
     walk(templateNode, {
+      each(node) {
+        node.bindingId = BINDING_ID;
+      },
       openBlock(expr, args) {
         stack.push(parseEachDeclaration(expr, stack, args));
       },
@@ -32,7 +35,7 @@ export default (templateNode, BINDING_KEY) => {
         parseTextNode(node.nodeValue, node, stack);
       },
       elementNode(node) {
-        node[BINDING_KEY] = [];
+        node.__bindings__ = [];
         parseElementNode(node, stack);
       },
       closeBlock(openingComment, nodes, closingComment) {
@@ -52,7 +55,7 @@ export default (templateNode, BINDING_KEY) => {
           path,
         };
 
-        openingComment[BINDING_KEY] = [
+        openingComment.__bindings__ = [
           {
             ...binding,
             type: LIST,
@@ -67,7 +70,7 @@ export default (templateNode, BINDING_KEY) => {
         };
 
         nodes.forEach((node) => {
-          node[BINDING_KEY].unshift(listNodeBinding);
+          node.__bindings__.unshift(listNodeBinding);
         });
 
         stack.pop();
@@ -83,7 +86,7 @@ export default (templateNode, BINDING_KEY) => {
   let parseTextNode = (value, node, context) => {
     if (!hasMustache(value)) return;
 
-    node[BINDING_KEY] = [
+    node.__bindings__ = [
       {
         childIndex: Array.from(node.parentNode.childNodes).findIndex(
           (v) => v === node
@@ -110,7 +113,7 @@ export default (templateNode, BINDING_KEY) => {
       let match = name.match(/{{\.{3}([^{}]+)}}/);
       if (match) {
         node.removeAttribute(name);
-        node[BINDING_KEY].push({
+        node.__bindings__.push({
           name,
           path: resolve(match[1], context),
           type: ATTRIBUTE_SPREAD,
@@ -125,7 +128,7 @@ export default (templateNode, BINDING_KEY) => {
 
       subscribers.add(eventName);
 
-      node[BINDING_KEY].push({
+      node.__bindings__.push({
         eventName: eventName,
         type: 'call',
         method: value,
@@ -157,7 +160,7 @@ export default (templateNode, BINDING_KEY) => {
         path,
       };
 
-      node[BINDING_KEY].push(binding, {
+      node.__bindings__.push(binding, {
         type: 'set',
         eventName: 'input',
         path,
@@ -167,7 +170,7 @@ export default (templateNode, BINDING_KEY) => {
     if (hasMustache(value)) {
       node.removeAttribute(name);
 
-      node[BINDING_KEY].push({
+      node.__bindings__.push({
         name,
         parts: getParts(value, context),
         type: ATTRIBUTE,
