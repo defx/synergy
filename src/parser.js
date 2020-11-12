@@ -18,7 +18,7 @@ import {
 
 import walk from './walk.js';
 
-export default (templateNode) => {
+export default (templateNode, BINDING_KEY) => {
   let subscribers = new Set();
 
   let parse = (v) => {
@@ -32,7 +32,7 @@ export default (templateNode) => {
         parseTextNode(node.nodeValue, node, stack);
       },
       elementNode(node) {
-        node.__bindings__ = [];
+        node[BINDING_KEY] = [];
         parseElementNode(node, stack);
       },
       closeBlock(openingComment, nodes, closingComment) {
@@ -52,7 +52,7 @@ export default (templateNode) => {
           path,
         };
 
-        openingComment.__bindings__ = [
+        openingComment[BINDING_KEY] = [
           {
             ...binding,
             type: LIST,
@@ -67,7 +67,7 @@ export default (templateNode) => {
         };
 
         nodes.forEach((node) => {
-          node.__bindings__.unshift(listNodeBinding);
+          node[BINDING_KEY].unshift(listNodeBinding);
         });
 
         stack.pop();
@@ -83,7 +83,7 @@ export default (templateNode) => {
   let parseTextNode = (value, node, context) => {
     if (!hasMustache(value)) return;
 
-    node.__bindings__ = [
+    node[BINDING_KEY] = [
       {
         childIndex: Array.from(node.parentNode.childNodes).findIndex(
           (v) => v === node
@@ -110,7 +110,7 @@ export default (templateNode) => {
       let match = name.match(/{{\.{3}([^{}]+)}}/);
       if (match) {
         node.removeAttribute(name);
-        node.__bindings__.push({
+        node[BINDING_KEY].push({
           name,
           path: resolve(match[1], context),
           type: ATTRIBUTE_SPREAD,
@@ -125,7 +125,7 @@ export default (templateNode) => {
 
       subscribers.add(eventName);
 
-      node.__bindings__.push({
+      node[BINDING_KEY].push({
         eventName: eventName,
         type: 'call',
         method: value,
@@ -157,7 +157,7 @@ export default (templateNode) => {
         path,
       };
 
-      node.__bindings__.push(binding, {
+      node[BINDING_KEY].push(binding, {
         type: 'set',
         eventName: 'input',
         path,
@@ -167,7 +167,7 @@ export default (templateNode) => {
     if (hasMustache(value)) {
       node.removeAttribute(name);
 
-      node.__bindings__.push({
+      node[BINDING_KEY].push({
         name,
         parts: getParts(value, context),
         type: ATTRIBUTE,

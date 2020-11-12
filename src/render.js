@@ -4,11 +4,17 @@ import subscribe from './subscribe.js';
 import transferBindings from './transferBindings.js';
 import Updater from './update.js';
 
+let count = 0;
+
 function render(viewmodel, templateId, targetNodeId) {
+  const BINDING_KEY = `__bindings$${count++}__`;
   let mountNode = document.getElementById(targetNodeId);
   let template = document.getElementById(templateId);
-  let { subscribers, templateNode } = parse(template.cloneNode(true).content);
-  let update = Updater(templateNode);
+  let { subscribers, templateNode } = parse(
+    template.cloneNode(true).content,
+    BINDING_KEY
+  );
+  let update = Updater(templateNode, BINDING_KEY);
 
   update(templateNode, viewmodel);
 
@@ -29,7 +35,7 @@ function render(viewmodel, templateId, targetNodeId) {
       );
   });
 
-  subscribe(mountNode, subscribers, proxy);
+  subscribe(mountNode, subscribers, proxy, BINDING_KEY);
 
   return proxy;
 }

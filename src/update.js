@@ -147,11 +147,6 @@ const updateNode = (node, binding, newValue, oldValue) =>
     ? applyAttribute(node, binding.name, newValue, oldValue)
     : (node.textContent = newValue);
 
-const updateBindings = (node, ctx, p) =>
-  (node.__bindings__ || []).forEach((binding) =>
-    updateBinding(binding, node, ctx, p)
-  );
-
 const updateBinding = (binding, node, ctx, p) => {
   if (binding.eventName)
     return binding.path && (binding.realPath = resolve(binding.path, ctx));
@@ -240,10 +235,15 @@ const updateBinding = (binding, node, ctx, p) => {
   updateNode(node, binding, newValue, oldValue);
 };
 
-const Updater = () => (rootNode, data) => {
+const Updater = () => (rootNode, data, BINDING_KEY) => {
   let ctx = {};
   let p = copy(data);
-  walk(rootNode, (node) => updateBindings(node, ctx, p));
+  walk(rootNode, (node) => {
+    let bindings = node[BINDING_KEY];
+
+    if (bindings)
+      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
+  });
 };
 
 export default Updater;
