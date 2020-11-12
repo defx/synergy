@@ -1,22 +1,8 @@
 export const isWhitespace = (node) =>
   node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
 
-// export function walk(node, callback, path = [0], rootNode = node) {
-//   if (!(node.isSameNode(rootNode) && node.__skip__)) callback(node, path);
-
-//   if (node.__skip__ && !node.isSameNode(rootNode)) return;
-
-//   let i = 0;
-//   node = node.firstChild;
-
-//   while (node) {
-//     if (!isWhitespace(node)) walk(node, callback, path.concat(++i), rootNode);
-//     node = node.nextSibling;
-//   }
-// }
-
 export function walk(node, callback, path = [0]) {
-  callback(node, path);
+  if (callback(node, path) === false) return;
 
   let i = 0;
   node = node.firstChild;
