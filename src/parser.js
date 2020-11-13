@@ -18,13 +18,13 @@ import {
 
 import walk from './walk.js';
 
-export default (templateNode, BINDING_ID) => {
+export default (templateFragment, BINDING_ID) => {
   let subscribers = new Set();
 
   let parse = (v) => {
     let stack = [];
 
-    walk(templateNode, {
+    walk(templateFragment, {
       each(node) {
         node.bindingId = BINDING_ID;
       },
@@ -78,7 +78,7 @@ export default (templateNode, BINDING_ID) => {
     });
 
     return {
-      templateNode,
+      templateFragment,
       subscribers: Array.from(subscribers),
     };
   };

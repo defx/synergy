@@ -1,68 +1,42 @@
 describe('input[name]', () => {
+  let rootNode;
+  beforeEach(() => {
+    rootNode = mount(html`<div id="container"></div>`);
+  });
+
   it('should bind the value to the named property', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <input name="message" /> the message is:
-        <span class="message">{{message}}</span>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    synergy.render(
+    let view = synergy.render(
+      rootNode,
       {
         message: '?',
       },
-      'x-template',
-      'container'
+      html`<input name="message" /> the message is:
+        <span class="message">{{message}}</span>`
     );
 
-    assert.equal($('#container span.message').textContent, '?');
+    assert.equal($('span.message').textContent, '?');
   });
 
   it('should bind the value to the named property (nested)', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <input name="nested.message" />
-        the message is: <span class="message">{{nested.message}}</span>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    synergy.render(
+    let view = synergy.render(
+      rootNode,
       {
         nested: {
           message: '??',
         },
       },
-      'x-template',
-      'container'
+      html`
+        <input name="nested.message" />
+        the message is: <span class="message">{{nested.message}}</span>
+      `
     );
 
-    assert.equal($('#container span.message').textContent, '??');
+    assert.equal($('span.message').textContent, '??');
   });
 
   it('should bind the value to the named + scoped property', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <ul>
-          <!-- #each todo in todos -->
-          <li>
-            {{todo.title}}
-            <input type="checkbox" name="todo.done" />
-          </li>
-          <!-- /each -->
-        </ul>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    synergy.render(
+    let view = synergy.render(
+      rootNode,
       {
         todos: [
           {
@@ -74,8 +48,16 @@ describe('input[name]', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <ul>
+          <!-- #each todo in todos -->
+          <li>
+            {{todo.title}}
+            <input type="checkbox" name="todo.done" />
+          </li>
+          <!-- /each -->
+        </ul>
+      `
     );
 
     const li = $$('#container li');
@@ -85,9 +67,12 @@ describe('input[name]', () => {
   });
 
   it('should check the correct radio button', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    let view = synergy.render(
+      rootNode,
+      {
+        filter: 'active',
+      },
+      html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
@@ -99,17 +84,7 @@ describe('input[name]', () => {
           id="filter.complete"
         />
         <label for="filter.complete">complete</label>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    synergy.render(
-      {
-        filter: 'active',
-      },
-      'x-template',
-      'container'
+      `
     );
 
     let checked = $(`#container input[type="radio"]:checked`);
@@ -117,9 +92,10 @@ describe('input[name]', () => {
   });
 
   it('should check the correct radio button', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    let view = synergy.render(
+      rootNode,
+      {},
+      html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
@@ -131,21 +107,20 @@ describe('input[name]', () => {
           id="filter.complete"
         />
         <label for="filter.complete">complete</label>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    synergy.render({}, 'x-template', 'container');
+      `
+    );
 
     let checked = $(`#container input[type="radio"]:checked`);
     assert.equal(checked, null);
   });
 
   it('should reflect the correct radio button', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    let view = synergy.render(
+      rootNode,
+      {
+        filter: 'active',
+      },
+      html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
@@ -157,17 +132,7 @@ describe('input[name]', () => {
           id="filter.complete"
         />
         <label for="filter.complete">complete</label>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    let view = synergy.render(
-      {
-        filter: 'active',
-      },
-      'x-template',
-      'container'
+      `
     );
 
     $(`#container input[type="radio"][value="complete"]`).click();
@@ -176,9 +141,12 @@ describe('input[name]', () => {
   });
 
   it('should select the correct option', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    let view = synergy.render(
+      rootNode,
+      {
+        pets: 'hamster',
+      },
+      html`
         <label for="pet-select">Choose a pet:</label>
         <select name="pets" id="pet-select">
           <option value="">--Please choose an option--</option>
@@ -189,26 +157,19 @@ describe('input[name]', () => {
           <option value="spider">Spider</option>
           <option value="goldfish">Goldfish</option>
         </select>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    let view = synergy.render(
-      {
-        pets: 'hamster',
-      },
-      'x-template',
-      'container'
+      `
     );
 
     assert.equal($('#container select option:checked').value, 'hamster');
   });
 
   it('should select multiple', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    let view = synergy.render(
+      rootNode,
+      {
+        pets: ['dog', 'hamster'],
+      },
+      html`
         <label for="pet-select">Choose a pet:</label>
         <select name="pets" id="pet-select" multiple>
           <option value="">--Please choose an option--</option>
@@ -219,17 +180,7 @@ describe('input[name]', () => {
           <option value="spider">Spider</option>
           <option value="goldfish">Goldfish</option>
         </select>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
-    let view = synergy.render(
-      {
-        pets: ['dog', 'hamster'],
-      },
-      'x-template',
-      'container'
+      `
     );
 
     assert.deepEqual(
@@ -239,21 +190,12 @@ describe('input[name]', () => {
   });
 
   it('should bind the named textarea', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <textarea name="text"></textarea>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
     let view = synergy.render(
+      rootNode,
       {
         text: 'ok',
       },
-      'x-template',
-      'container'
+      html` <textarea name="text"></textarea> `
     );
 
     assert.equal($('#container textarea').value, 'ok');
@@ -262,28 +204,19 @@ describe('input[name]', () => {
   it('should resolve target bindings', async () => {
     let clicked = false;
 
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <button onclick="handleClick">
-          <p></p>
-        </button>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
     let view = synergy.render(
+      rootNode,
       {
         handleClick() {
           clicked = true;
         },
       },
-      'x-template',
-      'container'
+      html`<button onclick="handleClick">
+        <p></p>
+      </button>`
     );
 
-    $('#container button p').click();
+    $('button p').click();
 
     await nextUpdate();
 

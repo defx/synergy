@@ -28,7 +28,9 @@
         strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
       const mount = (html) => {
-        document.getElementById('markup').innerHTML = html;
+        let node = document.getElementById('markup');
+        node.innerHTML = html;
+        return node.firstChild;
       };
 
       const nextUpdate = () =>
@@ -42,21 +44,21 @@
       window.nextUpdate = nextUpdate;
       window.assert = assert;
       window.textContent = textContent;
-
-      window.$$ = (x) => Array.from(document.querySelectorAll(x));
-      window.$ = (x) => document.querySelector(x);
+      window.$ = (v) => document.querySelector(v);
+      window.$$ = (v) => Array.from(document.querySelectorAll(v));
     </script>
     <script type="module">
       import synergy from '../src/index.js';
       window.synergy = synergy;
     </script>
-
+    <script type="module" src="./define.js"></script>
     <script type="module" src="./todo-app.js"></script>
     <script type="module" src="./scope.js"></script>
     <script type="module" src="./user-input.js"></script>
+    <script type="module" src="./arrays.js"></script>
     <script type="module" src="./iterations.js"></script>
     <script type="module" src="./interpolations.js"></script>
-    <script type="module" src="./render.js"></script>
-    <!-- <script type="module" src="./hydrate.js"></script> -->
+    <script type="module" src="./hydrate.js"></script>
+    <script type="module" src="./context.js"></script>
   </body>
 </html>

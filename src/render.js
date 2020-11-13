@@ -1,28 +1,41 @@
 import parse from './parser.js';
 import Proxy from './proxy.js';
 import subscribe from './subscribe.js';
-import transferBindings from './transferBindings.js';
+import hydrate from './hydrate.js';
 import Updater from './update.js';
 
-let count = 0;
+let counter = 1;
 
-function render(viewmodel, templateId, targetNodeId) {
-  const BINDING_ID = count++;
-  let mountNode = document.getElementById(targetNodeId);
-  let template = document.getElementById(templateId);
-  let { subscribers, templateNode } = parse(
-    template.cloneNode(true).content,
+const templateFromString = (str) => {
+  var tpl = document.createElement('template');
+  tpl.innerHTML = str;
+  return tpl;
+};
+
+function render(
+  mountNode,
+  viewmodel,
+  template,
+  { beforeMountCallback = () => {} } = {}
+) {
+  const BINDING_ID = counter++;
+
+  let templateNode =
+    typeof template === 'string' ? templateFromString(template) : template;
+
+  let { subscribers, templateFragment } = parse(
+    templateNode.cloneNode(true).content,
     BINDING_ID
   );
+
   let update = Updater(BINDING_ID);
 
-  update(templateNode, viewmodel);
+  update(templateFragment, viewmodel);
 
-  if (templateNode.innerHTML === mountNode.innerHTML) {
-    transferBindings(templateNode, mountNode);
-  } else {
+  if (!hydrate(BINDING_ID, templateFragment, mountNode)) {
+    beforeMountCallback(templateFragment);
     mountNode.innerHTML = '';
-    mountNode.appendChild(templateNode);
+    mountNode.appendChild(templateFragment);
   }
 
   let p = !!viewmodel.propertyChangedCallback;

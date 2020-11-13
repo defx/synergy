@@ -1,34 +1,26 @@
 describe('render', () => {
   it('should support nested trees', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <p>{{greeting}}</p>
-        <div id="container2"></div>
-        <p>{{farewell}}</p>
-      </template>
-      <template id="y-template">
-        <p>{{greeting}}</p>
-        <p>{{farewell}}</p>
-      </template>
-    `);
+    mount(html` <div id="container"></div> `);
 
     let view1 = synergy.render(
+      document.getElementById('container'),
       {
         greeting: 'hi!',
         farewell: 'bye!',
       },
-      'x-template',
-      'container'
+      html`<p>{{greeting}}</p>
+        <div id="container2"></div>
+        <p>{{farewell}}</p>`
     );
 
     let view2 = synergy.render(
+      document.getElementById('container2'),
       {
         greeting: '¡Hola!',
         farewell: 'adiós!',
       },
-      'y-template',
-      'container2'
+      html`<p>{{greeting}}</p>
+        <p>{{farewell}}</p>`
     );
 
     assert.equal($$('#container p')[0].textContent, 'hi!');

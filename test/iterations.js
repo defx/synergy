@@ -1,19 +1,12 @@
 describe('iterations', () => {
-  it('should iterate over Array', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{todo.title}}</p>
-          </li>
-          <!-- /each -->
-        </ul>
-      </template>
-    `);
+  let view, rootNode;
+  beforeEach(() => {
+    rootNode = mount(html`<div id="container"></div>`);
+  });
 
-    let view = synergy.render(
+  it('should iterate over Array', () => {
+    view = synergy.render(
+      rootNode,
       {
         todos: [
           {
@@ -28,8 +21,15 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <ul>
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
+            <p>{{todo.title}}</p>
+          </li>
+          <!-- /each -->
+        </ul>
+      `
     );
 
     let todos = Array.from(view.todos);
@@ -40,9 +40,12 @@ describe('iterations', () => {
   });
 
   it('should iterate over Array keys', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
+    const view = synergy.render(
+      rootNode,
+      {
+        colours: ['gold', 'tomato'],
+      },
+      html`
         <ul>
           <!-- #each colour in colours -->
           <li>
@@ -51,15 +54,7 @@ describe('iterations', () => {
           </li>
           <!-- /each -->
         </ul>
-      </template>
-    `);
-
-    let view = synergy.render(
-      {
-        colours: ['gold', 'tomato'],
-      },
-      'x-template',
-      'container'
+      `
     );
 
     $$('#container li').forEach((li, i) => {
@@ -68,20 +63,8 @@ describe('iterations', () => {
   });
 
   it('should iterate over Set', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{todo.title}}</p>
-          </li>
-          <!-- /each -->
-        </ul>
-      </template>
-    `);
-
-    let view = synergy.render(
+    view = synergy.render(
+      rootNode,
       {
         todos: new Set([
           {
@@ -96,8 +79,15 @@ describe('iterations', () => {
           },
         ]),
       },
-      'x-template',
-      'container'
+      html`
+        <ul>
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
+            <p>{{todo.title}}</p>
+          </li>
+          <!-- /each -->
+        </ul>
+      `
     );
 
     let todos = Array.from(view.todos);
@@ -108,20 +98,8 @@ describe('iterations', () => {
   });
 
   it('should iterate over Set keys', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{.}}</p>
-          </li>
-          <!-- /each -->
-        </ul>
-      </template>
-    `);
-
-    let view = synergy.render(
+    const view = synergy.render(
+      rootNode,
       {
         todos: new Set([
           {
@@ -136,8 +114,15 @@ describe('iterations', () => {
           },
         ]),
       },
-      'x-template',
-      'container'
+      html`
+        <ul>
+          <!-- #each todo in todos -->
+          <li style="background-color: {{todo.colour}}">
+            <p>{{.}}</p>
+          </li>
+          <!-- /each -->
+        </ul>
+      `
     );
 
     let todos = Array.from(view.todos);
@@ -148,18 +133,8 @@ describe('iterations', () => {
   });
 
   it('should pass the list datum as the second argument', (done) => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <select name="chosenName">
-          <!-- #each name in names -->
-          <option value="{{name}}" onclick="handleClick">{{name}}</option>
-          <!-- /each -->
-        </select>
-      </template>
-    `);
-
-    let view = synergy.render(
+    const view = synergy.render(
+      rootNode,
       {
         names: ['tim', 'john', 'kim'],
         handleClick: function (e, d) {
@@ -167,24 +142,21 @@ describe('iterations', () => {
           done();
         },
       },
-      'x-template',
-      'container'
+      html`
+        <select name="chosenName">
+          <!-- #each name in names -->
+          <option value="{{name}}" onclick="handleClick">{{name}}</option>
+          <!-- /each -->
+        </select>
+      `
     );
 
-    $('#container option[value="john"]').click();
+    rootNode.querySelector('option[value="john"]').click();
   });
 
   it('should overwrite non-keyed list nodes', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <!-- #each colour in colours -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
-      </template>
-    `);
-
-    let view = synergy.render(
+    view = synergy.render(
+      rootNode,
       {
         colours: [
           {
@@ -198,11 +170,14 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <!-- #each colour in colours -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
-    let previousNodes = $$('#container p');
+    let previousNodes = $$('p');
 
     view.colours = [
       {
@@ -218,7 +193,7 @@ describe('iterations', () => {
 
     await nextUpdate();
 
-    let currentNodes = $$('#container p');
+    let currentNodes = $$('p');
 
     assert.ok(previousNodes[0].isSameNode(currentNodes[0]));
     assert.ok(previousNodes[1].isSameNode(currentNodes[1]));
@@ -226,16 +201,8 @@ describe('iterations', () => {
   });
 
   it('should not overwrite non-keyed list nodes (default id present)', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <!-- #each colour in colours -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
-      </template>
-    `);
-
-    let view = synergy.render(
+    view = synergy.render(
+      rootNode,
       {
         colours: [
           {
@@ -252,11 +219,14 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <!-- #each colour in colours -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
-    let previousNodes = $$('#container p');
+    let previousNodes = $$('p');
 
     view.colours = [
       {
@@ -275,7 +245,7 @@ describe('iterations', () => {
 
     await nextUpdate();
 
-    let currentNodes = $$('#container p');
+    let currentNodes = $$('p');
 
     assert.ok(previousNodes[0].isSameNode(currentNodes[1]));
     assert.ok(previousNodes[1].isSameNode(currentNodes[0]));
@@ -283,16 +253,8 @@ describe('iterations', () => {
   });
 
   it('should not overwrite non-keyed list nodes (custom key)', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <!-- #each colour in colours (key=foo) -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
-      </template>
-    `);
-
-    let view = synergy.render(
+    view = synergy.render(
+      rootNode,
       {
         colours: [
           {
@@ -309,11 +271,14 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <!-- #each colour in colours (key=foo) -->
+        <p>{{colour.name}}</p>
+        <!-- /each -->
+      `
     );
 
-    let previousNodes = $$('#container p');
+    let previousNodes = $$('p');
 
     view.colours = [
       {
@@ -332,7 +297,7 @@ describe('iterations', () => {
 
     await nextUpdate();
 
-    let currentNodes = $$('#container p');
+    let currentNodes = $$('p');
 
     assert.ok(previousNodes[0].isSameNode(currentNodes[1]));
     assert.ok(previousNodes[1].isSameNode(currentNodes[0]));
@@ -340,17 +305,8 @@ describe('iterations', () => {
   });
 
   it('should support multiple top-level nodes', () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <!-- #each colour in colours -->
-        <p>{{colour.name}}</p>
-        <p>{{colour.id}}</p>
-        <!-- /each -->
-      </template>
-    `);
-
-    let view = synergy.render(
+    view = synergy.render(
+      rootNode,
       {
         colours: [
           {
@@ -367,16 +323,20 @@ describe('iterations', () => {
           },
         ],
       },
-      'x-template',
-      'container'
+      html`
+        <div>
+          <!-- #each colour in colours -->
+          <p>{{colour.name}}</p>
+          <p>{{colour.id}}</p>
+          <!-- /each -->
+        </div>
+      `
     );
 
     assert.ok(
-      document
-        .getElementById('container')
-        .innerHTML.includes(
-          `<p>red</p><p>1</p><p>green</p><p>2</p><p>gold</p><p>3</p>`
-        )
+      rootNode.innerHTML.includes(
+        `<p>red</p><p>1</p><p>green</p><p>2</p><p>gold</p><p>3</p>`
+      )
     );
   });
 });

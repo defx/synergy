@@ -58,16 +58,16 @@ The `render()` method combines an HTML template with a JavaScript object and the
 ### Syntax
 
 ```js
-let view = synergy.render(viewmodel, templateId, targetId);
+let view = synergy.render(targetNode, viewmodel, template);
 ```
 
 ### Parameters
 
+- `targetNode` An existing HTML element node where the rendered HTML should be mounted.
+
 - `viewmodel` A plain JavaScript object that contains the data for your view.
 
-- `templateId` The id of an HTML template node.
-
-- `targetId` The id of an existing HTML element node where the rendered HTML will be mounted.
+- `template` Either an HTML string or a <template> node.
 
 ### Return value
 

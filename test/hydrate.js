@@ -1,49 +1,44 @@
 describe('hydrate', () => {
+  let view, rootNode;
+  beforeEach(() => {
+    rootNode = mount(html`<div id="container"></div>`);
+  });
+
   it('should not replace the DOM', async () => {
-    mount(html`
-      <div id="container"></div>
-      <template id="x-template">
-        <p>{{message}}</p>
-      </template>
-    `);
-
-    let node = document.getElementById('container');
-
+    rootNode = mount(html`<div id="container"></div>`);
     synergy.render(
-      node,
+      rootNode,
       {
         message: 'hello world',
       },
-      'x-template'
+      html` <p class="message">{{message}}</p> `
     );
 
-    let htmlContent = node.innerHTML;
+    let htmlContent = rootNode.innerHTML;
 
-    node.innerHTML = htmlContent; //erase bindings and listeners
+    rootNode.innerHTML = htmlContent; //erase bindings and listeners
 
-    let textNode = $('#container p').firstChild;
+    let textNode = rootNode.querySelector('p.message').firstChild;
 
     let view = synergy.render(
-      node,
+      rootNode,
       {
         message: 'hello world',
       },
-      'x-template'
+      html` <p class="message">{{message}}</p> `
     );
-
-    assert.equal(node.innerHTML, htmlContent);
 
     //prove that the second render hasn't replaced the DOM
 
-    console.log(textNode, $('#container p').firstChild);
-
-    assert.ok(textNode.isSameNode($('#container p').firstChild));
+    assert.ok(
+      textNode.isSameNode(rootNode.querySelector('p.message').firstChild)
+    );
 
     //check that things are still working as expected...
 
     view.message = 'ok!';
 
     await nextUpdate();
-    // assert.equal(textNode.textContent, 'ok!');
+    assert.equal(textNode.textContent, 'ok!');
   });
 });
