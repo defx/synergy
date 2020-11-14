@@ -34,7 +34,6 @@ function render(
 
   if (!hydrate(BINDING_ID, templateFragment, mountNode)) {
     beforeMountCallback(templateFragment);
-    mountNode.innerHTML = '';
     mountNode.appendChild(templateFragment);
   }
 

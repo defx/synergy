@@ -7,11 +7,7 @@ const transferBindings = (BINDING_ID, templateFragment, targetNode) => {
     if (node.nodeName === 'SLOT') {
       return false; //skip this node and its children
     }
-    if (
-      node.bindingId === BINDING_ID &&
-      node.__bindings__ &&
-      node.__bindings__.length
-    ) {
+    if (node.__bindings__ && node.__bindings__.length) {
       bindings[path] = node;
     }
   });
@@ -38,7 +34,7 @@ const transferBindings = (BINDING_ID, templateFragment, targetNode) => {
     }
   });
 
-  return shouldHydrate === true;
+  return shouldHydrate;
 };
 
 export default transferBindings;
