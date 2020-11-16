@@ -422,6 +422,4 @@ You can implement a `propertyChangedCallback` method on your object to trigger s
 
 Pre-rendering is useful when you need to get content rendered immediately as part of the initial page load, without having to wait for JavaScript to build the page first.
 
-Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. Here's how it works...
-
-When Synergy is ready to mount to the DOM, it first checks to see if the target elements _existing_ HTML content matches what the content that is about to be rendered. If the two contents match _exactly_, then the existing DOM will be preserved, and the bindings will be transferred from the newly created (and yet unmounted) DOM across to the existing DOM. The newly created DOM is then left for the Garbage Collector, and the existing DOM is effectively _hydrated_ with all of its event and data bindings, thus becoming interactive.
+Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. In order to pre-render your page, you only need to load it in a browser (or with a synthetic DOM environment). That's it! Load the same page again in the browser and Synergy will hydrate the bindings without modifying the DOM.
