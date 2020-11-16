@@ -23,6 +23,15 @@ describe('hydrate', () => {
     assert.ok(shouldHydrate);
   });
 
+  it('should return falsy if target node and source node do not have matching content', () => {
+    const bindingId = 1;
+    //prepare sourceNode with bindings
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
+    let targetNode = nodeFromString(html`<b>hello world!</b>`);
+    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
+    assert.notOk(shouldHydrate);
+  });
+
   it('should add bindings when hydrating', () => {
     const bindingId = 1;
     const bindings = [{ foo: 'bar' }];

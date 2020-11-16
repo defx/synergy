@@ -99,13 +99,7 @@ export const parseEachDeclaration = (str, context, args) => {
 };
 
 export const getValueAtPath = (path, target) =>
-  path.split('.').reduce((o, k) => {
-    if (k === '*') return o;
-    if (Array.isArray(o) && k !== 'length' && isNaN(k)) {
-      return o.map((v) => (v || {})[k]);
-    }
-    return o && o[k];
-  }, target);
+  path.split('.').reduce((o, k) => o && o[k], target);
 
 export const setValueAtPath = (path, value, target) => {
   let parts = path.split('.');
@@ -117,8 +111,6 @@ export const setValueAtPath = (path, value, target) => {
 const negatives = [undefined, null, false];
 
 export const negative = (v) => negatives.includes(v);
-
-export const positive = (v) => !negative(v);
 
 export const removeNodes = (nodes) =>
   nodes.forEach((node) => node.parentNode.removeChild(node));
