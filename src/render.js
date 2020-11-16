@@ -13,6 +13,11 @@ const templateFromString = (str) => {
   return tpl;
 };
 
+const tfs = (str) =>
+  tfs.cache[str] || (tfs.cache[str] = templateFromString(str));
+
+tfs.cache = {};
+
 function render(
   mountNode,
   viewmodel,
@@ -21,8 +26,7 @@ function render(
 ) {
   const BINDING_ID = counter++;
 
-  let templateNode =
-    typeof template === 'string' ? templateFromString(template) : template;
+  let templateNode = typeof template === 'string' ? tfs(template) : template;
 
   let { subscribers, templateFragment } = parse(
     templateNode.cloneNode(true).content,
