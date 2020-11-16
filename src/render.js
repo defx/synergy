@@ -6,6 +6,7 @@ import Updater from './update.js';
 
 let counter = 1;
 
+//@TODO: memoize this function
 const templateFromString = (str) => {
   var tpl = document.createElement('template');
   tpl.innerHTML = str;
