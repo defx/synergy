@@ -1,18 +1,5 @@
 import { walk } from './helpers.js';
 
-const sameNode = (a, b) => {
-  if (a.nodeName !== b.nodeName) return false;
-
-  if (a.nodeType === a.TEXT_NODE) {
-    /* If a text node is slotted into another text node, they will have been joined together when pre-rendered to string  */
-    return b.textContent.includes(a.textContent);
-  }
-
-  return (
-    Array.from(a.attributes).toString() === Array.from(b.attributes).toString()
-  );
-};
-
 const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
   let nodesByPath = {};
 
@@ -28,7 +15,7 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
     if (path in nodesByPath) {
       let newNode = nodesByPath[path];
 
-      shouldHydrate = sameNode(newNode, node);
+      shouldHydrate = newNode.nodeName === node.nodeName;
 
       if (!shouldHydrate) return;
 

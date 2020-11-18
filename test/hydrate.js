@@ -71,13 +71,4 @@ describe('hydrate', () => {
     let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
     assert.ok(shouldHydrate);
   });
-
-  it('should acknowledge major text differences (cant be slotted text)', () => {
-    const bindingId = 1;
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let targetNode = nodeFromString(html`<p>ওহে বিশ্ব!</p>`);
-    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
-    assert.notOk(shouldHydrate);
-  });
 });
