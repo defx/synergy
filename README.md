@@ -67,7 +67,7 @@ let view = synergy.render(targetNode, viewmodel, template);
 
 - `viewmodel` A plain JavaScript object that contains the data for your view.
 
-- `template` Either an HTML string or a <template> node.
+- `template` Either an HTML string or a `<template>` node.
 
 ### Return value
 
