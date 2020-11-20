@@ -11,7 +11,6 @@ import {
   walk,
   typeOf,
   copy,
-  negative,
   removeNodes,
   last,
 } from './helpers.js';
@@ -111,7 +110,8 @@ const applyAttribute = (node, rawName, value, previous) => {
 
   if (name.match(/^aria\-/)) return node.setAttribute(name, value.toString());
 
-  if (negative(value)) return node.removeAttribute(name);
+  if ([undefined, null, false].includes(value))
+    return node.removeAttribute(name);
 
   let v;
 

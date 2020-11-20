@@ -108,9 +108,5 @@ export const setValueAtPath = (path, value, target) => {
   target[last(parts)] = value;
 };
 
-const negatives = [undefined, null, false];
-
-export const negative = (v) => negatives.includes(v);
-
 export const removeNodes = (nodes) =>
   nodes.forEach((node) => node.parentNode.removeChild(node));
