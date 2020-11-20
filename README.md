@@ -74,14 +74,20 @@ let view = synergy.render(targetNode, viewmodel, template);
 A proxied version of your JavaScript object that will automatically update the UI whenever any of its values change
 
 ```js
-let view = synergy.render(/*...*/);
+let view = synergy.render(
+  document.getElementById(
+    'app',
+    { message: 'Hello World!' },
+    `<p>{{ message }}</p>`
+  )
+);
 
 view.message = '¡Hola Mundo!';
 ```
 
 ## Template Syntax
 
-Use the double curly braces to bind named properties from your JavaScript object to text or attributes within your HTML template.
+Use the double curly braces to bind named properties from your JavaScript object to text or attribute values within your HTML template.
 
 ```html
 <p style="background-color: {{ bgColor }}">{{ message }}</p>
