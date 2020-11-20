@@ -106,8 +106,13 @@ const convertStyles = (o) =>
     return a;
   }, {});
 
-const applyAttribute = (node, name, value, previous) => {
-  if (name.match(/^aria\-/)) return node.setAttribute(value.toString());
+const applyAttribute = (node, rawName, value, previous) => {
+  let name = toKebab(rawName);
+
+  if (name.match(/^aria\-/)) return node.setAttribute(name, value.toString());
+
+  if (negative(value)) return node.removeAttribute(name);
+
   let v;
 
   if (name === 'style') {
@@ -121,7 +126,6 @@ const applyAttribute = (node, name, value, previous) => {
   } else {
     switch (typeOf(value)) {
       case 'Boolean':
-        if (negative(value)) return node.removeAttribute(name);
         v = '';
         break;
       case 'Array':
@@ -205,13 +209,7 @@ const updateBinding = (binding, node, ctx, p) => {
       oldValue = oldValue || {};
 
       for (let k in newValue) {
-        let v = newValue[k];
-        if (v === oldValue[k]) continue;
-        if (negative(v)) {
-          node.removeAttribute(k);
-        } else {
-          node.setAttribute(k, v);
-        }
+        applyAttribute(node, k, newValue[k], oldValue[k]);
       }
 
       for (let k in oldValue) {

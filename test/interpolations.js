@@ -57,6 +57,7 @@ describe('attributes', () => {
           min: '0',
           max: '360',
           step: null,
+          ariaExpanded: false,
         },
       },
       html`
@@ -71,6 +72,7 @@ describe('attributes', () => {
     assert.equal($('input').getAttribute('min'), '0');
     assert.equal($('input').getAttribute('max'), '360');
     assert.equal($('input').getAttribute('step'), null);
+    assert.equal($('input').getAttribute('aria-expanded'), 'false');
   });
 
   it('should remember previous spread attributes', async () => {
@@ -83,6 +85,7 @@ describe('attributes', () => {
           min: '0',
           max: '360',
           step: null,
+          ariaExpanded: false,
         },
       },
       html`
@@ -97,6 +100,7 @@ describe('attributes', () => {
       min: '0',
       max: '360',
       step: 1,
+      ariaExpanded: 'undefined',
     };
 
     await nextUpdate();
@@ -106,6 +110,7 @@ describe('attributes', () => {
     assert.equal($('input').getAttribute('min'), '0');
     assert.equal($('input').getAttribute('max'), '360');
     assert.equal($('input').getAttribute('step'), '1');
+    assert.equal($('input').getAttribute('aria-expanded'), 'undefined');
   });
 
   it('should apply styles', () => {
