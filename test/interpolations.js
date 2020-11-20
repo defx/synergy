@@ -65,6 +65,47 @@ describe('attributes', () => {
         </section>
       `
     );
+
+    assert.equal($('input').getAttribute('name'), 'slider');
+    assert.equal($('input').getAttribute('type'), 'range');
+    assert.equal($('input').getAttribute('min'), '0');
+    assert.equal($('input').getAttribute('max'), '360');
+    assert.equal($('input').getAttribute('step'), null);
+  });
+
+  it('should remember previous spread attributes', async () => {
+    view = synergy.render(
+      rootNode,
+      {
+        foo: {
+          name: 'slider',
+          type: 'range',
+          min: '0',
+          max: '360',
+          step: null,
+        },
+      },
+      html`
+        <section>
+          <input {{...foo}} />
+        </section>
+      `
+    );
+
+    view.foo = {
+      name: 'slider',
+      min: '0',
+      max: '360',
+      step: 1,
+    };
+
+    await nextUpdate();
+
+    assert.equal($('input').getAttribute('name'), 'slider');
+    assert.equal($('input').getAttribute('type'), null);
+    assert.equal($('input').getAttribute('min'), '0');
+    assert.equal($('input').getAttribute('max'), '360');
+    assert.equal($('input').getAttribute('step'), '1');
   });
 
   it('should apply styles', () => {

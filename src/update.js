@@ -107,7 +107,7 @@ const convertStyles = (o) =>
   }, {});
 
 const applyAttribute = (node, name, value, previous) => {
-  if (negative(value)) return node.removeAttribute(name);
+  if (name.match(/^aria\-/)) return node.setAttribute(value.toString());
   let v;
 
   if (name === 'style') {
@@ -121,6 +121,7 @@ const applyAttribute = (node, name, value, previous) => {
   } else {
     switch (typeOf(value)) {
       case 'Boolean':
+        if (negative(value)) return node.removeAttribute(name);
         v = '';
         break;
       case 'Array':
@@ -210,6 +211,12 @@ const updateBinding = (binding, node, ctx, p) => {
           node.removeAttribute(k);
         } else {
           node.setAttribute(k, v);
+        }
+      }
+
+      for (let k in oldValue) {
+        if (k in newValue === false) {
+          node.removeAttribute(k);
         }
       }
 
