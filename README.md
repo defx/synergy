@@ -10,12 +10,17 @@ Simple and declarative data binding for the DOM.
 - [Browser Support](#browser-support)
 - [Install](#install)
 - [Render](#render)
-- [Template Syntax](#template-syntax)
-  - [Logical NOT](#logical-not)
-  - [Attributes](#attributes)
+- [Data Binding](#data-binding)
+  - [Attributes and Arrays](#attributes-and-arrays)
+  - [Boolean Attributes](#boolean-attributes)
+  - [ARIA Attributes](#aria-attributes)
+  - [Inline Styles](#inline-styles)
   - [Getters](#getters)
+- [JavaScript Expressions](#javascript-expressions)
+  - [Logical Not](#logical-not)
+  - [Object Spread](#object-spread)
 - [Repeated Blocks](#repeated-blocks)
-- [Keyed Arrays](#keyed-arrays)
+  - [Keyed Arrays](#keyed-arrays)
 - [Events](#events)
 - [Forms](#forms)
   - [Submitting Form Data](#submitting-form-data)
@@ -85,7 +90,7 @@ view.message = '¡Hola Mundo!';
 
 In the example above, we initialise the view with a paragraph that reads "Hello World!". We then change the value of message to '¡Hola Mundo!' and Synergy updates the DOM automatically.
 
-## Template syntax {{ ... }}
+## Data binding {{ ... }}
 
 Use the double curly braces to bind named properties from your JavaScript object to text or attribute values within your HTML template.
 
@@ -138,7 +143,7 @@ The style attribute is a special case and handled slightly differently to other 
 // -> "background-color: gold; width: 100px; height: 100px;"
 ```
 
-## Getters
+### Getters
 
 Define any property as a standard JavaScript [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) in order to derive a value from _other_ values within your viewmodel.
 
@@ -431,4 +436,4 @@ You can implement a `propertyChangedCallback` method on your object to trigger s
 
 Pre-rendering is useful when you need to get content rendered immediately as part of the initial page load, without having to wait for JavaScript to build the page first.
 
-Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. In order to pre-render your page, you only need to load it in a browser (or with a synthetic DOM environment). That's it! Load the same page again in the browser and Synergy will hydrate the bindings without modifying the DOM.
+Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. In order to pre-render your page, you only need to load it in a browser (or within a synthetic DOM environment) and that's it! Load the same page again in the browser and Synergy will hydrate the bindings without modifying the DOM.
