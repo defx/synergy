@@ -59,18 +59,18 @@ const getValue = (path, ctx, target, binding) => {
 };
 
 const parseStyles = (value) => {
-  switch (typeOf(value)) {
-    case 'String':
-      return value.split(';').reduce((o, value) => {
-        const [k, v] = value.split(':').map((v) => v.trim());
-        if (k) o[k] = v;
-        return o;
-      }, {});
-    case 'Object':
-      return value;
-    default:
-      return {};
-  }
+  let type = typeof value;
+
+  if (type === 'string')
+    return value.split(';').reduce((o, value) => {
+      const [k, v] = value.split(':').map((v) => v.trim());
+      if (k) o[k] = v;
+      return o;
+    }, {});
+
+  if (type === 'object') return value;
+
+  return {};
 };
 
 const joinStyles = (value) =>
@@ -108,7 +108,7 @@ const convertStyles = (o) =>
 const applyAttribute = (node, rawName, value, previous) => {
   let name = toKebab(rawName);
 
-  if (name.match(/^aria\-/)) return node.setAttribute(name, value.toString());
+  if (name.match(/^aria\-/)) return node.setAttribute(name, '' + value);
 
   if ([undefined, null, false].includes(value))
     return node.removeAttribute(name);
