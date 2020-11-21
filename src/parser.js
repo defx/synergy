@@ -18,6 +18,8 @@ import {
 
 import walk from './walk.js';
 
+const EMPTY = Symbol('empty');
+
 export default (templateFragment, BINDING_ID) => {
   let subscribers = new Set();
 
@@ -94,6 +96,7 @@ export default (templateFragment, BINDING_ID) => {
         parts: getParts(value, context),
         type: TEXT,
         context: context.slice(),
+        data: EMPTY,
       },
     ];
   };
