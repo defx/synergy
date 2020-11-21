@@ -228,9 +228,12 @@ const updateBinding = (binding, node, ctx, p) => {
     parts.length === 1
       ? getValue(parts[0].value, ctx, p, binding)
       : parts.reduce((a, { type, value }) => {
-          return (
-            a + (type === 'key' ? getValue(value, ctx, p, binding) : value)
-          );
+          if (type === 'key') {
+            let v = getValue(value, ctx, p, binding);
+            return [undefined, null].includes(v) ? a : a + v;
+          } else {
+            return a + value;
+          }
         }, '');
 
   if (newValue === oldValue) return;

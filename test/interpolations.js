@@ -4,6 +4,48 @@ describe('attributes', () => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
+  /*
+  
+  should a text node always render its value as a string, even if its null or undefined? No. The browsers default behaviour
+
+
+  
+  */
+
+  it('should always cast primitive values to strings, unless null or undefined', () => {
+    view = synergy.render(
+      rootNode,
+      {
+        boolean: false,
+        undefined: undefined,
+        null: null,
+        number: 0,
+        string: 'string',
+        foo: 'bar',
+      },
+      html`
+        <ul>
+          <li id="boolean">{{ boolean }}</li>
+          <li id="undefined">{{ undefined }}</li>
+          <li id="null">{{ null }}</li>
+          <li id="number">{{ number }}</li>
+          <li id="string">{{ string }}</li>
+          <li id="mixed">
+            {{ boolean }} + {{ undefined }} + {{ number }} + {{ string }} + {{
+            null }}
+          </li>
+        </ul>
+      `
+    );
+
+    assert.equal($('#boolean').textContent, 'false');
+    assert.equal($('#undefined').textContent, '');
+    assert.equal($('#null').textContent, '');
+    assert.equal($('#number').textContent, '0');
+    assert.equal($('#string').textContent, 'string');
+    assert.equal($('#mixed').textContent, 'false +  + 0 + string + ');
+  });
+
   it('should support multiple bindings', () => {
     view = synergy.render(
       rootNode,
