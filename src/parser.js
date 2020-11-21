@@ -102,7 +102,6 @@ export default (templateFragment, BINDING_ID) => {
   };
 
   let parseElementNode = (node, context) => {
-    if (!node.hasAttributes()) return;
     let attrs = node.attributes;
     let i = attrs.length;
     while (i--) {
@@ -159,7 +158,6 @@ export default (templateFragment, BINDING_ID) => {
           },
         ],
         type: INPUT,
-        context: context.slice(),
         path,
       };
 
@@ -177,7 +175,6 @@ export default (templateFragment, BINDING_ID) => {
         name,
         parts: getParts(value, context),
         type: ATTRIBUTE,
-        context: context.slice(),
       });
     }
   };

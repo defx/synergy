@@ -161,7 +161,7 @@ const updateBinding = (binding, node, ctx, p) => {
   let oldValue = binding.data;
 
   if (binding.path) {
-    const { path, key } = binding;
+    const { path } = binding;
     const newValue = getValue(path, ctx, p, binding);
 
     binding.data = newValue;
@@ -222,7 +222,7 @@ const updateBinding = (binding, node, ctx, p) => {
     }
   }
 
-  const { paths, parts } = binding;
+  const { parts } = binding;
 
   const newValue =
     parts.length === 1
