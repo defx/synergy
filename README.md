@@ -11,9 +11,9 @@ Simple and declarative data binding for the DOM.
 - [Install](#install)
 - [Render](#render)
 - [Data Binding](#data-binding)
-  - [Attributes and Arrays](#attributes-and-arrays)
-  - [Boolean Attributes](#boolean-attributes)
-  - [ARIA Attributes](#aria-attributes)
+  - [Attributes & Booleans](#attributes-&-booleans)
+  - [CSS Classes](#css-classes)
+  - [Conditional Classes](#conditional-classes)
   - [Inline Styles](#inline-styles)
   - [Getters](#getters)
 - [JavaScript Expressions](#javascript-expressions)
@@ -102,9 +102,11 @@ As far as text nodes are concerned, the values you bind to them should always be
 
 Attributes, on the other hand, support binding to different data types in order to achieve different goals...
 
-### Attributes and arrays
+### Attributes & Booleans
 
-Some attributes accepts multiple values. The most common example of this is the `class` attribute.
+Any attribute that is bound to a boolean value will be treated as a [boolean attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes#Boolean_Attributes), unless it is an ARIA attribute, in which case the boolean value will be cast to a string.
+
+### CSS Classes
 
 You can bind multiple values to an attribute with an array.
 
@@ -120,15 +122,29 @@ You can bind multiple values to an attribute with an array.
 </section>
 ```
 
-### Boolean attributes
+> You can use an array to bind multiple values to any attribute that accepts them
 
-Some content attributes (e.g. `required`, `readonly`, `disabled`) are called boolean attributes. If a boolean attribute is present, its value is true, and if it’s absent, its value is false. You can bind these attributes to a boolean value and Synergy will add or remove the attribute accordingly.
+### Conditional Classes
 
-### ARIA attributes
+You may wish to _conditionally_ apply CSS classes to an element. You can do this by binding to a an object. Only the keys with truthy values will be applied.
 
-Some ARIA attributes (e.g., `aria-expanded`, `aria-hidden`, `aria-invalid`) accept "true" or "false" as string values. You can also bind these attributes to boolean values and Synergy will cast them to strings.
+```js
+{
+  classes: {
+      'bg-white': true,
+      'rounded', false,
+      'p-6': true
+    },
+}
+```
 
-### Inline styles
+```html
+<section class="{{ classes }}">
+  <!-- class="bg-white p-6" -->
+</section>
+```
+
+### Inline Styles
 
 The style attribute is a special case and handled slightly differently to other attributes. As well as a regular string binding, you can also bind this attribute to an object representing a dictionary of CSS properties and values.
 
@@ -166,7 +182,7 @@ Define any property as a standard JavaScript [getter](https://developer.mozilla.
 <section style="{{ styles }}"><!-- ... --></section>
 ```
 
-## JavaScript expressions
+## JavaScript Expressions
 
 Synergy doesn't allow you to write arbitrary JavaScript expressions inside your templates. This helps to keep a clearer separation of concerns between your JavaScript and your HTML. That being said, there are a couple of simple expressions that are supported to make working with attributes a little easier...
 
@@ -202,7 +218,7 @@ You can prefix a property name with an ellipsis to spread all of the keys and va
 <input {{...slider}} />
 ```
 
-## Repeated blocks
+## Repeated Blocks
 
 Repeat a block of HTML for each item in an Array or Set by
 surrounding it with the `each` opening (`#`) and closing (`/`) comments.
@@ -395,7 +411,7 @@ A `<select>` with `[multiple]` binds to an Array on your data:
 }
 ```
 
-### Radio
+### Radio Buttons
 
 Add a name to each radio button to indicate which _group_ it belongs to.
 
