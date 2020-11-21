@@ -18,7 +18,8 @@
     "test:watch": "karma start --auto-watch=true --single-run=false",
     "build": "rm -rf dist && rollup -c && npm run size",
     "size": "gzip -c9 ./dist/synergy.min.js | wc -c",
-    "coveralls": "cat ./coverage/chrome/lcov.info | coveralls"
+    "coveralls": "cat ./coverage/chrome/lcov.info | coveralls",
+    "prepublish": "npm t && npm run build"
   },
   "repository": {
     "type": "git",
