@@ -146,7 +146,7 @@ You may wish to _conditionally_ apply CSS classes to an element. You can do this
 
 ### Inline Styles
 
-The style attribute is a special case and handled slightly differently to other attributes. As well as a regular string binding, you can also bind this attribute to an object representing a dictionary of CSS properties and values.
+As well as binding the style attribute to a string or an array, you can also bind this attribute to an object representing a dictionary of CSS properties and values.
 
 ```js
 {
