@@ -75,17 +75,17 @@ A proxied version of your JavaScript object that will automatically update the U
 
 ```js
 let view = synergy.render(
-  document.getElementById(
-    'app',
-    { message: 'Hello World!' },
-    `<p>{{ message }}</p>`
-  )
+  document.getElementById('app'),
+  { message: 'Hello World!' },
+  `<p>{{ message }}</p>`
 );
 
 view.message = '¡Hola Mundo!';
 ```
 
-## Template Syntax
+In the example above, we initialise the view with a paragraph that reads "Hello World!". We then change the value of message to '¡Hola Mundo!' and Synergy updates the DOM automatically.
+
+## Template syntax {{ ... }}
 
 Use the double curly braces to bind named properties from your JavaScript object to text or attribute values within your HTML template.
 
@@ -93,71 +93,39 @@ Use the double curly braces to bind named properties from your JavaScript object
 <p style="background-color: {{ bgColor }}">{{ message }}</p>
 ```
 
-> Unlike many other libraries and frameworks, Synergy templates _don't_ support arbitrary JavaScript expressions. This helps to ensure a clear separation of concerns between your HTML and JavaScript.
+As far as text nodes are concerned, the values you bind to them should always be primitives, and will always be cast to strings unless the value is `null` or `undefined`, in which case the text node will be empty.
 
-### Logical NOT
+Attributes, on the other hand, support binding to different data types in order to achieve different goals...
 
-You can prefix the property name with the logical NOT operator (!) to flip a truthy value to `false`, or a falsy value to `true`
+### Attributes and arrays
 
-```html
-<section hidden="{{ !expanded }}"></section>
-```
+Some attributes accepts multiple values. The most common example of this is the `class` attribute.
 
-### Attributes
-
-If a bound property is an Array, then all of its values will be joined together, each separated by a space.
+You can bind multiple values to an attribute with an array.
 
 ```js
 {
-  className: ['bg-white', 'rounded', 'p-6'];
+  classes: ['bg-white', 'rounded', 'p-6'];
 }
 ```
 
 ```html
-<section class="{{ className }}">
+<section class="{{ classes }}">
   <!-- class="bg-white rounded p-6" -->
 </section>
 ```
 
-If a bound property is a plain object, then each key with a corresponding [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value will be joined together, each separated by a space.
+### Boolean attributes
 
-```js
-{
-  className: {
-    'bg-white': true,
-    'rounded': false,
-    'p-6': true
-  }
-}
-```
+Some content attributes (e.g. `required`, `readonly`, `disabled`) are called boolean attributes. If a boolean attribute is present, its value is true, and if it’s absent, its value is false. You can bind these attributes to a boolean value and Synergy will add or remove the attribute accordingly.
 
-```html
-<section class="{{ className }}">
-  <!-- class="bg-white p-6" -->
-</section>
-```
+### ARIA attributes
 
-Use the _spread_ syntax to apply multiple attributes to an element using a single object.
+Some ARIA attributes (e.g., `aria-expanded`, `aria-hidden`, `aria-invalid`) accept "true" or "false" as string values. You can also bind these attributes to boolean values and Synergy will cast them to strings.
 
-```js
-      {
-        slider: {
-          name: 'slider',
-          type: 'range',
-          min: '0',
-          max: '360',
-          step: null,
-        },
-      }
-```
+### Inline styles
 
-```html
-<input {{...slider}} />
-```
-
-### Style attribute
-
-The [style] attribute is a special case and handled slightly differently to other attributes; If the bound property is a plain object, then keys will be converted from Pascal to Kebab case before keys and values are joined together, separated by semi-colons.
+The style attribute is a special case and handled slightly differently to other attributes. As well as a regular string binding, you can also bind this attribute to an object representing a dictionary of CSS properties and values.
 
 ```js
 {
@@ -172,7 +140,7 @@ The [style] attribute is a special case and handled slightly differently to othe
 
 ## Getters
 
-Define any property as a standard JavaScript [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) when you want to derive the property value from _other_ property values on your object.
+Define any property as a standard JavaScript [getter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) in order to derive a value from _other_ values within your viewmodel.
 
 ```js
 {
@@ -189,9 +157,50 @@ Define any property as a standard JavaScript [getter](https://developer.mozilla.
 }
 ```
 
+```html
+<section style="{{ styles }}"><!-- ... --></section>
+```
+
+## JavaScript expressions
+
+Synergy doesn't allow you to write arbitrary JavaScript expressions inside your templates. This helps to keep a clearer separation of concerns between your JavaScript and your HTML. That being said, there are a couple of simple expressions that are supported to make working with attributes a little easier...
+
+### Logical Not ( ! )
+
+You can prefix a property name with an exclamation mark in order to negate it.
+
+```html
+<h3>
+  <button id="{{ id }}" aria-expanded="{{ expanded }}">{{ title }}</button>
+</h3>
+<div aria-labelledby="{{ id }}" hidden="{{ !expanded }}">
+  <!-- ... -->
+</div>
+```
+
+### Object Spread ( ... )
+
+You can prefix a property name with an ellipsis to spread all of the keys and values of an object onto an element as individual attributes.
+
+```js
+      {
+        slider: {
+          name: 'slider',
+          type: 'range',
+          min: '0',
+          max: '360',
+        },
+      }
+```
+
+```html
+<input {{...slider}} />
+```
+
 ## Repeated blocks
 
-Repeat a block of HTML for each item in an Array or Set using the `#each` comment block
+Repeat a block of HTML for each item in an Array or Set by
+surrounding it with the `each` opening (`#`) and closing (`/`) comments.
 
 ```js
 {
@@ -223,12 +232,12 @@ Repeated blocks can have multiple top-level nodes
 
 ```html
 <!-- #each drawer in accordion.drawers -->
-<h2>
+<h3>
   <button id="{{ id }}" aria-expanded="{{ expanded }}">{{ title }}</button>
-</h2>
-<section aria-labelledby="{{ id }}" hidden="{{ !expanded }}">
+</h3>
+<div aria-labelledby="{{ id }}" hidden="{{ !expanded }}">
   <!-- ... -->
-</section>
+</div>
 <!-- /each -->
 ```
 
@@ -250,7 +259,7 @@ Set the `key` parameter if you need to override the default behaviour...
 </ul>
 ```
 
-Note that `#each` works the same for Arrays and Sets.
+> Note that `#each` works the same for both Arrays and Sets.
 
 ## Events
 
@@ -314,12 +323,6 @@ Named inputs are automatically bound to properties of the same name on your data
 {
   color: '#4287f5';
 }
-```
-
-As with any other binding, you can use dot notation to target nested properties.
-
-```html
-<input name="color.primary" />
 ```
 
 ### Submitting Form Data
