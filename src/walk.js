@@ -67,7 +67,7 @@ function walk(node, callback) {
   node = node.firstChild;
 
   while (node) {
-    if (!isWhitespace(node)) walk(node, callback, context);
+    if (!isWhitespace(node)) walk(node, callback);
     node = node.nextSibling;
   }
 }
