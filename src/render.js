@@ -35,6 +35,10 @@ function render(mountNode, viewmodel, template) {
     if (viewmodel.preAppendCallback)
       viewmodel.preAppendCallback(templateFragment);
 
+    while (mountNode.firstChild) {
+      mountNode.removeChild(mountNode.lastChild);
+    }
+
     mountNode.appendChild(templateFragment);
   }
 
