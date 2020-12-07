@@ -6,7 +6,6 @@ import Updater from './update.js';
 
 let counter = 1;
 
-//@TODO: memoize this function
 const templateFromString = (str) => {
   var tpl = document.createElement('template');
   tpl.innerHTML = str;
@@ -16,13 +15,14 @@ const templateFromString = (str) => {
 function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
-  let templateNode =
-    typeof template === 'string' ? templateFromString(template) : template;
+  let templateNode = template
+    ? (typeof template === 'string'
+        ? templateFromString(template)
+        : template
+      ).cloneNode(true).content
+    : mountNode;
 
-  let { subscribers, templateFragment } = parse(
-    templateNode.cloneNode(true).content,
-    BINDING_ID
-  );
+  let { subscribers, templateFragment } = parse(templateNode, BINDING_ID);
 
   let update = Updater(BINDING_ID);
 
@@ -31,10 +31,7 @@ function render(mountNode, viewmodel, template) {
   if (hydrate(BINDING_ID, templateFragment, mountNode)) {
     /* it doesn't have to be a perfect match to hydrate, but we do want to patch the differences. This is an intentional strategy aimed at allowing you to design for users that might have JS turned off by stripping stateful attributes (e.g., [hidden],[disabled],[aria-expanded],etc) from your pre-rendered HTML to avoid dead-end situation where (for example) something is serialised with [hidden] but then there's no JS to unhide it. If your HTML isn't mismatched then this invocation of update won't touch the DOM.  */
     update(mountNode, viewmodel);
-  } else {
-    if (viewmodel.preAppendCallback)
-      viewmodel.preAppendCallback(templateFragment);
-
+  } else if (template) {
     while (mountNode.firstChild) {
       mountNode.removeChild(mountNode.lastChild);
     }

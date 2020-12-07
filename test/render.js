@@ -38,4 +38,12 @@ describe('render', () => {
     assert.equal($$('#container p')[2].textContent, 'adiós!');
     assert.equal($$('#container p')[3].textContent, 'fa!');
   });
+
+  it('should parse the mount node if no template is supplied', () => {
+    let node = mount(html`<div id="container">{{ greeting }}</div> `);
+
+    synergy.render(node, { greeting: 'hi!' });
+
+    assert.equal($('#container').textContent, 'hi!');
+  });
 });
