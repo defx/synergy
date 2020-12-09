@@ -1,10 +1,10 @@
-import PathMap from './pathMap.js';
 import { debounce } from './helpers.js';
+import Cache from './cache.js';
 
 const proxy = (obj, callback) => {
-  const TARGET = Symbol('target');
-  const proxyCache = new WeakMap();
-  let pathMap = PathMap();
+  let TARGET = Symbol('target');
+  let proxyCache = new WeakMap();
+  let cache = Cache();
   let changeset = new Map();
 
   let cb = debounce(() => {
@@ -17,9 +17,9 @@ const proxy = (obj, callback) => {
     cb();
   };
 
-  const getPaths = (value, property) => {
-    const paths = pathMap.get(value);
-    if (!paths || !paths.length) return [property];
+  const getPaths = (target, property) => {
+    const paths = cache.get(target);
+    if (!paths.length) return [property];
     return property
       ? paths.map((path) => path.split('.').concat(property).join('.'))
       : paths;
@@ -28,7 +28,7 @@ const proxy = (obj, callback) => {
   const buildProxy = (value, paths) => {
     value = value[TARGET] || value;
 
-    if (paths) pathMap.appendAll(value, paths);
+    if (paths) cache.setAll(value, paths);
 
     let proxy = proxyCache.get(value);
 
