@@ -8,7 +8,7 @@ export default () => {
       c.set(new Map(x));
       return x.map(([k]) => k);
     },
-    setAll(value, paths) {
+    set(value, paths) {
       let x = c.get(value) || new Map();
       paths.forEach((path) => x.set(path, nextId(path)));
       c.set(value, x);

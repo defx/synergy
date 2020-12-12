@@ -28,7 +28,7 @@ const proxy = (obj, callback) => {
   const buildProxy = (value, paths) => {
     value = value[TARGET] || value;
 
-    if (paths) cache.setAll(value, paths);
+    if (paths) cache.set(value, paths);
 
     let proxy = proxyCache.get(value);
 
