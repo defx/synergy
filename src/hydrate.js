@@ -9,6 +9,7 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
   });
 
   let shouldHydrate;
+  let count = 0;
 
   walk(targetNode, (node, path) => {
     if (shouldHydrate === false) return false;
@@ -19,6 +20,8 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
 
       if (!shouldHydrate) return;
 
+      count++;
+
       if (newNode.__bindings__) {
         node.__bindings__ = newNode.__bindings__;
         node.bindingId = BINDING_ID;
@@ -26,7 +29,7 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
     }
   });
 
-  return shouldHydrate;
+  return shouldHydrate && count === Object.keys(nodesByPath).length;
 };
 
 export default transferBindings;
