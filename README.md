@@ -27,6 +27,7 @@ Simple and declarative data binding for the DOM.
   - [Select](#select)
   - [Radio](#radio)
 - [Side Effects](#side-effects)
+- [Web Components](#web-components)
 - [Pre-rendering](#pre-rendering)
 
 ## Features
@@ -449,6 +450,10 @@ If you implement a `propertyChangedCallback` method on your viewmodel, then this
 ```
 
 > Invocations of `propertyChangedCallback` are already debounced with [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame), so you'll only get one invocation per property _per_ animation frame.
+
+## Web Components
+
+Synergy plays well with the Web Component APIs. I've written a Custom Element wrapper ([@defx/elementary](https://github.com/defx/elementary)) that you can take a look at, or even use as a starting point to writing your own wrapper to suit your specific requirements.
 
 ## Pre-rendering
 
