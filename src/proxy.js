@@ -1,8 +1,7 @@
-import { debounce } from './helpers.js';
+import { debounce, typeOf } from './helpers.js';
 import Cache from './cache.js';
 
 const proxy = (obj, callback) => {
-  let TARGET = Symbol('target');
   let proxyCache = new WeakMap();
   let cache = Cache();
   let changeset = new Map();
@@ -20,14 +19,10 @@ const proxy = (obj, callback) => {
   const getPaths = (target, property) => {
     const paths = cache.get(target);
     if (!paths.length) return [property];
-    return property
-      ? paths.map((path) => path.split('.').concat(property).join('.'))
-      : paths;
+    return paths.map((path) => path.split('.').concat(property).join('.'));
   };
 
   const buildProxy = (value, paths) => {
-    value = value[TARGET] || value;
-
     if (paths) cache.set(value, paths);
 
     let proxy = proxyCache.get(value);
@@ -42,17 +37,9 @@ const proxy = (obj, callback) => {
 
   const handler = {
     get: function (target, property) {
-      if (property === TARGET) return target;
-
-      if (
-        ['[object Object]', '[object Array]'].indexOf(
-          Object.prototype.toString.call(target[property])
-        ) > -1
-      ) {
-        return buildProxy(target[property], getPaths(target, property));
-      }
-
-      return Reflect.get(...arguments);
+      return ['Object', 'Array'].includes(typeOf(target[property]))
+        ? buildProxy(target[property], getPaths(target, property))
+        : Reflect.get(...arguments);
     },
     set: function (target, property, value) {
       if (value === target[property]) return true;
