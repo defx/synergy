@@ -246,6 +246,7 @@ const updateBinding = (binding, node, ctx, p) => {
 const Updater = (BINDING_ID) => (rootNode, data) => {
   let ctx = {};
   let p = copy(data);
+
   walk(rootNode, (node) => {
     if (node.bindingId !== BINDING_ID) return;
 

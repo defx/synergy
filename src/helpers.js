@@ -68,9 +68,7 @@ export const debounce = (fn) => {
 export const typeOf = (v) =>
   Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
-const replacer = (_, v) => (typeOf(v) === 'Set' ? Array.from(v) : v);
-
-export const copy = (v) => v && JSON.parse(JSON.stringify(v, replacer));
+export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
 const parseEach = (str) => {
   let [left, prop] = str.split(/\s+in\s+/).map((v) => v.trim());

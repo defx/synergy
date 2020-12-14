@@ -4,14 +4,6 @@ describe('attributes', () => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
-  /*
-  
-  should a text node always render its value as a string, even if its null or undefined? No. The browsers default behaviour
-
-
-  
-  */
-
   it('should always cast primitive values to strings, unless null or undefined', () => {
     view = synergy.render(
       rootNode,

@@ -47,6 +47,7 @@ const proxy = (obj, callback) => {
       getPaths(target, property).forEach((path) =>
         scheduleCallback(path, value)
       );
+
       return Reflect.set(...arguments);
     },
     deleteProperty: function (target, property) {

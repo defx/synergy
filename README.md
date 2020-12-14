@@ -221,7 +221,7 @@ You can prefix a property name with an ellipsis to spread all of the keys and va
 
 ## Repeated Blocks
 
-Repeat a block of HTML for each item in an Array or Set by
+Repeat a block of HTML for each item in an Array by
 surrounding it with the `each` opening (`#`) and closing (`/`) comments.
 
 ```js
@@ -280,8 +280,6 @@ Set the `key` parameter if you need to override the default behaviour...
   <!-- /each -->
 </ul>
 ```
-
-> Note that `#each` works the same for both Arrays and Sets.
 
 ## Events
 
