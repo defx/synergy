@@ -27,7 +27,7 @@ describe('misc', () => {
     v1.message = 'Helló Világ!';
     v2.message = 'こんにちは世界！';
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.equal(
       rootNode.querySelector('x-x').shadowRoot.querySelector('button')

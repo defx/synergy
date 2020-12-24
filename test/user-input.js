@@ -136,7 +136,7 @@ describe('input[name]', () => {
     );
 
     $(`#container input[type="radio"][value="complete"]`).click();
-    await nextUpdate();
+    await nextFrame();
     assert.equal(view.filter, 'complete');
   });
 
@@ -218,7 +218,7 @@ describe('input[name]', () => {
 
     $('button p').click();
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.ok(clicked);
   });

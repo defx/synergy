@@ -31,7 +31,7 @@ describe('render', () => {
     view1.greeting = 'talofa!';
     view1.farewell = 'fa!';
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.equal($$('#container p')[0].textContent, 'talofa!');
     assert.equal($$('#container p')[1].textContent, '¡Hola!');

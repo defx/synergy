@@ -29,13 +29,17 @@ Simple and declarative data binding for the DOM.
 - [Side Effects](#side-effects)
 - [Web Components](#web-components)
 - [Pre-rendering](#pre-rendering)
+- [Date Mutations](#date-mutations)
 
 ## Features
 
-- Simple and declarative way to bind data, events, and markup
-- Small footprint (~3.6k)
+- Simple templates for declarative data & event binding
+- Reactive data bindings update your view efficiently and automatically
+- Full component workflow using standard Web Components
+- Small footprint (~4k)
 - No special tooling required (e.g., compilers, plugins)
 - Minimal learning curve (almost entirely standard HTML, JS, and CSS!)
+- Seamless pre-rendering & hydration for great performance and SEO
 
 ## Browser Support
 
@@ -458,3 +462,7 @@ Synergy plays well with the Web Component APIs. I've written a Custom Element wr
 Pre-rendering is useful when you need to get content rendered immediately as part of the initial page load, without having to wait for JavaScript to build the page first.
 
 Synergy supports pre-rendering and hydration and doesn't care where or how you pre-render your content. In order to pre-render your page, you only need to load it in a browser (or within a synthetic DOM environment) and then save the rendered page. Load that same page again and Synergy will hydrate the bindings without modifying the DOM.
+
+### Date Mutations
+
+Don't use mutative methods on Dates (e.g., `setSeconds`) as these wont be detected or trigger an update to your view. Instead you should simply replace your Date object with a new one.

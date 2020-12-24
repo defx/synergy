@@ -89,7 +89,7 @@ describe('Todo List', () => {
       })
     );
 
-    return nextUpdate();
+    return nextFrame();
   };
 
   describe('No Todos', () => {
@@ -134,7 +134,7 @@ describe('Todo List', () => {
       await addTodo('walk the dog');
       await addTodo('feed the cat');
       app.allDoneCheckbox.click();
-      await nextUpdate();
+      await nextFrame();
       assert.ok(app.todoCheckboxes.every((node) => node.checked));
       assert.ok(storage.get('todos').every((todo) => todo.completed));
     });
@@ -143,7 +143,7 @@ describe('Todo List', () => {
       await addTodo('feed the cat');
       app.allDoneCheckbox.click();
       app.allDoneCheckbox.click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.allDoneCheckbox.checked, false);
       assert.ok(app.todoCheckboxes.every((node) => !node.checked));
       assert.ok(storage.get('todos').every((todo) => !todo.completed));
@@ -152,7 +152,7 @@ describe('Todo List', () => {
       await addTodo('walk the dog');
       await addTodo('feed the cat');
       app.todoCheckboxes.forEach((node) => node.click());
-      await nextUpdate();
+      await nextFrame();
       assert.ok(app.allDoneCheckbox.checked);
     });
   });
@@ -161,7 +161,7 @@ describe('Todo List', () => {
       await addTodo('walk the dog');
       await addTodo('feed the cat');
       app.todoCheckboxes.forEach((node) => node.click());
-      await nextUpdate();
+      await nextFrame();
       assert.ok(storage.get('todos').every((todo) => todo.completed));
     });
     it('should allow me to un-mark items as complete', async () => {
@@ -169,7 +169,7 @@ describe('Todo List', () => {
       await addTodo('feed the cat');
       app.todoCheckboxes.forEach((node) => node.click());
       app.todoCheckboxes.forEach((node) => node.click());
-      await nextUpdate();
+      await nextFrame();
       assert.ok(storage.get('todos').every((todo) => !todo.completed));
     });
     it('should allow me to edit an item', async () => {
@@ -190,7 +190,7 @@ describe('Todo List', () => {
         })
       );
 
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.todoLabels[0].textContent.trim(), newTitle);
     });
     xit('should show the remove button on hover', async () => {});
@@ -203,7 +203,7 @@ describe('Todo List', () => {
           bubbles: true,
         })
       );
-      await nextUpdate();
+      await nextFrame();
       assert.ok(isHidden(app.toggles[0]));
       assert.ok(isHidden(app.todoLabels[0]));
       assert.ok(isHidden(app.deleteButtons[0]));
@@ -216,7 +216,7 @@ describe('Todo List', () => {
           bubbles: true,
         })
       );
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.editInputs[0].value, 'jabba the hut');
     });
 
@@ -239,7 +239,7 @@ describe('Todo List', () => {
         })
       );
 
-      await nextUpdate();
+      await nextFrame();
 
       assert.equal(app.todoLabels[0].textContent.trim(), newTitle);
       assert.equal(storage.get('todos')[0].title, newTitle);
@@ -273,7 +273,7 @@ describe('Todo List', () => {
         })
       );
 
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.todos.length, 0);
     });
 
@@ -298,7 +298,7 @@ describe('Todo List', () => {
         })
       );
 
-      await nextUpdate();
+      await nextFrame();
 
       assert.equal(app.todoLabels[0].textContent.trim(), title);
       assert.equal(storage.get('todos')[0].title, title);
@@ -325,7 +325,7 @@ describe('Todo List', () => {
 
       app.deleteButtons[0].click();
 
-      await nextUpdate();
+      await nextFrame();
 
       assert.equal(app.count, '1 item left');
     });
@@ -336,7 +336,7 @@ describe('Todo List', () => {
       await addTodo('first thing');
       assert.equal(app.clearCompletedText, 'clear completed (0)');
       app.todoCheckboxes[0].click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.clearCompletedText, 'clear completed (1)');
     });
     it('should remove completed items when clicked', async () => {
@@ -344,10 +344,10 @@ describe('Todo List', () => {
       await addTodo('second thing');
       assert.equal(app.clearCompletedText, 'clear completed (0)');
       app.todoCheckboxes[0].click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.clearCompletedText, 'clear completed (1)');
       app.clearCompleted.click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(app.todos.length, 1);
       assert.equal(app.todoLabels[0].textContent, 'second thing');
     });
@@ -355,7 +355,7 @@ describe('Todo List', () => {
       await addTodo('first thing');
       assert.ok(isHidden(clearCompleted));
       app.todoCheckboxes[0].click();
-      await nextUpdate();
+      await nextFrame();
       assert.ok(isDisplayed(clearCompleted));
     });
   });
@@ -370,7 +370,7 @@ describe('Todo List', () => {
       await addTodo('second thing');
       app.todoCheckboxes[0].click();
       app.getFilterByValue('active').click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(1, 1);
       assert.equal(app.todos.length, 1);
       assert.equal(app.todoLabels[0].textContent.trim(), 'second thing');
@@ -380,7 +380,7 @@ describe('Todo List', () => {
       await addTodo('second thing');
       app.todoCheckboxes[0].click();
       app.getFilterByValue('done').click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(1, 1);
       assert.equal(app.todos.length, 1);
       assert.equal(app.todoLabels[0].textContent.trim(), 'first thing');
@@ -391,7 +391,7 @@ describe('Todo List', () => {
       app.todoCheckboxes[0].click();
       app.getFilterByValue('done').click();
       app.getFilterByValue('all').click();
-      await nextUpdate();
+      await nextFrame();
       assert.equal(1, 1);
       assert.equal(app.todos.length, 2);
       assert.equal(app.todoLabels[0].textContent.trim(), 'first thing');

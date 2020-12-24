@@ -137,7 +137,7 @@ describe('attributes', () => {
       ariaExpanded: 'undefined',
     };
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.equal($('input').getAttribute('name'), 'slider');
     assert.equal($('input').getAttribute('type'), null);
@@ -194,7 +194,7 @@ describe('attributes', () => {
       height: 100px;
   `;
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.ok(
       $('section').getAttribute('style').includes('background-color: tomato;')
@@ -269,7 +269,7 @@ describe('attributes', () => {
 
     view.foo = false;
 
-    await nextUpdate();
+    await nextFrame();
 
     assert.ok($('p').hidden);
   });

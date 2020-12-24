@@ -121,7 +121,7 @@ describe('iterations', () => {
       },
     ];
 
-    await nextUpdate();
+    await nextFrame();
 
     let currentNodes = $$('p');
 
@@ -173,7 +173,7 @@ describe('iterations', () => {
       },
     ];
 
-    await nextUpdate();
+    await nextFrame();
 
     let currentNodes = $$('p');
 
@@ -225,7 +225,7 @@ describe('iterations', () => {
       },
     ];
 
-    await nextUpdate();
+    await nextFrame();
 
     let currentNodes = $$('p');
 

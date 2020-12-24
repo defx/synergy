@@ -1,7 +1,10 @@
 import synergy from '../src/index.js';
 
 const html = (strings, ...values) =>
-  strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
+  strings.reduce(
+    (a, v, i) => a + v + (values[i] || ''),
+    ''
+  );
 
 const mount = (html) => {
   let node = document.body;
@@ -9,16 +12,20 @@ const mount = (html) => {
   return node.firstChild;
 };
 
-const nextUpdate = () =>
-  new Promise((resolve) => requestAnimationFrame(resolve));
+const nextFrame = () =>
+  new Promise((resolve) =>
+    requestAnimationFrame(resolve)
+  );
 
-const textContent = (node) => node.textContent.trim();
+const textContent = (node) =>
+  node.textContent.trim();
 
 window.synergy = synergy;
 window.mount = mount;
 window.html = html;
-window.nextUpdate = nextUpdate;
+window.nextFrame = nextFrame;
 window.assert = assert;
 window.textContent = textContent;
 window.$ = (v) => document.querySelector(v);
-window.$$ = (v) => Array.from(document.querySelectorAll(v));
+window.$$ = (v) =>
+  Array.from(document.querySelectorAll(v));

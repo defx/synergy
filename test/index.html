@@ -24,7 +24,7 @@
         mocha.run();
       };
 
-      const html = (strings, ...values) =>
+      const identityTpl = (strings, ...values) =>
         strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
       const mount = (html) => {
@@ -33,15 +33,16 @@
         return node.firstChild;
       };
 
-      const nextUpdate = () =>
+      const nextFrame = () =>
         new Promise((resolve) => requestAnimationFrame(resolve));
 
       const textContent = (node) => node.textContent.trim();
 
       window.mount = mount;
-      window.html = html;
+      window.html = identityTpl;
+      window.css = identityTpl;
 
-      window.nextUpdate = nextUpdate;
+      window.nextFrame = nextFrame;
       window.assert = assert;
       window.textContent = textContent;
       window.$ = (v) => document.querySelector(v);
@@ -62,5 +63,6 @@
     <script type="module" src="./hydrate.js"></script>
     <script type="module" src="./context.js"></script>
     <script type="module" src="./misc.js"></script>
+    <script type="module" src="./define.js"></script>
   </body>
 </html>
