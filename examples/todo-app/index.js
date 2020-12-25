@@ -22,104 +22,116 @@ const KEYS = {
   RETURN: 13,
   ESCAPE: 27,
 };
-export const TodoApp = () => ({
-  propertyChangedCallback(path) {
-    if (path.match(/^todos.?/)) {
-      storage.set('todos', this.todos);
-    }
-  },
-  filters: Object.keys(filters),
-  todos: [],
-  activeFilter: 'all',
-  addTodo(e) {
-    if (!(e.key && e.key === 'Enter')) return;
 
-    let title =
-      this.newTodo && this.newTodo.trim();
+export const TodoApp = () => {
+  let todos = [];
+  return {
+    observedProperties: ['todos'],
+    propertyChangedCallback() {
+      console.log('PCC');
+      storage.set('todos', todos);
+    },
+    filters: Object.keys(filters),
+    set todos(value) {
+      todos = value;
+    },
+    get todos() {
+      return filters[this.activeFilter](todos);
+    },
+    activeFilter: 'all',
+    addTodo(e) {
+      if (!(e.key && e.key === 'Enter')) return;
 
-    if (!title) return;
-    this.todos.push({ title, id: Date.now() });
-    this.newTodo = null;
-  },
-  startEdit(e, item) {
-    this.todos = this.todos.map((todo) => {
-      if (todo === item) {
-        this.titleEdit = item.title;
-      }
+      let title =
+        this.newTodo && this.newTodo.trim();
 
-      return {
-        ...todo,
-        editing: todo === item,
+      if (!title) return;
+      this.todos.push({ title, id: Date.now() });
+      this.newTodo = null;
+    },
+    startEdit(e, item) {
+      this.todos = this.todos.map((todo) => {
+        if (todo === item) {
+          this.titleEdit = item.title;
+        }
+
+        return {
+          ...todo,
+          editing: todo === item,
+        };
+      });
+      return () => {
+        e.target.parentNode
+          .querySelector('.edit')
+          .focus();
       };
-    });
-    return () => {
-      e.target.parentNode
-        .querySelector('.edit')
-        .focus();
-    };
-  },
-  saveEdit(_, item) {
-    if (!item.editing) return;
+    },
+    saveEdit(_, item) {
+      if (!item.editing) return;
 
-    item.editing = false;
-    let title = String(this.titleEdit);
+      item.editing = false;
+      let title = String(this.titleEdit);
 
-    if (!title.trim()) {
-      this.todos = this.todos.filter(
-        (todo) => todo !== item
+      if (!title.trim()) {
+        this.todos = this.todos.filter(
+          (todo) => todo !== item
+        );
+      } else {
+        item.title = title;
+      }
+    },
+    deleteTodo(e, item) {
+      this.todos.splice(
+        this.todos.indexOf(item),
+        1
       );
-    } else {
-      item.title = title;
-    }
-  },
-  deleteTodo(e, item) {
-    this.todos.splice(
-      this.todos.indexOf(item),
-      1
-    );
-  },
-  get allDone() {
-    return this.todos.every(
-      (todo) => todo.completed
-    );
-  },
-  set allDone(completed) {
-    this.todos = this.todos.map((todo) => ({
-      ...todo,
-      completed,
-    }));
-  },
-  get filteredTodos() {
-    return filters[this.activeFilter](this.todos);
-  },
-  get numCompleted() {
-    return this.todos.filter(
-      ({ completed }) => completed
-    ).length;
-  },
-  removeCompleted() {
-    this.todos = this.todos.filter(
-      ({ completed }) => !completed
-    );
-  },
-  get itemsLeft() {
-    const n = this.todos.filter(
-      ({ completed }) => !completed
-    ).length;
-    return `${n} item${n === 1 ? '' : 's'} left`;
-  },
-  dispatchKeyDown(e, item) {
-    switch (e.keyCode) {
-      case KEYS.ESCAPE:
-        item.editing = false;
-        this.titleEdit = '';
-        break;
-      case KEYS.RETURN:
-        this.saveEdit(e, item);
-        break;
-    }
-  },
-});
+    },
+    get allDone() {
+      return this.todos.every(
+        (todo) => todo.completed
+      );
+    },
+    set allDone(completed) {
+      this.todos = this.todos.map((todo) => ({
+        ...todo,
+        completed,
+      }));
+    },
+    get filteredTodos() {
+      return filters[this.activeFilter](
+        this.todos
+      );
+    },
+    get numCompleted() {
+      return this.todos.filter(
+        ({ completed }) => completed
+      ).length;
+    },
+    removeCompleted() {
+      this.todos = this.todos.filter(
+        ({ completed }) => !completed
+      );
+    },
+    get itemsLeft() {
+      const n = this.todos.filter(
+        ({ completed }) => !completed
+      ).length;
+      return `${n} item${
+        n === 1 ? '' : 's'
+      } left`;
+    },
+    dispatchKeyDown(e, item) {
+      switch (e.keyCode) {
+        case KEYS.ESCAPE:
+          item.editing = false;
+          this.titleEdit = '';
+          break;
+        case KEYS.RETURN:
+          this.saveEdit(e, item);
+      }
+    },
+  };
+};
 
 export const markup = html`
   <style>
@@ -160,7 +172,7 @@ export const markup = html`
       name="allDone"
     />
     <ul>
-      <!-- #each todo in filteredTodos -->
+      <!-- #each todo in todos -->
       <li
         class="todo"
         is-done="{{todo.completed}}"

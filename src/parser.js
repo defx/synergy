@@ -31,16 +31,26 @@ export default (templateFragment, BINDING_ID) => {
         node.bindingId = BINDING_ID;
       },
       openBlock(expr, args) {
-        stack.push(parseEachDeclaration(expr, stack, args));
+        stack.push(
+          parseEachDeclaration(expr, stack, args)
+        );
       },
       textNode(node) {
-        parseTextNode(node.nodeValue, node, stack);
+        parseTextNode(
+          node.nodeValue,
+          node,
+          stack
+        );
       },
       elementNode(node) {
         node.__bindings__ = [];
         parseElementNode(node, stack);
       },
-      closeBlock(openingComment, nodes, closingComment) {
+      closeBlock(
+        openingComment,
+        nodes,
+        closingComment
+      ) {
         removeNodes(nodes);
 
         let { key, prop } = last(stack);
@@ -72,7 +82,9 @@ export default (templateFragment, BINDING_ID) => {
         };
 
         nodes.forEach((node) => {
-          node.__bindings__.unshift(listNodeBinding);
+          node.__bindings__.unshift(
+            listNodeBinding
+          );
         });
 
         stack.pop();
@@ -90,9 +102,9 @@ export default (templateFragment, BINDING_ID) => {
 
     node.__bindings__ = [
       {
-        childIndex: Array.from(node.parentNode.childNodes).findIndex(
-          (v) => v === node
-        ),
+        childIndex: Array.from(
+          node.parentNode.childNodes
+        ).findIndex((v) => v === node),
         parts: getParts(value, context),
         type: TEXT,
         context: context.slice(),
@@ -110,7 +122,11 @@ export default (templateFragment, BINDING_ID) => {
     return context;
   };
 
-  let parseAttributeNode = ({ name, value }, node, context) => {
+  let parseAttributeNode = (
+    { name, value },
+    node,
+    context
+  ) => {
     if (name.charAt(0) === '{') {
       let match = name.match(/{{\.{3}([^{}]+)}}/);
       if (match) {
@@ -134,11 +150,17 @@ export default (templateFragment, BINDING_ID) => {
         eventName: eventName,
         type: 'call',
         method: value,
-        path: lastContext && `${lastContext.prop}.*`,
+        path:
+          lastContext && `${lastContext.prop}.*`,
       });
 
       return;
     }
+
+    /* interestingly, its this "automatic reflection" which gets us into trouble with multiple paths. I mean, without it you'd be forced to add an event listener and then update the object yourself, in which case change detection would be based on whichever property the author changes (expected), rather than the path followed within the template, which can always be a derivation (getter). 
+    so...perhaps the thing to do is to rip this feature out? i've never really questioned it since adding it but now that i do...it is perhaps too much of an assumption anyway. 
+    
+    */
 
     if (
       name === 'name' &&
