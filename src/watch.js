@@ -1,11 +1,6 @@
-// import { typeOf } from './helpers.js';
+import { typeOf } from './helpers.js';
 
 const NOOP = () => {};
-
-const typeOf = (v) =>
-  Object.prototype.toString
-    .call(v)
-    .match(/\s(.+[^\]])/)[1];
 
 function observe(
   root = {},

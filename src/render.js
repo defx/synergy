@@ -58,20 +58,6 @@ function render(mountNode, viewmodel, template) {
     viewmodel.observedProperties
   );
 
-  // if (viewmodel.observedProperties) {
-  //   viewmodel.observedProperties.forEach(
-  //     (key) => {
-  //       proxy = observex(proxy, key, () => {
-  //         viewmodel.propertyChangedCallback(
-  //           key,
-  //           proxy[key] //@TODO return raw value
-  //         );
-  //       });
-  //       console.log('watching', key);
-  //     }
-  //   );
-  // }
-
   subscribe(
     mountNode,
     subscribers,
