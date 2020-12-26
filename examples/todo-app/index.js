@@ -67,9 +67,9 @@ export const TodoApp = () => {
       let title = String(this.titleEdit);
 
       if (!title.trim()) {
-        this.todos = this.todos.filter(
-          (todo) => todo !== item
-        );
+        this.todos = this.todos.filter((todo) => {
+          return todo !== item;
+        });
       } else {
         item.title = title;
       }

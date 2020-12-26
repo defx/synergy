@@ -1,32 +1,16 @@
+import { ROOT_PROXY } from './constants.js';
 import { typeOf } from './helpers.js';
 
 const NOOP = () => {};
 
-function observe(root = {}, options = {}) {
-  let {
-    changeCallback = NOOP,
-    observedProperties = [],
-    propertyChangedCallback = NOOP,
-  } = options;
-
-  let pathMap = new WeakMap();
-  let observed = new Map();
+function observe(root = {}, callback) {
   let proxyCache = new WeakMap();
 
   function scheduleCallback() {
-    requestAnimationFrame(() => {
-      changeCallback();
-      Array.from(observed).forEach(([k, v]) =>
-        propertyChangedCallback(k, v)
-      );
-      observed = new Map();
-    });
+    requestAnimationFrame(callback);
   }
 
   function proxee(target, property) {
-    let path = (pathMap.get(target) || []).concat(
-      property
-    );
     let proxy = proxyCache.get(target[property]);
     if (proxy === undefined) {
       proxy = new Proxy(
@@ -35,13 +19,20 @@ function observe(root = {}, options = {}) {
       );
       proxyCache.set(target[property], proxy);
     }
-
-    pathMap.set(target[property], path);
     return proxy;
   }
 
   const handler = {
     get(target, property) {
+      if (property === ROOT_PROXY) {
+        // return proxyCache.get(target);
+        console.log(
+          'ROOT:',
+          proxyCache.get(target)
+        );
+        return proxyCache.get(target);
+      }
+
       if (
         ['Object', 'Array'].includes(
           typeOf(target[property])
@@ -53,13 +44,6 @@ function observe(root = {}, options = {}) {
       }
     },
     set(target, property, value) {
-      let path = (
-        pathMap.get(target) || []
-      ).concat(property);
-
-      if (observedProperties.includes(path[0])) {
-        // observed.set(path, value);
-      }
       scheduleCallback();
 
       return Reflect.set(...arguments);

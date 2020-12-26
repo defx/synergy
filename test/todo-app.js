@@ -166,6 +166,7 @@ describe('Todo List', () => {
     it('should allow me to mark all items as completed', async () => {
       await addTodo('walk the dog');
       await addTodo('feed the cat');
+
       app.allDoneCheckbox.click();
       await nextFrame();
       assert.ok(

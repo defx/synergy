@@ -2,7 +2,7 @@ import parse from './parser.js';
 import subscribe from './subscribe.js';
 import hydrate from './hydrate.js';
 import Updater from './update.js';
-import observe from './observe.js';
+import observe from './watch.js';
 
 let counter = 1;
 
@@ -51,30 +51,26 @@ function render(mountNode, viewmodel, template) {
     mountNode.appendChild(templateFragment);
   }
 
-  // let p = !!viewmodel.propertyChangedCallback;
+  let proxy = observe(
+    viewmodel,
+    () => update(mountNode, proxy),
+    () => viewmodel.propertyChangedCallback(),
+    viewmodel.observedProperties
+  );
 
-  // let proxy = Proxy(viewmodel, (changeset) => {
-  //   update(mountNode, proxy);
-  //   p &&
-  //     changeset.forEach(([path, value]) =>
-  //       proxy.propertyChangedCallback(
-  //         path,
-  //         value,
-  //         mountNode
-  //       )
-  //     );
-  // });
-
-  let proxy = observe(viewmodel, {
-    changeCallback: () => {
-      update(mountNode, proxy);
-    },
-    propertyChangedCallback(k, v) {
-      proxy.propertyChangedCallback(k, v);
-    },
-    observedProperties:
-      viewmodel.observedProperties,
-  });
+  // if (viewmodel.observedProperties) {
+  //   viewmodel.observedProperties.forEach(
+  //     (key) => {
+  //       proxy = observex(proxy, key, () => {
+  //         viewmodel.propertyChangedCallback(
+  //           key,
+  //           proxy[key] //@TODO return raw value
+  //         );
+  //       });
+  //       console.log('watching', key);
+  //     }
+  //   );
+  // }
 
   subscribe(
     mountNode,

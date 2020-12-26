@@ -1,4 +1,8 @@
 import {
+  TARGET,
+  ROOT_PROXY,
+} from './constants.js';
+import {
   getValueAtPath,
   setValueAtPath,
 } from './helpers.js';
@@ -66,14 +70,14 @@ const subscribe = (
 
         bindings.forEach((binding) => {
           if (binding.type === 'call') {
-            let fn = proxy[binding.method](
-              e,
+            let v =
               binding.realPath &&
-                getValueAtPath(
-                  binding.realPath,
-                  proxy
-                )
-            );
+              getValueAtPath(
+                binding.realPath,
+                proxy
+              );
+
+            let fn = proxy[binding.method](e, v);
             if (fn) {
               requestAnimationFrame(fn);
             }

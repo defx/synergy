@@ -19,7 +19,9 @@ const proxy = (obj, callback) => {
   const getPaths = (target, property) => {
     const paths = cache.get(target);
     if (!paths.length) return [property];
-    return paths.map((path) => path.split('.').concat(property).join('.'));
+    return paths.map((path) =>
+      path.split('.').concat(property).join('.')
+    );
   };
 
   const buildProxy = (value, paths) => {
@@ -37,8 +39,13 @@ const proxy = (obj, callback) => {
 
   const handler = {
     get: function (target, property) {
-      return ['Object', 'Array'].includes(typeOf(target[property]))
-        ? buildProxy(target[property], getPaths(target, property))
+      return ['Object', 'Array'].includes(
+        typeOf(target[property])
+      )
+        ? buildProxy(
+            target[property],
+            getPaths(target, property)
+          )
         : Reflect.get(...arguments);
     },
     set: function (target, property, value) {
@@ -52,7 +59,9 @@ const proxy = (obj, callback) => {
     },
     deleteProperty: function (target, property) {
       delete target[property];
-      getPaths(target, property).forEach((path) => scheduleCallback(path));
+      getPaths(target, property).forEach((path) =>
+        scheduleCallback(path)
+      );
       return true;
     },
   };
