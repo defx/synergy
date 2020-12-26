@@ -58,7 +58,7 @@ function observe(root = {}, options = {}) {
       ).concat(property);
 
       if (observedProperties.includes(path[0])) {
-        observed.set(path, value);
+        // observed.set(path, value);
       }
       scheduleCallback();
 

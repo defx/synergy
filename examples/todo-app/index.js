@@ -32,12 +32,6 @@ export const TodoApp = () => {
     },
     filters: Object.keys(filters),
     todos: [],
-    // set todos(value) {
-    //   todos = value;
-    // },
-    // get todos() {
-    //   return filters[this.activeFilter](todos);
-    // },
     activeFilter: 'all',
     addTodo(e) {
       if (!(e.key && e.key === 'Enter')) return;
