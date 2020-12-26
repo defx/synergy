@@ -157,11 +157,6 @@ export default (templateFragment, BINDING_ID) => {
       return;
     }
 
-    /* interestingly, its this "automatic reflection" which gets us into trouble with multiple paths. I mean, without it you'd be forced to add an event listener and then update the object yourself, in which case change detection would be based on whichever property the author changes (expected), rather than the path followed within the template, which can always be a derivation (getter). 
-    so...perhaps the thing to do is to rip this feature out? i've never really questioned it since adding it but now that i do...it is perhaps too much of an assumption anyway. 
-    
-    */
-
     if (
       name === 'name' &&
       (node.nodeName === 'INPUT' ||

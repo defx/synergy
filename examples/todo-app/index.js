@@ -28,16 +28,16 @@ export const TodoApp = () => {
   return {
     observedProperties: ['todos'],
     propertyChangedCallback() {
-      console.log('PCC');
-      storage.set('todos', todos);
+      storage.set('todos', this.todos);
     },
     filters: Object.keys(filters),
-    set todos(value) {
-      todos = value;
-    },
-    get todos() {
-      return filters[this.activeFilter](todos);
-    },
+    todos: [],
+    // set todos(value) {
+    //   todos = value;
+    // },
+    // get todos() {
+    //   return filters[this.activeFilter](todos);
+    // },
     activeFilter: 'all',
     addTodo(e) {
       if (!(e.key && e.key === 'Enter')) return;
@@ -172,7 +172,7 @@ export const markup = html`
       name="allDone"
     />
     <ul>
-      <!-- #each todo in todos -->
+      <!-- #each todo in filteredTodos -->
       <li
         class="todo"
         is-done="{{todo.completed}}"

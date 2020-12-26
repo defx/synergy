@@ -1,5 +1,6 @@
 export const isWhitespace = (node) =>
-  node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
+  node.nodeType === node.TEXT_NODE &&
+  node.nodeValue.match(/^\s+$/);
 
 export function walk(node, callback, path = [0]) {
   if (callback(node, path) === false) return;
@@ -8,7 +9,8 @@ export function walk(node, callback, path = [0]) {
   node = node.firstChild;
 
   while (node) {
-    if (!isWhitespace(node)) walk(node, callback, path.concat(++i));
+    if (!isWhitespace(node))
+      walk(node, callback, path.concat(++i));
     node = node.nextSibling;
   }
 }
@@ -23,7 +25,8 @@ export const resolve = (path, context) => {
     path = path
       .split('.')
       .map((v) => {
-        if (v === valueIdentifier) return `${prop}.*`;
+        if (v === valueIdentifier)
+          return `${prop}.*`;
 
         return v;
       })
@@ -32,7 +35,8 @@ export const resolve = (path, context) => {
   return path;
 };
 
-export const hasMustache = (v) => v.match(/({{[^{}]+}})/);
+export const hasMustache = (v) =>
+  v.match(/({{[^{}]+}})/);
 
 export const getParts = (value, context) =>
   value
@@ -45,7 +49,10 @@ export const getParts = (value, context) =>
       if (match)
         return {
           type: 'key',
-          value: resolve(match[1].trim(), context),
+          value: resolve(
+            match[1].trim(),
+            context
+          ),
         };
 
       return {
@@ -66,12 +73,17 @@ export const debounce = (fn) => {
 };
 
 export const typeOf = (v) =>
-  Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
+  Object.prototype.toString
+    .call(v)
+    .match(/\s(.+[^\]])/)[1];
 
-export const copy = (v) => v && JSON.parse(JSON.stringify(v));
+export const copy = (v) =>
+  v && JSON.parse(JSON.stringify(v));
 
 const parseEach = (str) => {
-  let [left, prop] = str.split(/\s+in\s+/).map((v) => v.trim());
+  let [left, prop] = str
+    .split(/\s+in\s+/)
+    .map((v) => v.trim());
   return { valueIdentifier: left, prop };
 };
 
@@ -86,7 +98,11 @@ const parseArgs = (args) =>
         }, {})
     : {};
 
-export const parseEachDeclaration = (str, context, args) => {
+export const parseEachDeclaration = (
+  str,
+  context,
+  args
+) => {
   let v = parseEach(str);
 
   return {
@@ -97,14 +113,26 @@ export const parseEachDeclaration = (str, context, args) => {
 };
 
 export const getValueAtPath = (path, target) =>
-  path.split('.').reduce((o, k) => o && o[k], target);
+  path
+    .split('.')
+    .reduce((o, k) => o && o[k], target);
 
-export const setValueAtPath = (path, value, target) => {
+export const setValueAtPath = (
+  path,
+  value,
+  target
+) => {
   let parts = path.split('.');
-  if (parts.length === 1) return (target[path] = value);
-  target = getValueAtPath(parts.slice(0, -1).join('.'), target);
+  if (parts.length === 1)
+    return (target[path] = value);
+  target = getValueAtPath(
+    parts.slice(0, -1).join('.'),
+    target
+  );
   target[last(parts)] = value;
 };
 
 export const removeNodes = (nodes) =>
-  nodes.forEach((node) => node.parentNode.removeChild(node));
+  nodes.forEach((node) =>
+    node.parentNode.removeChild(node)
+  );
