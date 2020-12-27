@@ -1,6 +1,12 @@
-import { typeOf } from './helpers.js';
+import { debounce, typeOf } from './helpers.js';
 
 const NOOP = () => {};
+
+/*
+
+@TODO: callbackObserved with TP prop & value
+
+*/
 
 function observe(
   root = {},
@@ -76,12 +82,3 @@ function observe(
 }
 
 export default observe;
-
-// let z = observe(
-//   { foo: { bar: 123 }, fe: { fi: 'fo' } },
-//   () => console.log('ANY'),
-//   () => console.log('SPECIFIC'),
-//   ['foo']
-// );
-
-// z.foo.bar = 234;
