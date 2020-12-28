@@ -61,9 +61,6 @@ $ npm i synergy
 You can find the Synergy documentation
 [on the website](https://synergyjs.org/documentation).
 
-You can improve it by sending pull requests to
-[this repository](https://github.com/synergyjs/synergyjs.org).
-
 ## Example
 
 ### Step 1. Define your custom element
