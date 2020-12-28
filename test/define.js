@@ -44,10 +44,9 @@ describe('define', () => {
   });
   it('should reflect attribute changes on to viewmodel', async () => {
     let name = `x-${count++}`;
-    let factory = (props) => ({
-      ...props,
+    let factory = ({ title }) => ({
+      title,
     });
-    factory.observedAttributes = ['title'];
     synergy.define(
       name,
       factory,
@@ -74,7 +73,6 @@ describe('define', () => {
         this.hidden = !this.hidden;
       },
     });
-    factory.observedAttributes = ['hidden'];
     synergy.define(
       name,
       factory,
