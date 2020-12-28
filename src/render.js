@@ -54,8 +54,8 @@ function render(mountNode, viewmodel, template) {
   let proxy = observe(
     viewmodel,
     () => update(mountNode, proxy),
-    () => viewmodel.propertyChangedCallback(),
-    viewmodel.observedProperties
+    viewmodel.observedProperties,
+    () => viewmodel.propertyChangedCallback()
   );
 
   subscribe(

@@ -11,8 +11,8 @@ const NOOP = () => {};
 function observe(
   root = {},
   callbackAny,
-  callbackObserved = NOOP,
-  observedProperties = []
+  observedProperties = [],
+  callbackObserved = NOOP
 ) {
   let proxyCache = new WeakMap();
 
