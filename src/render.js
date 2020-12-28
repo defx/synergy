@@ -2,7 +2,7 @@ import parse from './parser.js';
 import subscribe from './subscribe.js';
 import hydrate from './hydrate.js';
 import Updater from './update.js';
-import observe from './watch.js';
+import observe from './observe.js';
 
 let counter = 1;
 
