@@ -32,7 +32,9 @@ function templateNodeFromString(v = '') {
 }
 
 function stylesExistInDoc(name) {
-  return document.querySelector(`head style[id="elementary-${name}"]`);
+  return document.querySelector(
+    `head style[id="elementary-${name}"]`
+  );
 }
 
 function mountStyles(name, css) {
@@ -42,18 +44,43 @@ function mountStyles(name, css) {
   document.head.appendChild(el);
 }
 
+const getObservedAttributes = (factory) => {
+  let attrs = new Set();
+  factory(
+    new Proxy(
+      {},
+      {
+        get(_, property) {
+          attrs.add(property);
+        },
+      }
+    )
+  );
+  return Array.from(attrs);
+};
+
 const define = (
   name,
   factory,
-  template = document.querySelector(`template#${name}`)
+  template = document.querySelector(
+    `template#${name}`
+  )
 ) => {
-  const observedAttributes = factory.observedAttributes || [];
+  let observedAttributes = getObservedAttributes(
+    factory
+  );
 
-  if (typeof template === 'string') template = templateNodeFromString(template);
-  let styleNode = template.content.querySelector('style[scoped]');
+  if (typeof template === 'string')
+    template = templateNodeFromString(template);
+  let styleNode = template.content.querySelector(
+    'style[scoped]'
+  );
 
   if (styleNode && !stylesExistInDoc(name)) {
-    mountStyles(name, prefixSelectors(name, styleNode.textContent));
+    mountStyles(
+      name,
+      prefixSelectors(name, styleNode.textContent)
+    );
     styleNode.remove();
   }
 
@@ -64,31 +91,44 @@ const define = (
     constructor() {
       super();
 
-      let viewmodel = factory(initialAttributes(this));
+      let props = initialAttributes(this);
 
-      wrap(viewmodel, 'propertyChangedCallback', (k, v) => {
-        if (observedAttributes.includes(k)) {
-          if (v || v === '') {
-            this.setAttribute(k, v);
-          } else {
-            this.removeAttribute(k);
+      let viewmodel = factory(props);
+
+      wrap(
+        viewmodel,
+        'propertyChangedCallback',
+        (k, v) => {
+          if (observedAttributes.includes(k)) {
+            if (v || v === '') {
+              this.setAttribute(k, v);
+            } else {
+              this.removeAttribute(k);
+            }
           }
         }
-      });
+      );
 
-      viewmodel.beforeMountCallback = (frag) => mergeSlots(this, frag);
+      viewmodel.beforeMountCallback = (frag) =>
+        mergeSlots(this, frag);
 
-      this.viewmodel = synergy.render(this, viewmodel, template);
+      this.viewmodel = synergy.render(
+        this,
+        viewmodel,
+        template
+      );
     }
     attributeChangedCallback(k, _, v) {
-      if (this.viewmodel) this.viewmodel[k] = v === '' ? true : v;
+      if (this.viewmodel)
+        this.viewmodel[k] = v === '' ? true : v;
     }
   };
 
   forwards.forEach((k) =>
     Object.assign(X.prototype, {
       [k](...args) {
-        if (this.viewmodel && this.viewmodel[k]) this.viewmodel[k](...args);
+        if (this.viewmodel && this.viewmodel[k])
+          this.viewmodel[k](...args);
       },
     })
   );
