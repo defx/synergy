@@ -48,14 +48,21 @@ function observe(
       }
     },
     set(target, property, value) {
+      if (value === target[property]) return true;
       scheduleCallback(callbackAny);
       if (
         target === root &&
         observedProperties.includes(property)
       ) {
-        scheduleCallback(callbackObserved);
+        scheduleCallback(() =>
+          callbackObserved(property, value)
+        );
       }
       return Reflect.set(...arguments);
+    },
+    deleteProperty(target, property) {
+      scheduleCallback(callbackAny);
+      return Reflect.deleteProperty(...arguments);
     },
   };
 
@@ -72,9 +79,16 @@ function observe(
       }
     },
     set(target, property, value) {
+      if (value === target[property]) return true;
       scheduleCallback(callbackAny);
-      scheduleCallback(callbackObserved);
+      scheduleCallback(() =>
+        callbackObserved(property, value)
+      );
       return Reflect.set(...arguments);
+    },
+    deleteProperty(target, property) {
+      scheduleCallback(callbackAny);
+      return Reflect.deleteProperty(...arguments);
     },
   };
 
