@@ -1,6 +1,5 @@
 import {
   ATTRIBUTE,
-  ATTRIBUTE_SPREAD,
   INPUT,
   TEXT,
   LIST,
@@ -127,18 +126,6 @@ export default (templateFragment, BINDING_ID) => {
     node,
     context
   ) => {
-    if (name.charAt(0) === '{') {
-      let match = name.match(/{{\.{3}([^{}]+)}}/);
-      if (match) {
-        node.removeAttribute(name);
-        node.__bindings__.push({
-          name,
-          path: resolve(match[1], context),
-          type: ATTRIBUTE_SPREAD,
-        });
-      }
-    }
-
     if (name.startsWith('on')) {
       node.removeAttribute(name);
       let lastContext = last(context);

@@ -1,7 +1,9 @@
 describe('attributes', () => {
   let view, rootNode;
   beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
+    rootNode = mount(
+      html`<div id="container"></div>`
+    );
   });
 
   it('should always cast primitive values to strings, unless null or undefined', () => {
@@ -23,19 +25,28 @@ describe('attributes', () => {
           <li id="number">{{ number }}</li>
           <li id="string">{{ string }}</li>
           <li id="mixed">
-            {{ boolean }} + {{ undefined }} + {{ number }} + {{ string }} + {{
-            null }}
+            {{ boolean }} + {{ undefined }} + {{
+            number }} + {{ string }} + {{ null }}
           </li>
         </ul>
       `
     );
 
-    assert.equal($('#boolean').textContent, 'false');
+    assert.equal(
+      $('#boolean').textContent,
+      'false'
+    );
     assert.equal($('#undefined').textContent, '');
     assert.equal($('#null').textContent, '');
     assert.equal($('#number').textContent, '0');
-    assert.equal($('#string').textContent, 'string');
-    assert.equal($('#mixed').textContent, 'false +  + 0 + string + ');
+    assert.equal(
+      $('#string').textContent,
+      'string'
+    );
+    assert.equal(
+      $('#mixed').textContent,
+      'false +  + 0 + string + '
+    );
   });
 
   it('should support multiple bindings', () => {
@@ -47,7 +58,10 @@ describe('attributes', () => {
       },
       html` <p>{{c1}} + {{c2}}</p> `
     );
-    assert.equal(rootNode.querySelector('p').textContent, 'red + green');
+    assert.equal(
+      rootNode.querySelector('p').textContent,
+      'red + green'
+    );
   });
 
   it('should apply all the values', () => {
@@ -56,10 +70,15 @@ describe('attributes', () => {
       {
         classes: ['one', 'two', 'three'],
       },
-      html` <section class="{{classes}}"></section> `
+      html`
+        <section class="{{classes}}"></section>
+      `
     );
 
-    assert.equal($('section').className, 'one two three');
+    assert.equal(
+      $('section').className,
+      'one two three'
+    );
   });
 
   it('should apply all the keys with truthy values', () => {
@@ -75,76 +94,15 @@ describe('attributes', () => {
           six: 'ok',
         },
       },
-      html` <section class="{{classes}}"></section> `
-    );
-
-    assert.equal($('section').className, 'one three six');
-  });
-
-  it('should spread attributes', () => {
-    view = synergy.render(
-      rootNode,
-      {
-        foo: {
-          name: 'slider',
-          type: 'range',
-          min: '0',
-          max: '360',
-          step: null,
-          ariaExpanded: false,
-        },
-      },
       html`
-        <section>
-          <input {{...foo}} />
-        </section>
+        <section class="{{classes}}"></section>
       `
     );
 
-    assert.equal($('input').getAttribute('name'), 'slider');
-    assert.equal($('input').getAttribute('type'), 'range');
-    assert.equal($('input').getAttribute('min'), '0');
-    assert.equal($('input').getAttribute('max'), '360');
-    assert.equal($('input').getAttribute('step'), null);
-    assert.equal($('input').getAttribute('aria-expanded'), 'false');
-  });
-
-  it('should remember previous spread attributes', async () => {
-    view = synergy.render(
-      rootNode,
-      {
-        foo: {
-          name: 'slider',
-          type: 'range',
-          min: '0',
-          max: '360',
-          step: null,
-          ariaExpanded: false,
-        },
-      },
-      html`
-        <section>
-          <input {{...foo}} />
-        </section>
-      `
+    assert.equal(
+      $('section').className,
+      'one three six'
     );
-
-    view.foo = {
-      name: 'slider',
-      min: '0',
-      max: '360',
-      step: 1,
-      ariaExpanded: 'undefined',
-    };
-
-    await nextFrame();
-
-    assert.equal($('input').getAttribute('name'), 'slider');
-    assert.equal($('input').getAttribute('type'), null);
-    assert.equal($('input').getAttribute('min'), '0');
-    assert.equal($('input').getAttribute('max'), '360');
-    assert.equal($('input').getAttribute('step'), '1');
-    assert.equal($('input').getAttribute('aria-expanded'), 'undefined');
   });
 
   it('should apply styles', () => {
@@ -184,7 +142,9 @@ describe('attributes', () => {
     $('section').style.opacity = '0.5';
 
     assert.ok(
-      $('section').getAttribute('style').includes('background-color: gold;')
+      $('section')
+        .getAttribute('style')
+        .includes('background-color: gold;')
     );
 
     view.foo = `
@@ -197,10 +157,16 @@ describe('attributes', () => {
     await nextFrame();
 
     assert.ok(
-      $('section').getAttribute('style').includes('background-color: tomato;')
+      $('section')
+        .getAttribute('style')
+        .includes('background-color: tomato;')
     );
 
-    assert.ok($('section').getAttribute('style').includes('opacity: 0.5;'));
+    assert.ok(
+      $('section')
+        .getAttribute('style')
+        .includes('opacity: 0.5;')
+    );
   });
 
   it('should apply styles (Object / kebab)', () => {
@@ -252,7 +218,10 @@ describe('attributes', () => {
       },
       html` <p name="{{ c1 }}">{{ c2 }}</p> `
     );
-    assert.equal($('p').getAttribute('name'), 'red');
+    assert.equal(
+      $('p').getAttribute('name'),
+      'red'
+    );
     assert.equal($('p').textContent, 'green');
   });
 

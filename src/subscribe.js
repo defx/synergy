@@ -1,8 +1,4 @@
 import {
-  TARGET,
-  ROOT_PROXY,
-} from './constants.js';
-import {
   getValueAtPath,
   setValueAtPath,
 } from './helpers.js';
@@ -82,16 +78,7 @@ const subscribe = (
               requestAnimationFrame(fn);
             }
           }
-          /*
-          
-          the only failing tests is where we manually check each checkbox inside filteredTodos.
 
-          because the path is filteredTodos.*.completed, proxy doesn't detect any change at todos.*
-
-          another way to solve this problem is simply to create a new proxycache for each path we want to listen to. this allows us to retain the proxy at the path we're interested in, regardless of whether the same target object shows up at a new path.
-          
-          
-          */
           if (binding.type === 'set') {
             setValueAtPath(
               binding.realPath,

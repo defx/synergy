@@ -3,7 +3,6 @@ import {
   LIST_ITEM,
   TEXT,
   ATTRIBUTE,
-  ATTRIBUTE_SPREAD,
   INPUT,
 } from './constants.js';
 import {
@@ -17,13 +16,21 @@ import {
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
 
-const updateList = (placeholder, binding, delta) => {
+const updateList = (
+  placeholder,
+  binding,
+  delta
+) => {
   let listItems = binding.listItems;
   let fragment = document.createDocumentFragment();
   listItems.forEach(removeNodes);
   binding.listItems = delta.map((i, newIndex) => {
     let nodes =
-      i === -1 ? binding.nodes.map((node) => cloneNode(node)) : listItems[i];
+      i === -1
+        ? binding.nodes.map((node) =>
+            cloneNode(node)
+          )
+        : listItems[i];
 
     nodes.forEach((el) => {
       el.__index__ = newIndex;
@@ -47,13 +54,17 @@ const resolve = (path, ctx) => {
 };
 
 const getValue = (path, ctx, target, binding) => {
-  if (path === '.') return ctx[last(binding.context).prop];
+  if (path === '.')
+    return ctx[last(binding.context).prop];
 
   let negated = path.charAt(0) === '!';
 
   if (negated) path = path.slice(1);
 
-  let value = getValueAtPath(resolve(path, ctx), target);
+  let value = getValueAtPath(
+    resolve(path, ctx),
+    target
+  );
 
   return negated ? !value : value;
 };
@@ -63,7 +74,9 @@ const parseStyles = (value) => {
 
   if (type === 'string')
     return value.split(';').reduce((o, value) => {
-      const [k, v] = value.split(':').map((v) => v.trim());
+      const [k, v] = value
+        .split(':')
+        .map((v) => v.trim());
       if (k) o[k] = v;
       return o;
     }, {});
@@ -105,10 +118,16 @@ const convertStyles = (o) =>
     return a;
   }, {});
 
-const applyAttribute = (node, rawName, value, previous) => {
+const applyAttribute = (
+  node,
+  rawName,
+  value,
+  previous
+) => {
   let name = toKebab(rawName);
 
-  if (name.match(/^aria\-/)) return node.setAttribute(name, '' + value);
+  if (name.match(/^aria\-/))
+    return node.setAttribute(name, '' + value);
 
   if ([undefined, null, false].includes(value))
     return node.removeAttribute(name);
@@ -147,36 +166,71 @@ const applyAttribute = (node, rawName, value, previous) => {
   return node.setAttribute(name, v);
 };
 
-const updateNode = (node, binding, newValue, oldValue) =>
+const updateNode = (
+  node,
+  binding,
+  newValue,
+  oldValue
+) =>
   binding.type === ATTRIBUTE
-    ? applyAttribute(node, binding.name, newValue, oldValue)
+    ? applyAttribute(
+        node,
+        binding.name,
+        newValue,
+        oldValue
+      )
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p) => {
   if (binding.eventName)
-    return binding.path && (binding.realPath = resolve(binding.path, ctx));
+    return (
+      binding.path &&
+      (binding.realPath = resolve(
+        binding.path,
+        ctx
+      ))
+    );
 
-  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
+  if (binding.type === LIST_ITEM)
+    return (ctx[binding.path] = node.__index__);
 
   let oldValue = binding.data;
 
   if (binding.path) {
     const { path } = binding;
-    const newValue = getValue(path, ctx, p, binding);
+    const newValue = getValue(
+      path,
+      ctx,
+      p,
+      binding
+    );
 
     binding.data = newValue;
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
-      return delta && updateList(node, binding, delta);
+      const delta = compareKeyedLists(
+        binding.uid,
+        oldValue,
+        newValue
+      );
+      return (
+        delta && updateList(node, binding, delta)
+      );
     }
 
     if (oldValue === newValue) return;
 
     if (binding.type === INPUT) {
-      if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
-        Array.from(node.querySelectorAll('option')).forEach((option) => {
-          option.selected = newValue.includes(option.value);
+      if (
+        node.hasAttribute('multiple') &&
+        node.nodeName === 'SELECT'
+      ) {
+        Array.from(
+          node.querySelectorAll('option')
+        ).forEach((option) => {
+          option.selected = newValue.includes(
+            option.value
+          );
         });
         return;
       }
@@ -191,7 +245,9 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         case 'radio':
-          node.checked = newValue === node.getAttribute('value');
+          node.checked =
+            newValue ===
+            node.getAttribute('value');
           if (node.checked) {
             node.setAttribute('checked', '');
           } else {
@@ -199,25 +255,12 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         default:
-          node.setAttribute('value', (node.value = newValue || ''));
+          node.setAttribute(
+            'value',
+            (node.value = newValue || '')
+          );
           break;
       }
-      return;
-    }
-
-    if (binding.type === ATTRIBUTE_SPREAD) {
-      oldValue = oldValue || {};
-
-      for (let k in newValue) {
-        applyAttribute(node, k, newValue[k], oldValue[k]);
-      }
-
-      for (let k in oldValue) {
-        if (k in newValue === false) {
-          node.removeAttribute(k);
-        }
-      }
-
       return;
     }
   }
@@ -229,8 +272,15 @@ const updateBinding = (binding, node, ctx, p) => {
       ? getValue(parts[0].value, ctx, p, binding)
       : parts.reduce((a, { type, value }) => {
           if (type === 'key') {
-            let v = getValue(value, ctx, p, binding);
-            return [undefined, null].includes(v) ? a : a + v;
+            let v = getValue(
+              value,
+              ctx,
+              p,
+              binding
+            );
+            return [undefined, null].includes(v)
+              ? a
+              : a + v;
           } else {
             return a + value;
           }
@@ -243,7 +293,10 @@ const updateBinding = (binding, node, ctx, p) => {
   updateNode(node, binding, newValue, oldValue);
 };
 
-const Updater = (BINDING_ID) => (rootNode, data) => {
+const Updater = (BINDING_ID) => (
+  rootNode,
+  data
+) => {
   let ctx = {};
   let p = copy(data);
 
@@ -253,7 +306,9 @@ const Updater = (BINDING_ID) => (rootNode, data) => {
     let bindings = node.__bindings__;
 
     if (bindings)
-      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
+      bindings.forEach((binding) =>
+        updateBinding(binding, node, ctx, p)
+      );
   });
 };
 
