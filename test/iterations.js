@@ -49,8 +49,8 @@ describe('iterations', () => {
         <ul>
           <!-- #each colour in colours -->
           <li>
-            <p>{{.}}</p>
-            <p>{{colour}}</p>
+            <p>{{ # }}</p>
+            <p>{{ colour }}</p>
           </li>
           <!-- /each -->
         </ul>
