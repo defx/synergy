@@ -44,32 +44,16 @@ function mountStyles(name, css) {
   document.head.appendChild(el);
 }
 
-const getObservedAttributes = (factory) => {
-  let attrs = new Set();
-  factory(
-    new Proxy(
-      {},
-      {
-        get(_, property) {
-          attrs.add(property);
-        },
-      }
-    )
-  );
-  return Array.from(attrs);
-};
-
 const define = (
   name,
   factory,
-  template = document.querySelector(
-    `template#${name}`
-  )
+  {
+    template = document.querySelector(
+      `template#${name}`
+    ),
+    observedAttributes = [],
+  } = {}
 ) => {
-  let observedAttributes = getObservedAttributes(
-    factory
-  );
-
   if (typeof template === 'string')
     template = templateNodeFromString(template);
   let styleNode = template.content.querySelector(
@@ -93,7 +77,7 @@ const define = (
 
       let props = initialAttributes(this);
 
-      let viewmodel = factory(props);
+      let viewmodel = factory(props, this);
 
       wrap(
         viewmodel,
