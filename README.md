@@ -43,7 +43,7 @@ Synergy package directly from a CDN.
 
 ```html
 <script type="module">
-  import synergy from 'https://unpkg.com/synergy@1.5.2';
+  import synergy from 'https://unpkg.com/synergy@1.5.3';
 </script>
 ```
 
@@ -67,7 +67,7 @@ You can find the Synergy documentation
 
 ```html
 <script type="module">
-  import define from 'https://unpkg.com/synergy@1.5.2';
+  import define from 'https://unpkg.com/synergy@1.5.3';
 
   define('hello-world', ({ name }) => ({ name }));
 </script>
