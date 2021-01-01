@@ -3,17 +3,17 @@ describe('define', () => {
 
   it('should define a custom element', () => {
     let name = `x-${count++}`;
-    synergy.define(name, () => {}, {
-      template: '',
-    });
+    synergy.define(name, () => {}, '');
     assert.ok(customElements.get(name));
   });
   it('should initialise factory with initial attributes', () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({ title });
-    synergy.define(name, factory, {
-      template: '<p>{{ title }}</p>',
-    });
+    synergy.define(
+      name,
+      factory,
+      '<p>{{ title }}</p>'
+    );
     mount(`
       <${name} title="ok!"></${name}>
       `);
@@ -23,34 +23,20 @@ describe('define', () => {
       'ok!'
     );
   });
-  it('should use template with id matching element name if no string template is provided', () => {
-    let name = `x-${count++}`;
-    let factory = ({ title }) => ({ title });
-    let template = document.createElement(
-      'template'
-    );
-    template.innerHTML = '<p>{{ title }}</p>';
-    template.id = name;
-    document.body.appendChild(template);
-    synergy.define(name, factory);
-    mount(`
-      <${name} title="ok!"></${name}>
-      `);
-    let el = document.querySelector(name);
-    assert.equal(
-      el.querySelector('p').textContent,
-      'ok!'
-    );
-  });
+
   it('should reflect attribute changes on to viewmodel', async () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({
       title,
     });
-    synergy.define(name, factory, {
-      template: '<p>{{ title }}</p>',
-      observedAttributes: ['title'],
-    });
+    synergy.define(
+      name,
+      factory,
+      '<p>{{ title }}</p>',
+      {
+        observedAttributes: ['title'],
+      }
+    );
     mount(`
       <${name} title="ok!"></${name}>
       `);
@@ -72,11 +58,14 @@ describe('define', () => {
         this.hidden = !this.hidden;
       },
     });
-    synergy.define(name, factory, {
-      template:
-        '<p hidden={{ hidden }}>hello world!</p><button onclick="toggle">toggle</button>',
-      observedAttributes: ['hidden'],
-    });
+    synergy.define(
+      name,
+      factory,
+      '<p hidden={{ hidden }}>hello world!</p><button onclick="toggle">toggle</button>',
+      {
+        observedAttributes: ['hidden'],
+      }
+    );
     mount(`
       <${name}></${name}>
       `);
@@ -93,8 +82,10 @@ describe('define', () => {
   it('should extract style element, prefix selectors with type selector and append styles to document head', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
-    synergy.define(name, factory, {
-      template: html`
+    synergy.define(
+      name,
+      factory,
+      html`
         <style scoped>
           button,
           p {
@@ -102,8 +93,8 @@ describe('define', () => {
           }
         </style>
         <p>Hello world!</p>
-      `,
-    });
+      `
+    );
     mount(`
           <${name}></${name}>
           `);
@@ -124,9 +115,11 @@ describe('define', () => {
   it('should merge default slot', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
-    synergy.define(name, factory, {
-      template: html`hello <slot></slot>!`,
-    });
+    synergy.define(
+      name,
+      factory,
+      html`hello <slot></slot>!`
+    );
     mount(`
           <${name}>world</${name}>
           `);
@@ -141,11 +134,13 @@ describe('define', () => {
   it('should merge named slots', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
-    synergy.define(name, factory, {
-      template: html`<slot name="foo"></slot
+    synergy.define(
+      name,
+      factory,
+      html`<slot name="foo"></slot
         ><slot name="bar"></slot
-        ><slot>hello</slot>`,
-    });
+        ><slot>hello</slot>`
+    );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);

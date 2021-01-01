@@ -1,7 +1,7 @@
 import synergy from './index.js';
-
 import prefixSelectors from './prefixSelectors.js';
 import mergeSlots from './mergeSlots.js';
+import { templateFromString } from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -25,12 +25,6 @@ const forwards = [
   'adoptedCallback',
 ];
 
-function templateNodeFromString(v = '') {
-  let tpl = document.createElement('template');
-  tpl.innerHTML = v;
-  return tpl;
-}
-
 function stylesExistInDoc(name) {
   return document.querySelector(
     `head style[id="elementary-${name}"]`
@@ -47,15 +41,11 @@ function mountStyles(name, css) {
 const define = (
   name,
   factory,
-  {
-    template = document.querySelector(
-      `template#${name}`
-    ),
-    observedAttributes = [],
-  } = {}
+  template,
+  { observedAttributes = [] } = {}
 ) => {
   if (typeof template === 'string')
-    template = templateNodeFromString(template);
+    template = templateFromString(template);
   let styleNode = template.content.querySelector(
     'style[scoped]'
   );

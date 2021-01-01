@@ -136,3 +136,9 @@ export const removeNodes = (nodes) =>
   nodes.forEach((node) =>
     node.parentNode.removeChild(node)
   );
+
+export function templateFromString(v = '') {
+  let tpl = document.createElement('template');
+  tpl.innerHTML = v;
+  return tpl;
+}
