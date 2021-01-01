@@ -27,14 +27,14 @@ const forwards = [
 
 function stylesExistInDoc(name) {
   return document.querySelector(
-    `head style[id="elementary-${name}"]`
+    `head style[id="synergy-${name}"]`
   );
 }
 
 function mountStyles(name, css) {
   let el = document.createElement('style');
   el.textContent = css;
-  el.id = `elementary-${name}`;
+  el.id = `synergy-${name}`;
   document.head.appendChild(el);
 }
 

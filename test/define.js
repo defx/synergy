@@ -101,7 +101,7 @@ describe('define', () => {
 
     let el = document.querySelector(name);
     let style = document.querySelector(
-      `head style[id="elementary-${name}"]`
+      `head style[id="synergy-${name}"]`
     );
 
     assert.equal(
