@@ -1,12 +1,44 @@
-import synergy from './index.js';
-import prefixSelectors from './prefixSelectors.js';
-import mergeSlots from './mergeSlots.js';
-import { templateFromString } from './helpers.js';
+import synergy from "./index.js";
+import prefixSelectors from "./prefixSelectors.js";
+import mergeSlots from "./mergeSlots.js";
+import { templateFromString } from "./helpers.js";
+
+const pascalToKebab = (string) =>
+  string.replace(/[\w]([A-Z])/g, function (m) {
+    return m[0] + "-" + m[1].toLowerCase();
+  });
+
+const kebabToPascal = (string) =>
+  string.replace(/[\w]-([\w])/g, function (m) {
+    return m[0] + m[2].toUpperCase();
+  });
+
+const attributeToProp = (k, v) => {
+  let name = kebabToPascal(k);
+  if (v === "") v = true;
+  if (k.startsWith("aria-")) {
+    if (v === "true") v = true;
+    if (v === "false") v = false;
+  }
+  return {
+    name,
+    value: v,
+  };
+};
+
+const propToAttribute = (k, v) => {
+  let name = pascalToKebab(k);
+  if (typeof v === "boolean" && name.startsWith("aria-")) {
+    v = v.toString();
+  }
+  return { name, value: v };
+};
 
 const initialAttributes = (node) => {
   const o = {};
   for (let { name, value } of node.attributes) {
-    o[name] = value === '' ? true : value;
+    let x = attributeToProp(name, value);
+    o[x.name] = x.value;
   }
   return o;
 };
@@ -20,19 +52,17 @@ const wrap = (target, name, method) => {
 };
 
 const forwards = [
-  'connectedCallback',
-  'disconnectedCallback',
-  'adoptedCallback',
+  "connectedCallback",
+  "disconnectedCallback",
+  "adoptedCallback",
 ];
 
 function stylesExistInDoc(name) {
-  return document.querySelector(
-    `head style[id="synergy-${name}"]`
-  );
+  return document.querySelector(`head style[id="synergy-${name}"]`);
 }
 
 function mountStyles(name, css) {
-  let el = document.createElement('style');
+  let el = document.createElement("style");
   el.textContent = css;
   el.id = `synergy-${name}`;
   document.head.appendChild(el);
@@ -44,19 +74,16 @@ const define = (
   template,
   { observedAttributes = [] } = {}
 ) => {
-  if (typeof template === 'string')
+  if (typeof template === "string")
     template = templateFromString(template);
-  let styleNode = template.content.querySelector(
-    'style[scoped]'
-  );
+  let styleNode = template.content.querySelector("style[scoped]");
 
   if (styleNode && !stylesExistInDoc(name)) {
-    mountStyles(
-      name,
-      prefixSelectors(name, styleNode.textContent)
-    );
+    mountStyles(name, prefixSelectors(name, styleNode.textContent));
     styleNode.remove();
   }
+
+  let observedProps = observedAttributes.map(kebabToPascal);
 
   let X = class extends HTMLElement {
     static get observedAttributes() {
@@ -65,44 +92,39 @@ const define = (
     constructor() {
       super();
 
-      let props = initialAttributes(this);
+      let viewmodel = factory(initialAttributes(this), this);
 
-      let viewmodel = factory(props, this);
+      viewmodel.observedProperties = (
+        viewmodel.observedProperties || []
+      ).concat(observedProps);
 
-      wrap(
-        viewmodel,
-        'propertyChangedCallback',
-        (k, v) => {
-          if (observedAttributes.includes(k)) {
-            if (v || v === '') {
-              this.setAttribute(k, v);
-            } else {
-              this.removeAttribute(k);
-            }
-          }
+      wrap(viewmodel, "propertyChangedCallback", (k, v) => {
+        if (!observedProps.includes(k)) return;
+        let { name, value } = propToAttribute(k, v);
+        if (value) {
+          this.setAttribute(name, value);
+        } else {
+          this.removeAttribute(name);
         }
-      );
+      });
 
       viewmodel.beforeMountCallback = (frag) =>
         mergeSlots(this, frag);
 
-      this.viewmodel = synergy.render(
-        this,
-        viewmodel,
-        template
-      );
+      this.viewmodel = synergy.render(this, viewmodel, template);
     }
     attributeChangedCallback(k, _, v) {
-      if (this.viewmodel)
-        this.viewmodel[k] = v === '' ? true : v;
+      if (this.viewmodel) {
+        let { name, value } = attributeToProp(k, v);
+        this.viewmodel[name] = value;
+      }
     }
   };
 
   forwards.forEach((k) =>
     Object.assign(X.prototype, {
-      [k](...args) {
-        if (this.viewmodel && this.viewmodel[k])
-          this.viewmodel[k](...args);
+      [k]() {
+        if (this.viewmodel && this.viewmodel[k]) this.viewmodel[k]();
       },
     })
   );
