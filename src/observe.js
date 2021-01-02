@@ -1,6 +1,4 @@
-import { debounce, typeOf } from './helpers.js';
-
-const NOOP = () => {};
+import { typeOf } from "./helpers.js";
 
 /*
 
@@ -12,7 +10,7 @@ function observe(
   root = {},
   callbackAny,
   observedProperties = [],
-  callbackObserved = NOOP
+  callbackObserved
 ) {
   let proxyCache = new WeakMap();
 
@@ -31,14 +29,9 @@ function observe(
 
   const handler1 = {
     get(target, property) {
-      if (
-        ['Object', 'Array'].includes(
-          typeOf(target[property])
-        )
-      ) {
+      if (["Object", "Array"].includes(typeOf(target[property]))) {
         let handler =
-          target === root &&
-          observedProperties.includes(property)
+          target === root && observedProperties.includes(property)
             ? handler2
             : handler1;
 
@@ -50,13 +43,8 @@ function observe(
     set(target, property, value) {
       if (value === target[property]) return true;
       scheduleCallback(callbackAny);
-      if (
-        target === root &&
-        observedProperties.includes(property)
-      ) {
-        scheduleCallback(() =>
-          callbackObserved(property, value)
-        );
+      if (target === root && observedProperties.includes(property)) {
+        scheduleCallback(() => callbackObserved(property, value));
       }
       return Reflect.set(...arguments);
     },
@@ -68,11 +56,7 @@ function observe(
 
   const handler2 = {
     get(target, property) {
-      if (
-        ['Object', 'Array'].includes(
-          typeOf(target[property])
-        )
-      ) {
+      if (["Object", "Array"].includes(typeOf(target[property]))) {
         return proxy(target[property], handler2);
       } else {
         return Reflect.get(...arguments);
@@ -81,9 +65,7 @@ function observe(
     set(target, property, value) {
       if (value === target[property]) return true;
       scheduleCallback(callbackAny);
-      scheduleCallback(() =>
-        callbackObserved(property, value)
-      );
+      scheduleCallback(() => callbackObserved(property, value));
       return Reflect.set(...arguments);
     },
     deleteProperty(target, property) {

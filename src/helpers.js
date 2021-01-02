@@ -54,17 +54,6 @@ export const getParts = (value, context) =>
       };
     });
 
-export const debounce = (fn) => {
-  let t;
-  return function () {
-    if (t) return;
-    t = requestAnimationFrame(() => {
-      fn();
-      t = null;
-    });
-  };
-};
-
 export const typeOf = (v) =>
   Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
