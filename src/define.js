@@ -1,38 +1,12 @@
 import synergy from "./index.js";
 import prefixSelectors from "./prefixSelectors.js";
 import mergeSlots from "./mergeSlots.js";
-import { templateFromString } from "./helpers.js";
-
-const pascalToKebab = (string) =>
-  string.replace(/[\w]([A-Z])/g, function (m) {
-    return m[0] + "-" + m[1].toLowerCase();
-  });
-
-const kebabToPascal = (string) =>
-  string.replace(/[\w]-([\w])/g, function (m) {
-    return m[0] + m[2].toUpperCase();
-  });
-
-const attributeToProp = (k, v) => {
-  let name = kebabToPascal(k);
-  if (v === "") v = true;
-  if (k.startsWith("aria-")) {
-    if (v === "true") v = true;
-    if (v === "false") v = false;
-  }
-  return {
-    name,
-    value: v,
-  };
-};
-
-const propToAttribute = (k, v) => {
-  let name = pascalToKebab(k);
-  if (typeof v === "boolean" && name.startsWith("aria-")) {
-    v = v.toString();
-  }
-  return { name, value: v };
-};
+import {
+  templateFromString,
+  kebabToPascal,
+  propToAttribute,
+  attributeToProp,
+} from "./helpers.js";
 
 const initialAttributes = (node) => {
   const o = {};

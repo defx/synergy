@@ -12,6 +12,8 @@ import {
   copy,
   removeNodes,
   last,
+  pascalToKebab,
+  propToAttribute,
 } from "./helpers.js";
 import cloneNode from "./cloneNode.js";
 import compareKeyedLists from "./compareKeyedLists.js";
@@ -93,29 +95,15 @@ const mergeStyles = (previous, current, next) => {
   return convertStyles(o);
 };
 
-const toKebab = (string) =>
-  string.replace(/[\w]([A-Z])/g, function (m) {
-    return m[0] + "-" + m[1].toLowerCase();
-  });
-
 const convertStyles = (o) =>
   Object.keys(o).reduce((a, k) => {
-    a[toKebab(k)] = o[k];
+    a[pascalToKebab(k)] = o[k];
     return a;
   }, {});
 
 const applyAttribute = (node, rawName, value, previous) => {
-  let name = toKebab(rawName);
-
-  if (name.match(/^aria\-/))
-    return node.setAttribute(name, "" + value);
-
-  if ([undefined, null, false].includes(value))
-    return node.removeAttribute(name);
-
-  let v;
-
-  if (name === "style") {
+  let v = value;
+  if (rawName === "style") {
     v = joinStyles(
       mergeStyles(
         parseStyles(previous),
@@ -125,9 +113,6 @@ const applyAttribute = (node, rawName, value, previous) => {
     );
   } else {
     switch (typeOf(value)) {
-      case "Boolean":
-        v = "";
-        break;
       case "Array":
         v = value.join(" ");
         break;
@@ -139,12 +124,16 @@ const applyAttribute = (node, rawName, value, previous) => {
           }, [])
           .join(" ");
         break;
-      default:
-        v = value;
-        break;
     }
   }
-  return node.setAttribute(name, v);
+
+  let a = propToAttribute(rawName, v);
+
+  if (v) {
+    node.setAttribute(a.name, a.value);
+  } else {
+    node.removeAttribute(a.name);
+  }
 };
 
 const updateNode = (node, binding, newValue, oldValue) =>
