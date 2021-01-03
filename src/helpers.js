@@ -21,13 +21,13 @@ export const resolve = (path, context) => {
     let { valueIdentifier, prop } = context[i];
 
     path = path
-      .split(".")
+      .split('.')
       .map((v) => {
         if (v === valueIdentifier) return `${prop}.*`;
 
         return v;
       })
-      .join(".");
+      .join('.');
   }
   return path;
 };
@@ -44,12 +44,12 @@ export const getParts = (value, context) =>
 
       if (match)
         return {
-          type: "key",
+          type: 'key',
           value: resolve(match[1].trim(), context),
         };
 
       return {
-        type: "value",
+        type: 'value',
         value: v,
       };
     });
@@ -67,8 +67,8 @@ const parseEach = (str) => {
 const parseArgs = (args) =>
   args
     ? args
-        .split(",")
-        .map((v) => v.split("="))
+        .split(',')
+        .map((v) => v.split('='))
         .reduce((a, [k, v]) => {
           a[k] = v;
           return a;
@@ -86,27 +86,27 @@ export const parseEachDeclaration = (str, context, args) => {
 };
 
 export const getValueAtPath = (path, target) =>
-  path.split(".").reduce((o, k) => o && o[k], target);
+  path.split('.').reduce((o, k) => o && o[k], target);
 
 export const setValueAtPath = (path, value, target) => {
-  let parts = path.split(".");
+  let parts = path.split('.');
   if (parts.length === 1) return (target[path] = value);
-  target = getValueAtPath(parts.slice(0, -1).join("."), target);
+  target = getValueAtPath(parts.slice(0, -1).join('.'), target);
   target[last(parts)] = value;
 };
 
 export const removeNodes = (nodes) =>
   nodes.forEach((node) => node.parentNode.removeChild(node));
 
-export function templateFromString(v = "") {
-  let tpl = document.createElement("template");
+export function templateFromString(v = '') {
+  let tpl = document.createElement('template');
   tpl.innerHTML = v;
   return tpl;
 }
 
 export const pascalToKebab = (string) =>
   string.replace(/[\w]([A-Z])/g, function (m) {
-    return m[0] + "-" + m[1].toLowerCase();
+    return m[0] + '-' + m[1].toLowerCase();
   });
 
 export const kebabToPascal = (string) =>
@@ -116,10 +116,10 @@ export const kebabToPascal = (string) =>
 
 export const attributeToProp = (k, v) => {
   let name = kebabToPascal(k);
-  if (v === "") v = true;
-  if (k.startsWith("aria-")) {
-    if (v === "true") v = true;
-    if (v === "false") v = false;
+  if (v === '') v = true;
+  if (k.startsWith('aria-')) {
+    if (v === 'true') v = true;
+    if (v === 'false') v = false;
   }
   return {
     name,
@@ -129,7 +129,7 @@ export const attributeToProp = (k, v) => {
 
 export const propToAttribute = (k, v) => {
   let name = pascalToKebab(k);
-  if (typeof v === "boolean" && name.startsWith("aria-")) {
+  if (typeof v === 'boolean' && name.startsWith('aria-')) {
     v = v.toString();
   }
   return { name, value: v };

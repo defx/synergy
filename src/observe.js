@@ -1,4 +1,4 @@
-import { typeOf } from "./helpers.js";
+import { typeOf } from './helpers.js';
 
 /*
 
@@ -29,7 +29,7 @@ function observe(
 
   const handler1 = {
     get(target, property) {
-      if (["Object", "Array"].includes(typeOf(target[property]))) {
+      if (['Object', 'Array'].includes(typeOf(target[property]))) {
         let handler =
           target === root && observedProperties.includes(property)
             ? handler2
@@ -56,7 +56,7 @@ function observe(
 
   const handler2 = {
     get(target, property) {
-      if (["Object", "Array"].includes(typeOf(target[property]))) {
+      if (['Object', 'Array'].includes(typeOf(target[property]))) {
         return proxy(target[property], handler2);
       } else {
         return Reflect.get(...arguments);

@@ -1,12 +1,12 @@
-import synergy from "./index.js";
-import prefixSelectors from "./prefixSelectors.js";
-import mergeSlots from "./mergeSlots.js";
+import synergy from './index.js';
+import prefixSelectors from './prefixSelectors.js';
+import mergeSlots from './mergeSlots.js';
 import {
   templateFromString,
   kebabToPascal,
   propToAttribute,
   attributeToProp,
-} from "./helpers.js";
+} from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -26,9 +26,9 @@ const wrap = (target, name, method) => {
 };
 
 const forwards = [
-  "connectedCallback",
-  "disconnectedCallback",
-  "adoptedCallback",
+  'connectedCallback',
+  'disconnectedCallback',
+  'adoptedCallback',
 ];
 
 function stylesExistInDoc(name) {
@@ -36,21 +36,15 @@ function stylesExistInDoc(name) {
 }
 
 function mountStyles(name, css) {
-  let el = document.createElement("style");
+  let el = document.createElement('style');
   el.textContent = css;
   el.id = `synergy-${name}`;
   document.head.appendChild(el);
 }
 
-const define = (
-  name,
-  factory,
-  template,
-  { observedAttributes = [] } = {}
-) => {
-  if (typeof template === "string")
-    template = templateFromString(template);
-  let styleNode = template.content.querySelector("style[scoped]");
+const define = (name, factory, template, { observedAttributes = [] } = {}) => {
+  if (typeof template === 'string') template = templateFromString(template);
+  let styleNode = template.content.querySelector('style[scoped]');
 
   if (styleNode && !stylesExistInDoc(name)) {
     mountStyles(name, prefixSelectors(name, styleNode.textContent));
@@ -72,7 +66,7 @@ const define = (
         viewmodel.observedProperties || []
       ).concat(observedProps);
 
-      wrap(viewmodel, "propertyChangedCallback", (k, v) => {
+      wrap(viewmodel, 'propertyChangedCallback', (k, v) => {
         if (!observedProps.includes(k)) return;
         let { name, value } = propToAttribute(k, v);
         if (value) {
@@ -82,8 +76,7 @@ const define = (
         }
       });
 
-      viewmodel.beforeMountCallback = (frag) =>
-        mergeSlots(this, frag);
+      viewmodel.beforeMountCallback = (frag) => mergeSlots(this, frag);
 
       this.viewmodel = synergy.render(this, viewmodel, template);
     }

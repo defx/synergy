@@ -1,24 +1,21 @@
-import parse from "./parser.js";
-import subscribe from "./subscribe.js";
-import hydrate from "./hydrate.js";
-import Updater from "./update.js";
-import observe from "./observe.js";
-import { templateFromString } from "./helpers.js";
+import parse from './parser.js';
+import subscribe from './subscribe.js';
+import hydrate from './hydrate.js';
+import Updater from './update.js';
+import observe from './observe.js';
+import { templateFromString } from './helpers.js';
 
 let counter = 1;
 
 function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
-  let templateNode = (typeof template === "string"
+  let templateNode = (typeof template === 'string'
     ? templateFromString(template)
     : template
   ).cloneNode(true).content;
 
-  let { subscribers, templateFragment } = parse(
-    templateNode,
-    BINDING_ID
-  );
+  let { subscribers, templateFragment } = parse(templateNode, BINDING_ID);
 
   let update = Updater(BINDING_ID);
 

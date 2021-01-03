@@ -1,10 +1,4 @@
-import {
-  ATTRIBUTE,
-  INPUT,
-  TEXT,
-  LIST,
-  LIST_ITEM,
-} from './constants.js';
+import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 
 import {
   getParts,
@@ -30,26 +24,16 @@ export default (templateFragment, BINDING_ID) => {
         node.bindingId = BINDING_ID;
       },
       openBlock(expr, args) {
-        stack.push(
-          parseEachDeclaration(expr, stack, args)
-        );
+        stack.push(parseEachDeclaration(expr, stack, args));
       },
       textNode(node) {
-        parseTextNode(
-          node.nodeValue,
-          node,
-          stack
-        );
+        parseTextNode(node.nodeValue, node, stack);
       },
       elementNode(node) {
         node.__bindings__ = [];
         parseElementNode(node, stack);
       },
-      closeBlock(
-        openingComment,
-        nodes,
-        closingComment
-      ) {
+      closeBlock(openingComment, nodes, closingComment) {
         removeNodes(nodes);
 
         let { key, prop } = last(stack);
@@ -81,9 +65,7 @@ export default (templateFragment, BINDING_ID) => {
         };
 
         nodes.forEach((node) => {
-          node.__bindings__.unshift(
-            listNodeBinding
-          );
+          node.__bindings__.unshift(listNodeBinding);
         });
 
         stack.pop();
@@ -101,9 +83,9 @@ export default (templateFragment, BINDING_ID) => {
 
     node.__bindings__ = [
       {
-        childIndex: Array.from(
-          node.parentNode.childNodes
-        ).findIndex((v) => v === node),
+        childIndex: Array.from(node.parentNode.childNodes).findIndex(
+          (v) => v === node
+        ),
         parts: getParts(value, context),
         type: TEXT,
         context: context.slice(),
@@ -121,11 +103,7 @@ export default (templateFragment, BINDING_ID) => {
     return context;
   };
 
-  let parseAttributeNode = (
-    { name, value },
-    node,
-    context
-  ) => {
+  let parseAttributeNode = ({ name, value }, node, context) => {
     if (name.startsWith('on')) {
       node.removeAttribute(name);
       let lastContext = last(context);
@@ -137,8 +115,7 @@ export default (templateFragment, BINDING_ID) => {
         eventName: eventName,
         type: 'call',
         method: value,
-        path:
-          lastContext && `${lastContext.prop}.*`,
+        path: lastContext && `${lastContext.prop}.*`,
       });
 
       return;
@@ -179,6 +156,7 @@ export default (templateFragment, BINDING_ID) => {
         name,
         parts: getParts(value, context),
         type: ATTRIBUTE,
+        context: context.slice(),
       });
     }
   };

@@ -48,7 +48,7 @@ describe('iterations', () => {
       html`
         <ul>
           <!-- #each colour in colours -->
-          <li>
+          <li id="item-{{ # }}">
             <p>{{ # }}</p>
             <p>{{ colour }}</p>
           </li>

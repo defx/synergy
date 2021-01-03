@@ -1,10 +1,4 @@
-import {
-  LIST,
-  LIST_ITEM,
-  TEXT,
-  ATTRIBUTE,
-  INPUT,
-} from "./constants.js";
+import { LIST, LIST_ITEM, TEXT, ATTRIBUTE, INPUT } from './constants.js';
 import {
   getValueAtPath,
   walk,
@@ -14,9 +8,9 @@ import {
   last,
   pascalToKebab,
   propToAttribute,
-} from "./helpers.js";
-import cloneNode from "./cloneNode.js";
-import compareKeyedLists from "./compareKeyedLists.js";
+} from './helpers.js';
+import cloneNode from './cloneNode.js';
+import compareKeyedLists from './compareKeyedLists.js';
 
 const updateList = (placeholder, binding, delta) => {
   let listItems = binding.listItems;
@@ -24,9 +18,7 @@ const updateList = (placeholder, binding, delta) => {
   listItems.forEach(removeNodes);
   binding.listItems = delta.map((i, newIndex) => {
     let nodes =
-      i === -1
-        ? binding.nodes.map((node) => cloneNode(node))
-        : listItems[i];
+      i === -1 ? binding.nodes.map((node) => cloneNode(node)) : listItems[i];
 
     nodes.forEach((el) => {
       el.__index__ = newIndex;
@@ -39,20 +31,20 @@ const updateList = (placeholder, binding, delta) => {
 };
 
 const resolve = (path, ctx) => {
-  let parts = path.split(".");
+  let parts = path.split('.');
   let i = parts.length;
   while (i--) {
-    if (parts[i] === "*") {
-      parts[i] = ctx[parts.slice(0, i).join(".")];
+    if (parts[i] === '*') {
+      parts[i] = ctx[parts.slice(0, i).join('.')];
     }
   }
-  return parts.join(".");
+  return parts.join('.');
 };
 
 const getValue = (path, ctx, target, binding) => {
-  if (path === "#") return ctx[last(binding.context).prop];
+  if (path === '#') return ctx[last(binding.context).prop];
 
-  let negated = path.charAt(0) === "!";
+  let negated = path.charAt(0) === '!';
 
   if (negated) path = path.slice(1);
 
@@ -64,14 +56,14 @@ const getValue = (path, ctx, target, binding) => {
 const parseStyles = (value) => {
   let type = typeof value;
 
-  if (type === "string")
-    return value.split(";").reduce((o, value) => {
-      const [k, v] = value.split(":").map((v) => v.trim());
+  if (type === 'string')
+    return value.split(';').reduce((o, value) => {
+      const [k, v] = value.split(':').map((v) => v.trim());
       if (k) o[k] = v;
       return o;
     }, {});
 
-  if (type === "object") return value;
+  if (type === 'object') return value;
 
   return {};
 };
@@ -79,7 +71,7 @@ const parseStyles = (value) => {
 const joinStyles = (value) =>
   Object.entries(value)
     .map(([k, v]) => `${k}: ${v};`)
-    .join(" ");
+    .join(' ');
 
 const mergeStyles = (previous, current, next) => {
   let o = {};
@@ -103,26 +95,26 @@ const convertStyles = (o) =>
 
 const applyAttribute = (node, rawName, value, previous) => {
   let v = value;
-  if (rawName === "style") {
+  if (rawName === 'style') {
     v = joinStyles(
       mergeStyles(
         parseStyles(previous),
-        parseStyles(node.getAttribute("style")),
+        parseStyles(node.getAttribute('style')),
         parseStyles(value)
       )
     );
   } else {
     switch (typeOf(value)) {
-      case "Array":
-        v = value.join(" ");
+      case 'Array':
+        v = value.join(' ');
         break;
-      case "Object":
+      case 'Object':
         v = Object.keys(value)
           .reduce((a, k) => {
             if (value[k]) a.push(k);
             return a;
           }, [])
-          .join(" ");
+          .join(' ');
         break;
     }
   }
@@ -143,12 +135,9 @@ const updateNode = (node, binding, newValue, oldValue) =>
 
 const updateBinding = (binding, node, ctx, p) => {
   if (binding.eventName)
-    return (
-      binding.path && (binding.realPath = resolve(binding.path, ctx))
-    );
+    return binding.path && (binding.realPath = resolve(binding.path, ctx));
 
-  if (binding.type === LIST_ITEM)
-    return (ctx[binding.path] = node.__index__);
+  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
 
   let oldValue = binding.data;
 
@@ -159,48 +148,39 @@ const updateBinding = (binding, node, ctx, p) => {
     binding.data = newValue;
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(
-        binding.uid,
-        oldValue,
-        newValue
-      );
+      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
       return delta && updateList(node, binding, delta);
     }
 
     if (oldValue === newValue) return;
 
     if (binding.type === INPUT) {
-      if (
-        node.hasAttribute("multiple") &&
-        node.nodeName === "SELECT"
-      ) {
-        Array.from(node.querySelectorAll("option")).forEach(
-          (option) => {
-            option.selected = newValue.includes(option.value);
-          }
-        );
+      if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
+        Array.from(node.querySelectorAll('option')).forEach((option) => {
+          option.selected = newValue.includes(option.value);
+        });
         return;
       }
 
-      switch (node.getAttribute("type")) {
-        case "checkbox":
+      switch (node.getAttribute('type')) {
+        case 'checkbox':
           node.checked = newValue;
           if (node.checked) {
-            node.setAttribute("checked", "");
+            node.setAttribute('checked', '');
           } else {
-            node.removeAttribute("checked");
+            node.removeAttribute('checked');
           }
           break;
-        case "radio":
-          node.checked = newValue === node.getAttribute("value");
+        case 'radio':
+          node.checked = newValue === node.getAttribute('value');
           if (node.checked) {
-            node.setAttribute("checked", "");
+            node.setAttribute('checked', '');
           } else {
-            node.removeAttribute("checked");
+            node.removeAttribute('checked');
           }
           break;
         default:
-          node.setAttribute("value", (node.value = newValue || ""));
+          node.setAttribute('value', (node.value = newValue || ''));
           break;
       }
       return;
@@ -213,13 +193,13 @@ const updateBinding = (binding, node, ctx, p) => {
     parts.length === 1
       ? getValue(parts[0].value, ctx, p, binding)
       : parts.reduce((a, { type, value }) => {
-          if (type === "key") {
+          if (type === 'key') {
             let v = getValue(value, ctx, p, binding);
             return [undefined, null].includes(v) ? a : a + v;
           } else {
             return a + value;
           }
-        }, "");
+        }, '');
 
   if (newValue === oldValue) return;
 
@@ -238,9 +218,7 @@ const Updater = (BINDING_ID) => (rootNode, data) => {
     let bindings = node.__bindings__;
 
     if (bindings)
-      bindings.forEach((binding) =>
-        updateBinding(binding, node, ctx, p)
-      );
+      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
   });
 };
 
