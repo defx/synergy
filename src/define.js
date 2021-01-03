@@ -3,7 +3,6 @@ import prefixSelectors from './prefixSelectors.js';
 import mergeSlots from './mergeSlots.js';
 import {
   templateFromString,
-  kebabToPascal,
   propToAttribute,
   attributeToProp,
 } from './helpers.js';
@@ -51,7 +50,7 @@ const define = (name, factory, template, { observedAttributes = [] } = {}) => {
     styleNode.remove();
   }
 
-  let observedProps = observedAttributes.map(kebabToPascal);
+  let observedProps = observedAttributes.map((v) => attributeToProp(v).name);
 
   let X = class extends HTMLElement {
     static get observedAttributes() {
