@@ -1,11 +1,5 @@
 import { typeOf } from './helpers.js';
 
-/*
-
-@TODO: callbackObserved with TP prop & value
-
-*/
-
 function observe(
   root = {},
   callbackAny,
