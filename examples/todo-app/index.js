@@ -20,12 +20,10 @@ const KEYS = {
 export const TodoApp = () => {
   let todos = [];
   return {
-    get watchProperties() {
-      return {
-        todos: (todos) => {
-          storage.set('todos', todos);
-        },
-      };
+    watch: {
+      todos(value) {
+        storage.set('todos', value);
+      },
     },
     filters: Object.keys(filters),
     todos: [],

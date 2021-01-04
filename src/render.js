@@ -38,8 +38,8 @@ function render(mountNode, viewmodel, template, options = {}) {
 
   let observer = observe();
 
-  let watchers = Object.entries(options.watchProperties || []).concat(
-    Object.entries(viewmodel.watchProperties || [])
+  let watchers = Object.entries(options.watch || []).concat(
+    Object.entries(viewmodel.watch || [])
   );
 
   watchers.forEach(([name, fn]) => observer.subscribe(name, fn));
