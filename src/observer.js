@@ -6,8 +6,7 @@ function observer() {
 
   let queueCallback = debounce(function () {
     Object.entries(updates).forEach(([name, value]) => {
-      let fns = subscribers[name] || [];
-      fns.forEach((fn) => fn(value));
+      subscribers[name].forEach((fn) => fn(value));
     });
     updates = {};
   });
