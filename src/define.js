@@ -16,14 +16,6 @@ const initialAttributes = (node) => {
   return o;
 };
 
-const wrap = (target, name, method) => {
-  let originalMethod = target[name] || (() => {});
-  target[name] = function () {
-    method(...arguments);
-    originalMethod(...arguments);
-  };
-};
-
 const forwards = [
   'connectedCallback',
   'disconnectedCallback',
@@ -42,7 +34,9 @@ function mountStyles(name, css) {
 }
 
 const define = (name, factory, template, { observedAttributes = [] } = {}) => {
-  if (typeof template === 'string') template = templateFromString(template);
+  template =
+    typeof template === 'string' ? templateFromString(template) : template;
+
   let styleNode = template.content.querySelector('style[scoped]');
 
   if (styleNode && !stylesExistInDoc(name)) {
