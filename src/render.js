@@ -2,12 +2,13 @@ import parse from './parser.js';
 import subscribe from './subscribe.js';
 import hydrate from './hydrate.js';
 import Updater from './update.js';
-import observe from './observe.js';
-import { templateFromString } from './helpers.js';
+import proxy from './proxy.js';
+import { debounce, templateFromString } from './helpers.js';
+import observe from './observer.js';
 
 let counter = 1;
 
-function render(mountNode, viewmodel, template) {
+function render(mountNode, viewmodel, template, options = {}) {
   const BINDING_ID = counter++;
 
   let templateNode = (typeof template === 'string'
@@ -22,7 +23,7 @@ function render(mountNode, viewmodel, template) {
   update(templateFragment, viewmodel);
 
   if (hydrate(BINDING_ID, templateFragment, mountNode)) {
-    /* it doesn't have to be a perfect match to hydrate, but we do want to patch the differences. This is an intentional strategy aimed at allowing you to design for users that might have JS turned off by stripping stateful attributes (e.g., [hidden],[disabled],[aria-expanded],etc) from your pre-rendered HTML to avoid dead-end situation where (for example) something is serialised with [hidden] but then there's no JS to unhide it. If your HTML isn't mismatched then this invocation of update won't touch the DOM.  */
+    /* it doesn't have to be a perfect match to hydrate, but we do want to patch the differences. This is an intentional strategy aimed at allowing you to design for users that might have JS turned off by stripping stateful attributes (e.g., [hidden],[disabled],[aria-expanded],etc) from your pre-rendered HTML to avoid dead-end situations where (for example) something is serialised with [hidden] but then there's no JS to unhide it. If your HTML isn't mismatched then this invocation of update won't touch the DOM.  */
     update(mountNode, viewmodel);
   } else {
     if (viewmodel.beforeMountCallback)
@@ -35,16 +36,24 @@ function render(mountNode, viewmodel, template) {
     mountNode.appendChild(templateFragment);
   }
 
-  let proxy = observe(
-    viewmodel,
-    () => update(mountNode, proxy),
-    viewmodel.observedProperties,
-    (k, v) => viewmodel.propertyChangedCallback(k, v)
+  let observer = observe();
+
+  let watchers = Object.entries(options.watchProperties || []).concat(
+    Object.entries(viewmodel.watchProperties || [])
   );
 
-  subscribe(mountNode, subscribers, proxy, BINDING_ID);
+  watchers.forEach(([name, fn]) => observer.subscribe(name, fn));
 
-  return proxy;
+  let vm = proxy(
+    viewmodel,
+    debounce(() => update(mountNode, viewmodel)),
+    watchers.map(([name]) => name),
+    observer.transmit
+  );
+
+  subscribe(mountNode, subscribers, vm, BINDING_ID);
+
+  return vm;
 }
 
 export default render;

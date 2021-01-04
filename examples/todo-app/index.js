@@ -1,21 +1,15 @@
 export const storage = {
   get: (k) => JSON.parse(localStorage.getItem(k)),
-  set: (k, v) =>
-    localStorage.setItem(k, JSON.stringify(v)),
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
 
 const html = (strings, ...values) =>
-  strings.reduce(
-    (a, v, i) => a + v + (values[i] || ''),
-    ''
-  );
+  strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
 const filters = {
   all: (todos) => todos,
-  active: (todos) =>
-    todos.filter(({ completed }) => !completed),
-  done: (todos) =>
-    todos.filter(({ completed }) => completed),
+  active: (todos) => todos.filter(({ completed }) => !completed),
+  done: (todos) => todos.filter(({ completed }) => completed),
 };
 
 const KEYS = {
@@ -26,9 +20,12 @@ const KEYS = {
 export const TodoApp = () => {
   let todos = [];
   return {
-    observedProperties: ['todos'],
-    propertyChangedCallback() {
-      storage.set('todos', this.todos);
+    get watchProperties() {
+      return {
+        todos: (todos) => {
+          storage.set('todos', todos);
+        },
+      };
     },
     filters: Object.keys(filters),
     todos: [],
@@ -36,8 +33,7 @@ export const TodoApp = () => {
     addTodo(e) {
       if (!(e.key && e.key === 'Enter')) return;
 
-      let title =
-        this.newTodo && this.newTodo.trim();
+      let title = this.newTodo && this.newTodo.trim();
 
       if (!title) return;
       this.todos.push({ title, id: Date.now() });
@@ -55,9 +51,7 @@ export const TodoApp = () => {
         };
       });
       return () => {
-        e.target.parentNode
-          .querySelector('.edit')
-          .focus();
+        e.target.parentNode.querySelector('.edit').focus();
       };
     },
     saveEdit(_, item) {
@@ -75,15 +69,10 @@ export const TodoApp = () => {
       }
     },
     deleteTodo(e, item) {
-      this.todos.splice(
-        this.todos.indexOf(item),
-        1
-      );
+      this.todos.splice(this.todos.indexOf(item), 1);
     },
     get allDone() {
-      return this.todos.every(
-        (todo) => todo.completed
-      );
+      return this.todos.every((todo) => todo.completed);
     },
     set allDone(completed) {
       this.todos = this.todos.map((todo) => ({
@@ -92,27 +81,17 @@ export const TodoApp = () => {
       }));
     },
     get filteredTodos() {
-      return filters[this.activeFilter](
-        this.todos
-      );
+      return filters[this.activeFilter](this.todos);
     },
     get numCompleted() {
-      return this.todos.filter(
-        ({ completed }) => completed
-      ).length;
+      return this.todos.filter(({ completed }) => completed).length;
     },
     removeCompleted() {
-      this.todos = this.todos.filter(
-        ({ completed }) => !completed
-      );
+      this.todos = this.todos.filter(({ completed }) => !completed);
     },
     get itemsLeft() {
-      const n = this.todos.filter(
-        ({ completed }) => !completed
-      ).length;
-      return `${n} item${
-        n === 1 ? '' : 's'
-      } left`;
+      const n = this.todos.filter(({ completed }) => !completed).length;
+      return `${n} item${n === 1 ? '' : 's'} left`;
     },
     dispatchKeyDown(e, item) {
       switch (e.keyCode) {
@@ -157,14 +136,8 @@ export const markup = html`
     />
   </header>
   <main hidden="{{ !todos.length }}">
-    <label for="allDone"
-      >Mark all as complete</label
-    >
-    <input
-      id="allDone"
-      type="checkbox"
-      name="allDone"
-    />
+    <label for="allDone">Mark all as complete</label>
+    <input id="allDone" type="checkbox" name="allDone" />
     <ul>
       <!-- #each todo in filteredTodos -->
       <li
@@ -173,26 +146,15 @@ export const markup = html`
         editing="{{todo.editing}}"
         key="id"
       >
-        <input
-          class="toggle"
-          type="checkbox"
-          name="todo.completed"
-        />
-        <label ondblclick="startEdit"
-          >{{todo.title}}</label
-        >
+        <input class="toggle" type="checkbox" name="todo.completed" />
+        <label ondblclick="startEdit">{{todo.title}}</label>
         <input
           class="edit"
           name="titleEdit"
           onblur="saveEdit"
           onkeydown="dispatchKeyDown"
         />
-        <button
-          class="delete"
-          onclick="deleteTodo"
-        >
-          [delete]
-        </button>
+        <button class="delete" onclick="deleteTodo">[delete]</button>
       </li>
       <!-- /each -->
     </ul>
@@ -202,11 +164,7 @@ export const markup = html`
     <ul id="filterList">
       <!-- #each filter in filters -->
       <li>
-        <input
-          type="radio"
-          name="activeFilter"
-          value="{{filter}}"
-        />
+        <input type="radio" name="activeFilter" value="{{filter}}" />
         <label>{{ filter }}</label>
       </li>
       <!-- /each -->

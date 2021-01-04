@@ -104,6 +104,17 @@ export function templateFromString(v = '') {
   return tpl;
 }
 
+export const debounce = (fn) => {
+  let t;
+  return function () {
+    if (t) return;
+    t = requestAnimationFrame(() => {
+      fn();
+      t = null;
+    });
+  };
+};
+
 export const pascalToKebab = (string) =>
   string.replace(/[\w]([A-Z])/g, function (m) {
     return m[0] + '-' + m[1].toLowerCase();

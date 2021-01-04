@@ -1,41 +1,38 @@
-describe("define", () => {
+describe('define', () => {
   let count = 0;
 
-  it("should define a custom element", () => {
+  it('should define a custom element', () => {
     let name = `x-${count++}`;
-    synergy.define(name, () => {}, "");
+    synergy.define(name, () => {}, '');
     assert.ok(customElements.get(name));
   });
-  it("should initialise factory with initial attributes", () => {
+  it('should initialise factory with initial attributes', () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({ title });
-    synergy.define(name, factory, "<p>{{ title }}</p>");
+    synergy.define(name, factory, '<p>{{ title }}</p>');
     mount(`
       <${name} title="ok!"></${name}>
       `);
     let el = document.querySelector(name);
-    assert.equal(el.querySelector("p").textContent, "ok!");
+    assert.equal(el.querySelector('p').textContent, 'ok!');
   });
 
-  it("should reflect attribute changes on to viewmodel", async () => {
+  it('should reflect attribute changes on to viewmodel', async () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({
       title,
     });
-    synergy.define(name, factory, "<p>{{ title }}</p>", {
-      observedAttributes: ["title"],
+    synergy.define(name, factory, '<p>{{ title }}</p>', {
+      observedAttributes: ['title'],
     });
     mount(`
       <${name} title="ok!"></${name}>
       `);
-    document.querySelector(name).setAttribute("title", "foo!");
+    document.querySelector(name).setAttribute('title', 'foo!');
     await nextFrame();
-    assert.equal(
-      document.querySelector(`${name} p`).textContent,
-      "foo!"
-    );
+    assert.equal(document.querySelector(`${name} p`).textContent, 'foo!');
   });
-  it("should reflect viewmodel changes back on to attributes", async () => {
+  it('should reflect viewmodel changes back on to attributes', async () => {
     let name = `x-${count++}`;
     let factory = ({ hidden = true }) => ({
       hidden,
@@ -48,7 +45,7 @@ describe("define", () => {
       factory,
       '<p hidden={{ hidden }}>hello world!</p><button onclick="toggle">toggle</button>',
       {
-        observedAttributes: ["hidden"],
+        observedAttributes: ['hidden'],
       }
     );
     mount(`
@@ -57,9 +54,9 @@ describe("define", () => {
     document.querySelector(`${name} button`).click();
     await nextFrame();
     let el = document.querySelector(name);
-    assert.equal(el.hasAttribute("hidden"), false);
+    assert.equal(el.hasAttribute('hidden'), false);
   });
-  it("should extract style element, prefix selectors with type selector and append styles to document head", () => {
+  it('should extract style element, prefix selectors with type selector and append styles to document head', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
     synergy.define(
@@ -80,17 +77,15 @@ describe("define", () => {
           `);
 
     let el = document.querySelector(name);
-    let style = document.querySelector(
-      `head style[id="synergy-${name}"]`
-    );
+    let style = document.querySelector(`head style[id="synergy-${name}"]`);
 
     assert.equal(
-      style.textContent.trim().replace(/\s+/g, " "),
+      style.textContent.trim().replace(/\s+/g, ' '),
       `${name} button, ${name} p { all: inherit; }`
     );
   });
 
-  it("should merge default slot", () => {
+  it('should merge default slot', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
     synergy.define(name, factory, html`hello <slot></slot>!`);
@@ -99,27 +94,26 @@ describe("define", () => {
           `);
 
     let el = document.querySelector(name);
-    assert.equal(el.innerHTML.trim(), "hello world!");
+    assert.equal(el.innerHTML.trim(), 'hello world!');
   });
 
-  it("should merge named slots", () => {
+  it('should merge named slots', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
     synergy.define(
       name,
       factory,
-      html`<slot name="foo"></slot><slot name="bar"></slot
-        ><slot>hello</slot>`
+      html`<slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);
 
     let el = document.querySelector(name);
-    assert.equal(el.innerHTML.trim(), "<span>!</span>hello");
+    assert.equal(el.innerHTML.trim(), '<span>!</span>hello');
   });
 
-  it("should convert between kebab and pascal casing", async () => {
+  it('should convert between kebab and pascal casing', async () => {
     let name = `x-${count++}`;
     let factory = ({ fooBar = false }) => ({
       fooBar,
@@ -127,26 +121,22 @@ describe("define", () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(
-      name,
-      factory,
-      html`<button onclick="toggle">ok</button>`,
-      {
-        observedAttributes: ["foo-bar"],
-      }
-    );
+    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+      observedAttributes: ['foo-bar'],
+    });
     mount(`
     <${name} foo-bar></${name}>
     `);
 
-    assert.equal($(`${name}`).getAttribute("foo-bar"), "");
+    assert.equal($(`${name}`).getAttribute('foo-bar'), '');
 
-    $("button").click();
+    $('button').click();
     await nextFrame();
-    assert.equal($(`${name}`).hasAttribute("foo-bar"), false);
+
+    assert.equal($(`${name}`).hasAttribute('foo-bar'), false);
   });
 
-  it("should account for aria string booleans", async () => {
+  it('should account for aria string booleans', async () => {
     let name = `x-${count++}`;
     let factory = ({ ariaHidden = false }) => ({
       ariaHidden,
@@ -154,20 +144,15 @@ describe("define", () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(
-      name,
-      factory,
-      html`<button onclick="toggle">ok</button>`,
-      {
-        observedAttributes: ["aria-hidden"],
-      }
-    );
+    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+      observedAttributes: ['aria-hidden'],
+    });
     mount(`
     <${name} aria-hidden="false"></${name}>
     `);
 
-    $("button").click();
+    $('button').click();
     await nextFrame();
-    assert.equal($(`${name}`).getAttribute("aria-hidden"), "true");
+    assert.equal($(`${name}`).getAttribute('aria-hidden'), 'true');
   });
 });

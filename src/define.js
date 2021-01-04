@@ -61,23 +61,24 @@ const define = (name, factory, template, { observedAttributes = [] } = {}) => {
 
       let viewmodel = factory(initialAttributes(this), this);
 
-      viewmodel.observedProperties = (
-        viewmodel.observedProperties || []
-      ).concat(observedProps);
-
-      wrap(viewmodel, 'propertyChangedCallback', (k, v) => {
-        if (!observedProps.includes(k)) return;
-        let { name, value } = propToAttribute(k, v);
-        if (value) {
-          this.setAttribute(name, value);
-        } else {
-          this.removeAttribute(name);
-        }
-      });
-
       viewmodel.beforeMountCallback = (frag) => mergeSlots(this, frag);
 
-      this.viewmodel = synergy.render(this, viewmodel, template);
+      let watchProperties = observedProps.reduce((o, k) => {
+        o[k] = (value) => this.updateAttribute(k, value);
+        return o;
+      }, {});
+
+      this.viewmodel = synergy.render(this, viewmodel, template, {
+        watchProperties,
+      });
+    }
+    updateAttribute(k, v) {
+      let { name, value } = propToAttribute(k, v);
+      if (value) {
+        this.setAttribute(name, value);
+      } else {
+        this.removeAttribute(name);
+      }
     }
     attributeChangedCallback(k, _, v) {
       if (this.viewmodel) {

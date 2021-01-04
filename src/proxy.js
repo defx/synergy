@@ -8,10 +8,6 @@ function observe(
 ) {
   let proxyCache = new WeakMap();
 
-  function scheduleCallback(cb) {
-    requestAnimationFrame(cb);
-  }
-
   function proxy(target, handler) {
     let proxy = proxyCache.get(target);
     if (proxy === undefined) {
@@ -26,7 +22,7 @@ function observe(
       if (['Object', 'Array'].includes(typeOf(target[property]))) {
         let handler =
           target === root && observedProperties.includes(property)
-            ? handler2
+            ? handler2(property)
             : handler1;
 
         return proxy(target[property], handler);
@@ -36,37 +32,40 @@ function observe(
     },
     set(target, property, value) {
       if (value === target[property]) return true;
-      scheduleCallback(callbackAny);
+
+      callbackAny();
       if (target === root && observedProperties.includes(property)) {
-        scheduleCallback(() => callbackObserved(property, value));
+        callbackObserved(property, value);
       }
       return Reflect.set(...arguments);
     },
     deleteProperty(target, property) {
-      scheduleCallback(callbackAny);
+      callbackAny();
       return Reflect.deleteProperty(...arguments);
     },
   };
 
-  const handler2 = {
+  const handler2 = (prop) => ({
     get(target, property) {
       if (['Object', 'Array'].includes(typeOf(target[property]))) {
-        return proxy(target[property], handler2);
+        return proxy(target[property], handler2(prop));
       } else {
         return Reflect.get(...arguments);
       }
     },
     set(target, property, value) {
       if (value === target[property]) return true;
-      scheduleCallback(callbackAny);
-      scheduleCallback(() => callbackObserved(property, value));
+
+      callbackAny();
+
+      callbackObserved(prop, root[prop]);
       return Reflect.set(...arguments);
     },
     deleteProperty(target, property) {
-      scheduleCallback(callbackAny);
+      callbackAny();
       return Reflect.deleteProperty(...arguments);
     },
-  };
+  });
 
   return new Proxy(root, handler1);
 }
