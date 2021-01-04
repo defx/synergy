@@ -1,11 +1,6 @@
 import { typeOf } from './helpers.js';
 
-function observe(
-  root = {},
-  callbackAny,
-  observedProperties = [],
-  callbackObserved
-) {
+function observe(root, callbackAny, observedProperties, callbackObserved) {
   let proxyCache = new WeakMap();
 
   function proxy(target, handler) {
@@ -55,14 +50,13 @@ function observe(
     },
     set(target, property, value) {
       if (value === target[property]) return true;
-
       callbackAny();
-
       callbackObserved(prop, root[prop]);
       return Reflect.set(...arguments);
     },
     deleteProperty(target, property) {
       callbackAny();
+      callbackObserved(prop);
       return Reflect.deleteProperty(...arguments);
     },
   });
