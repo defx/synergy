@@ -6,10 +6,24 @@ describe('define', () => {
     synergy.define(name, () => {}, '');
     assert.ok(customElements.get(name));
   });
+
   it('should initialise factory with initial attributes', () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({ title });
     synergy.define(name, factory, '<p>{{ title }}</p>');
+    mount(`
+      <${name} title="ok!"></${name}>
+      `);
+    let el = document.querySelector(name);
+    assert.equal(el.querySelector('p').textContent, 'ok!');
+  });
+
+  it('should accept template element', () => {
+    let name = `x-${count++}`;
+    let factory = ({ title }) => ({ title });
+    let template = document.createElement('template');
+    template.innerHTML = '<p>{{ title }}</p>';
+    synergy.define(name, factory, template);
     mount(`
       <${name} title="ok!"></${name}>
       `);
@@ -154,5 +168,30 @@ describe('define', () => {
     $('button').click();
     await nextFrame();
     assert.equal($(`${name}`).getAttribute('aria-hidden'), 'true');
+  });
+
+  it('should forward lifecycle events', () => {
+    let name = `x-${count++}`;
+
+    let connected = false;
+    let disconnected = false;
+    let factory = () => {
+      return {
+        connectedCallback() {
+          connected = true;
+        },
+        disconnectedCallback() {
+          disconnected = true;
+        },
+      };
+    };
+    synergy.define(name, factory, '');
+    mount(`
+    <${name}></${name}>
+    `);
+    assert.ok(connected);
+    assert.notOk(disconnected);
+    document.querySelector(name).remove();
+    assert.ok(disconnected);
   });
 });
