@@ -1,5 +1,4 @@
 import synergy from './index.js';
-import prefixSelectors from './prefixSelectors.js';
 import mergeSlots from './mergeSlots.js';
 import {
   templateFromString,
@@ -22,29 +21,20 @@ const forwards = [
   'adoptedCallback',
 ];
 
-function stylesExistInDoc(name) {
-  return document.querySelector(`head style[id="synergy-${name}"]`);
-}
-
-function mountStyles(name, css) {
-  let el = document.createElement('style');
-  el.textContent = css;
-  el.id = `synergy-${name}`;
-  document.head.appendChild(el);
-}
-
-const define = (name, factory, template, { observedAttributes = [] } = {}) => {
+const define = (
+  name,
+  factory,
+  template,
+  { observedAttributes = [] } = {}
+) => {
   template =
-    typeof template === 'string' ? templateFromString(template) : template;
+    typeof template === 'string'
+      ? templateFromString(template)
+      : template;
 
-  let styleNode = template.content.querySelector('style[scoped]');
-
-  if (styleNode && !stylesExistInDoc(name)) {
-    mountStyles(name, prefixSelectors(name, styleNode.textContent));
-    styleNode.remove();
-  }
-
-  let observedProps = observedAttributes.map((v) => attributeToProp(v).name);
+  let observedProps = observedAttributes.map(
+    (v) => attributeToProp(v).name
+  );
 
   let X = class extends HTMLElement {
     static get observedAttributes() {
@@ -53,18 +43,27 @@ const define = (name, factory, template, { observedAttributes = [] } = {}) => {
     constructor() {
       super();
 
-      let viewmodel = factory(initialAttributes(this), this);
+      let viewmodel = factory(
+        initialAttributes(this),
+        this
+      );
 
-      viewmodel.beforeMountCallback = (frag) => mergeSlots(this, frag);
+      viewmodel.beforeMountCallback = (frag) =>
+        mergeSlots(this, frag);
 
       let watch = observedProps.reduce((o, k) => {
         o[k] = (value) => this.updateAttribute(k, value);
         return o;
       }, {});
 
-      this.viewmodel = synergy.render(this, viewmodel, template, {
-        watch,
-      });
+      this.viewmodel = synergy.render(
+        this,
+        viewmodel,
+        template,
+        {
+          watch,
+        }
+      );
     }
     updateAttribute(k, v) {
       let { name, value } = propToAttribute(k, v);
@@ -85,7 +84,8 @@ const define = (name, factory, template, { observedAttributes = [] } = {}) => {
   forwards.forEach((k) =>
     Object.assign(X.prototype, {
       [k]() {
-        if (this.viewmodel && this.viewmodel[k]) this.viewmodel[k]();
+        if (this.viewmodel && this.viewmodel[k])
+          this.viewmodel[k]();
       },
     })
   );

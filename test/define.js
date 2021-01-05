@@ -42,9 +42,14 @@ describe('define', () => {
     mount(`
       <${name} title="ok!"></${name}>
       `);
-    document.querySelector(name).setAttribute('title', 'foo!');
+    document
+      .querySelector(name)
+      .setAttribute('title', 'foo!');
     await nextFrame();
-    assert.equal(document.querySelector(`${name} p`).textContent, 'foo!');
+    assert.equal(
+      document.querySelector(`${name} p`).textContent,
+      'foo!'
+    );
   });
   it('should reflect viewmodel changes back on to attributes', async () => {
     let name = `x-${count++}`;
@@ -70,39 +75,15 @@ describe('define', () => {
     let el = document.querySelector(name);
     assert.equal(el.hasAttribute('hidden'), false);
   });
-  it('should extract style element, prefix selectors with type selector and append styles to document head', () => {
+
+  it('should merge default slot', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
     synergy.define(
       name,
       factory,
-      html`
-        <style scoped>
-          button,
-          p {
-            all: inherit;
-          }
-        </style>
-        <p>Hello world!</p>
-      `
+      html`hello <slot></slot>!`
     );
-    mount(`
-          <${name}></${name}>
-          `);
-
-    let el = document.querySelector(name);
-    let style = document.querySelector(`head style[id="synergy-${name}"]`);
-
-    assert.equal(
-      style.textContent.trim().replace(/\s+/g, ' '),
-      `${name} button, ${name} p { all: inherit; }`
-    );
-  });
-
-  it('should merge default slot', () => {
-    let name = `x-${count++}`;
-    let factory = () => ({});
-    synergy.define(name, factory, html`hello <slot></slot>!`);
     mount(`
           <${name}>world</${name}>
           `);
@@ -117,14 +98,18 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      html`<slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>`
+      html`<slot name="foo"></slot><slot name="bar"></slot
+        ><slot>hello</slot>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);
 
     let el = document.querySelector(name);
-    assert.equal(el.innerHTML.trim(), '<span>!</span>hello');
+    assert.equal(
+      el.innerHTML.trim(),
+      '<span>!</span>hello'
+    );
   });
 
   it('should convert between kebab and pascal casing', async () => {
@@ -135,9 +120,14 @@ describe('define', () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
-      observedAttributes: ['foo-bar'],
-    });
+    synergy.define(
+      name,
+      factory,
+      html`<button onclick="toggle">ok</button>`,
+      {
+        observedAttributes: ['foo-bar'],
+      }
+    );
     mount(`
     <${name} foo-bar></${name}>
     `);
@@ -147,7 +137,10 @@ describe('define', () => {
     $('button').click();
     await nextFrame();
 
-    assert.equal($(`${name}`).hasAttribute('foo-bar'), false);
+    assert.equal(
+      $(`${name}`).hasAttribute('foo-bar'),
+      false
+    );
   });
 
   it('should account for aria string booleans', async () => {
@@ -158,16 +151,24 @@ describe('define', () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
-      observedAttributes: ['aria-hidden'],
-    });
+    synergy.define(
+      name,
+      factory,
+      html`<button onclick="toggle">ok</button>`,
+      {
+        observedAttributes: ['aria-hidden'],
+      }
+    );
     mount(`
     <${name} aria-hidden="false"></${name}>
     `);
 
     $('button').click();
     await nextFrame();
-    assert.equal($(`${name}`).getAttribute('aria-hidden'), 'true');
+    assert.equal(
+      $(`${name}`).getAttribute('aria-hidden'),
+      'true'
+    );
   });
 
   it('should forward lifecycle events', () => {
