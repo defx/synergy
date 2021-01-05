@@ -67,7 +67,7 @@ const define = (
             this.updateAttribute(k, v);
           });
 
-        puc(prev);
+        puc.call(this.viewmodel, prev);
       };
     }
     updateAttribute(k, v) {
