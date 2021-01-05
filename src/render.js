@@ -26,8 +26,8 @@ function render(
   );
 
   let update = Updater(BINDING_ID, (prev) => {
-    if (viewmodel.postUpdateCallback)
-      viewmodel.postUpdateCallback(prev);
+    if (viewmodel.updatedCallback)
+      viewmodel.updatedCallback(prev);
   });
 
   update(templateFragment, viewmodel);

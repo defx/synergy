@@ -25,7 +25,7 @@ const KEYS = {
 export const TodoApp = () => {
   let todos = [];
   return {
-    postUpdateCallback() {
+    updatedCallback() {
       storage.set('todos', this.todos);
     },
     filters: Object.keys(filters),

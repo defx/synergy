@@ -57,10 +57,9 @@ const define = (
         template
       );
 
-      let puc =
-        viewmodel.postUpdateCallback || function () {};
+      let puc = viewmodel.updatedCallback || function () {};
 
-      viewmodel.postUpdateCallback = (prev) => {
+      viewmodel.updatedCallback = (prev) => {
         observedProps
           .map((k) => [k, prev[k], viewmodel[k]])
           .filter(([_, a, b]) => a !== b)

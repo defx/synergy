@@ -241,7 +241,7 @@ let prev;
 
 const Updater = (
   BINDING_ID,
-  postUpdateCallback = () => {}
+  updatedCallback = () => {}
 ) => (rootNode, viewmodel) => {
   let ctx = {};
   let p = copy(viewmodel);
@@ -257,7 +257,7 @@ const Updater = (
       );
   });
 
-  if (prev) postUpdateCallback(prev);
+  if (prev) updatedCallback(prev);
 
   prev = p;
 };
