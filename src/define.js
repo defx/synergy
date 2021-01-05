@@ -51,18 +51,18 @@ const define = (
       viewmodel.beforeMountCallback = (frag) =>
         mergeSlots(this, frag);
 
-      let watch = observedProps.reduce((o, k) => {
-        o[k] = (value) => this.updateAttribute(k, value);
-        return o;
-      }, {});
+      // let watch = observedProps.reduce((o, k) => {
+      //   o[k] = (value) => this.updateAttribute(k, value);
+      //   return o;
+      // }, {});
 
       this.viewmodel = synergy.render(
         this,
         viewmodel,
-        template,
-        {
-          watch,
-        }
+        template
+        // {
+        //   watch,
+        // }
       );
     }
     updateAttribute(k, v) {

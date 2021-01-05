@@ -1,6 +1,6 @@
 import { typeOf } from './helpers.js';
 
-function observe(root, callbackAny, observedProperties, callbackObserved) {
+function observe(root, callbackAny) {
   let proxyCache = new WeakMap();
 
   function proxy(target, handler) {
@@ -12,14 +12,13 @@ function observe(root, callbackAny, observedProperties, callbackObserved) {
     return proxy;
   }
 
-  const handler1 = {
+  const handler = {
     get(target, property) {
-      if (['Object', 'Array'].includes(typeOf(target[property]))) {
-        let handler =
-          target === root && observedProperties.includes(property)
-            ? handler2(property)
-            : handler1;
-
+      if (
+        ['Object', 'Array'].includes(
+          typeOf(target[property])
+        )
+      ) {
         return proxy(target[property], handler);
       } else {
         return Reflect.get(...arguments);
@@ -29,9 +28,6 @@ function observe(root, callbackAny, observedProperties, callbackObserved) {
       if (value === target[property]) return true;
 
       callbackAny();
-      if (target === root && observedProperties.includes(property)) {
-        callbackObserved(property, value);
-      }
       return Reflect.set(...arguments);
     },
     deleteProperty(target, property) {
@@ -40,28 +36,7 @@ function observe(root, callbackAny, observedProperties, callbackObserved) {
     },
   };
 
-  const handler2 = (prop) => ({
-    get(target, property) {
-      if (['Object', 'Array'].includes(typeOf(target[property]))) {
-        return proxy(target[property], handler2(prop));
-      } else {
-        return Reflect.get(...arguments);
-      }
-    },
-    set(target, property, value) {
-      if (value === target[property]) return true;
-      callbackAny();
-      callbackObserved(prop, root[prop]);
-      return Reflect.set(...arguments);
-    },
-    deleteProperty(target, property) {
-      callbackAny();
-      callbackObserved(prop);
-      return Reflect.deleteProperty(...arguments);
-    },
-  });
-
-  return new Proxy(root, handler1);
+  return new Proxy(root, handler);
 }
 
 export default observe;

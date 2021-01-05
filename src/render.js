@@ -4,11 +4,10 @@ import hydrate from './hydrate.js';
 import Updater from './update.js';
 import proxy from './proxy.js';
 import { debounce, templateFromString } from './helpers.js';
-import observe from './observer.js';
 
 let counter = 1;
 
-function render(mountNode, viewmodel, template, options = {}) {
+function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
   let templateNode = (typeof template === 'string'
@@ -16,7 +15,10 @@ function render(mountNode, viewmodel, template, options = {}) {
     : template
   ).cloneNode(true).content;
 
-  let { subscribers, templateFragment } = parse(templateNode, BINDING_ID);
+  let { subscribers, templateFragment } = parse(
+    templateNode,
+    BINDING_ID
+  );
 
   let update = Updater(BINDING_ID);
 
@@ -36,19 +38,9 @@ function render(mountNode, viewmodel, template, options = {}) {
     mountNode.appendChild(templateFragment);
   }
 
-  let observer = observe();
-
-  let watchers = Object.entries(options.watch || []).concat(
-    Object.entries(viewmodel.watch || [])
-  );
-
-  watchers.forEach(([name, fn]) => observer.subscribe(name, fn));
-
   let vm = proxy(
     viewmodel,
-    debounce(() => update(mountNode, viewmodel)),
-    watchers.map(([name]) => name),
-    observer.transmit
+    debounce(() => update(mountNode, viewmodel))
   );
 
   subscribe(mountNode, subscribers, vm, BINDING_ID);

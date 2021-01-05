@@ -2,7 +2,10 @@
 <html>
   <head>
     <title>Mocha Tests</title>
-    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <link
+      rel="stylesheet"
+      href="../node_modules/mocha/mocha.css"
+    />
     <style>
       html {
         font-size: 62.5%;
@@ -18,23 +21,28 @@
     <script src="../node_modules/chai/chai.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script>
-      mocha.setup("bdd");
+      mocha.setup('bdd');
       let assert = chai.assert;
       window.onload = function () {
         mocha.run();
       };
 
       const identityTpl = (strings, ...values) =>
-        strings.reduce((a, v, i) => a + v + (values[i] || ""), "");
+        strings.reduce(
+          (a, v, i) => a + v + (values[i] || ''),
+          ''
+        );
 
       const mount = (html) => {
-        let node = document.getElementById("markup");
+        let node = document.getElementById('markup');
         node.innerHTML = html;
         return node.firstChild;
       };
 
       const nextFrame = () =>
-        new Promise((resolve) => requestAnimationFrame(resolve));
+        new Promise((resolve) =>
+          requestAnimationFrame(resolve)
+        );
 
       const textContent = (node) => node.textContent.trim();
 
@@ -46,25 +54,29 @@
       window.assert = assert;
       window.textContent = textContent;
       window.$ = (v) => document.querySelector(v);
-      window.$$ = (v) => Array.from(document.querySelectorAll(v));
+      window.$$ = (v) =>
+        Array.from(document.querySelectorAll(v));
     </script>
     <script type="module">
-      import synergy from "../src/index.js";
+      import synergy from '../src/index.js';
       // import synergy from "https://unpkg.com/synergy";
       window.synergy = synergy;
     </script>
     <script type="module" src="./render.js"></script>
 
-    <script type="module" src="./todo-app.js"></script>
+    <!-- <script type="module" src="./todo-app.js"></script> -->
     <script type="module" src="./scope.js"></script>
     <script type="module" src="./user-input.js"></script>
 
     <script type="module" src="./iterations.js"></script>
-    <script type="module" src="./interpolations.js"></script>
+    <script
+      type="module"
+      src="./interpolations.js"
+    ></script>
     <script type="module" src="./hydrate.js"></script>
 
     <script type="module" src="./misc.js"></script>
-    <script type="module" src="./define.js"></script>
+    <!-- <script type="module" src="./define.js"></script> -->
     <script type="module" src="./observe.js"></script>
   </body>
 </html>

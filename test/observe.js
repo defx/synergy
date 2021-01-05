@@ -42,21 +42,4 @@ describe('proxy', () => {
       assert.equal(count, 1);
     });
   });
-  describe('callbackObserved', () => {
-    it('should callback with name and value', async () => {
-      let stack = [];
-      let model = proxy(
-        { foo: 'bar' },
-        () => {},
-        ['foo'],
-        (...args) => stack.push(args)
-      );
-      model.bar = 7;
-      await nextFrame();
-      assert.equal(stack.length, 0);
-      model.foo = 'baa';
-      await nextFrame();
-      assert.deepEqual(stack, [['foo', 'baa']]);
-    });
-  });
 });
