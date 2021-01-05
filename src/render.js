@@ -7,7 +7,12 @@ import { debounce, templateFromString } from './helpers.js';
 
 let counter = 1;
 
-function render(mountNode, viewmodel, template) {
+function render(
+  mountNode,
+  viewmodel,
+  template,
+  options = {}
+) {
   const BINDING_ID = counter++;
 
   let templateNode = (typeof template === 'string'
@@ -20,7 +25,10 @@ function render(mountNode, viewmodel, template) {
     BINDING_ID
   );
 
-  let update = Updater(BINDING_ID);
+  let update = Updater(BINDING_ID, (prev) => {
+    if (viewmodel.postUpdateCallback)
+      viewmodel.postUpdateCallback(prev);
+  });
 
   update(templateFragment, viewmodel);
 

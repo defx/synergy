@@ -1,5 +1,6 @@
 export const isWhitespace = (node) =>
-  node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
+  node.nodeType === node.TEXT_NODE &&
+  node.nodeValue.match(/^\s+$/);
 
 export function walk(node, callback, path = [0]) {
   if (callback(node, path) === false) return;
@@ -8,7 +9,8 @@ export function walk(node, callback, path = [0]) {
   node = node.firstChild;
 
   while (node) {
-    if (!isWhitespace(node)) walk(node, callback, path.concat(++i));
+    if (!isWhitespace(node))
+      walk(node, callback, path.concat(++i));
     node = node.nextSibling;
   }
 }
@@ -57,10 +59,13 @@ export const getParts = (value, context) =>
 export const typeOf = (v) =>
   Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
-export const copy = (v) => v && JSON.parse(JSON.stringify(v));
+export const copy = (v) =>
+  v && JSON.parse(JSON.stringify(v));
 
 const parseEach = (str) => {
-  let [left, prop] = str.split(/\s+in\s+/).map((v) => v.trim());
+  let [left, prop] = str
+    .split(/\s+in\s+/)
+    .map((v) => v.trim());
   return { valueIdentifier: left, prop };
 };
 
@@ -75,7 +80,11 @@ const parseArgs = (args) =>
         }, {})
     : {};
 
-export const parseEachDeclaration = (str, context, args) => {
+export const parseEachDeclaration = (
+  str,
+  context,
+  args
+) => {
   let v = parseEach(str);
 
   return {
@@ -91,12 +100,17 @@ export const getValueAtPath = (path, target) =>
 export const setValueAtPath = (path, value, target) => {
   let parts = path.split('.');
   if (parts.length === 1) return (target[path] = value);
-  target = getValueAtPath(parts.slice(0, -1).join('.'), target);
+  target = getValueAtPath(
+    parts.slice(0, -1).join('.'),
+    target
+  );
   target[last(parts)] = value;
 };
 
 export const removeNodes = (nodes) =>
-  nodes.forEach((node) => node.parentNode.removeChild(node));
+  nodes.forEach((node) =>
+    node.parentNode.removeChild(node)
+  );
 
 export function templateFromString(v = '') {
   let tpl = document.createElement('template');

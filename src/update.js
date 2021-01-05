@@ -1,4 +1,10 @@
-import { LIST, LIST_ITEM, TEXT, ATTRIBUTE, INPUT } from './constants.js';
+import {
+  LIST,
+  LIST_ITEM,
+  TEXT,
+  ATTRIBUTE,
+  INPUT,
+} from './constants.js';
 import {
   getValueAtPath,
   walk,
@@ -18,7 +24,9 @@ const updateList = (placeholder, binding, delta) => {
   listItems.forEach(removeNodes);
   binding.listItems = delta.map((i, newIndex) => {
     let nodes =
-      i === -1 ? binding.nodes.map((node) => cloneNode(node)) : listItems[i];
+      i === -1
+        ? binding.nodes.map((node) => cloneNode(node))
+        : listItems[i];
 
     nodes.forEach((el) => {
       el.__index__ = newIndex;
@@ -135,9 +143,13 @@ const updateNode = (node, binding, newValue, oldValue) =>
 
 const updateBinding = (binding, node, ctx, p) => {
   if (binding.eventName)
-    return binding.path && (binding.realPath = resolve(binding.path, ctx));
+    return (
+      binding.path &&
+      (binding.realPath = resolve(binding.path, ctx))
+    );
 
-  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
+  if (binding.type === LIST_ITEM)
+    return (ctx[binding.path] = node.__index__);
 
   let oldValue = binding.data;
 
@@ -148,17 +160,28 @@ const updateBinding = (binding, node, ctx, p) => {
     binding.data = newValue;
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
+      const delta = compareKeyedLists(
+        binding.uid,
+        oldValue,
+        newValue
+      );
       return delta && updateList(node, binding, delta);
     }
 
     if (oldValue === newValue) return;
 
     if (binding.type === INPUT) {
-      if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
-        Array.from(node.querySelectorAll('option')).forEach((option) => {
-          option.selected = newValue.includes(option.value);
-        });
+      if (
+        node.hasAttribute('multiple') &&
+        node.nodeName === 'SELECT'
+      ) {
+        Array.from(node.querySelectorAll('option')).forEach(
+          (option) => {
+            option.selected = newValue.includes(
+              option.value
+            );
+          }
+        );
         return;
       }
 
@@ -172,7 +195,8 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         case 'radio':
-          node.checked = newValue === node.getAttribute('value');
+          node.checked =
+            newValue === node.getAttribute('value');
           if (node.checked) {
             node.setAttribute('checked', '');
           } else {
@@ -180,7 +204,10 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         default:
-          node.setAttribute('value', (node.value = newValue || ''));
+          node.setAttribute(
+            'value',
+            (node.value = newValue || '')
+          );
           break;
       }
       return;
@@ -195,7 +222,9 @@ const updateBinding = (binding, node, ctx, p) => {
       : parts.reduce((a, { type, value }) => {
           if (type === 'key') {
             let v = getValue(value, ctx, p, binding);
-            return [undefined, null].includes(v) ? a : a + v;
+            return [undefined, null].includes(v)
+              ? a
+              : a + v;
           } else {
             return a + value;
           }
@@ -208,9 +237,14 @@ const updateBinding = (binding, node, ctx, p) => {
   updateNode(node, binding, newValue, oldValue);
 };
 
-const Updater = (BINDING_ID) => (rootNode, data) => {
+let prev;
+
+const Updater = (
+  BINDING_ID,
+  postUpdateCallback = () => {}
+) => (rootNode, viewmodel) => {
   let ctx = {};
-  let p = copy(data);
+  let p = copy(viewmodel);
 
   walk(rootNode, (node) => {
     if (node.bindingId !== BINDING_ID) return;
@@ -218,8 +252,14 @@ const Updater = (BINDING_ID) => (rootNode, data) => {
     let bindings = node.__bindings__;
 
     if (bindings)
-      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
+      bindings.forEach((binding) =>
+        updateBinding(binding, node, ctx, p)
+      );
   });
+
+  if (prev) postUpdateCallback(prev);
+
+  prev = p;
 };
 
 export default Updater;

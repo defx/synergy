@@ -4,12 +4,17 @@ export const storage = {
 };
 
 const html = (strings, ...values) =>
-  strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
+  strings.reduce(
+    (a, v, i) => a + v + (values[i] || ''),
+    ''
+  );
 
 const filters = {
   all: (todos) => todos,
-  active: (todos) => todos.filter(({ completed }) => !completed),
-  done: (todos) => todos.filter(({ completed }) => completed),
+  active: (todos) =>
+    todos.filter(({ completed }) => !completed),
+  done: (todos) =>
+    todos.filter(({ completed }) => completed),
 };
 
 const KEYS = {
@@ -20,10 +25,8 @@ const KEYS = {
 export const TodoApp = () => {
   let todos = [];
   return {
-    watch: {
-      todos(value) {
-        storage.set('todos', value);
-      },
+    postUpdateCallback() {
+      storage.set('todos', this.todos);
     },
     filters: Object.keys(filters),
     todos: [],
@@ -82,13 +85,18 @@ export const TodoApp = () => {
       return filters[this.activeFilter](this.todos);
     },
     get numCompleted() {
-      return this.todos.filter(({ completed }) => completed).length;
+      return this.todos.filter(({ completed }) => completed)
+        .length;
     },
     removeCompleted() {
-      this.todos = this.todos.filter(({ completed }) => !completed);
+      this.todos = this.todos.filter(
+        ({ completed }) => !completed
+      );
     },
     get itemsLeft() {
-      const n = this.todos.filter(({ completed }) => !completed).length;
+      const n = this.todos.filter(
+        ({ completed }) => !completed
+      ).length;
       return `${n} item${n === 1 ? '' : 's'} left`;
     },
     dispatchKeyDown(e, item) {
@@ -144,7 +152,11 @@ export const markup = html`
         editing="{{todo.editing}}"
         key="id"
       >
-        <input class="toggle" type="checkbox" name="todo.completed" />
+        <input
+          class="toggle"
+          type="checkbox"
+          name="todo.completed"
+        />
         <label ondblclick="startEdit">{{todo.title}}</label>
         <input
           class="edit"
@@ -152,7 +164,9 @@ export const markup = html`
           onblur="saveEdit"
           onkeydown="dispatchKeyDown"
         />
-        <button class="delete" onclick="deleteTodo">[delete]</button>
+        <button class="delete" onclick="deleteTodo">
+          [delete]
+        </button>
       </li>
       <!-- /each -->
     </ul>
@@ -162,7 +176,11 @@ export const markup = html`
     <ul id="filterList">
       <!-- #each filter in filters -->
       <li>
-        <input type="radio" name="activeFilter" value="{{filter}}" />
+        <input
+          type="radio"
+          name="activeFilter"
+          value="{{filter}}"
+        />
         <label>{{ filter }}</label>
       </li>
       <!-- /each -->

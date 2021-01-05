@@ -51,19 +51,25 @@ const define = (
       viewmodel.beforeMountCallback = (frag) =>
         mergeSlots(this, frag);
 
-      // let watch = observedProps.reduce((o, k) => {
-      //   o[k] = (value) => this.updateAttribute(k, value);
-      //   return o;
-      // }, {});
-
       this.viewmodel = synergy.render(
         this,
         viewmodel,
         template
-        // {
-        //   watch,
-        // }
       );
+
+      let puc =
+        viewmodel.postUpdateCallback || function () {};
+
+      viewmodel.postUpdateCallback = (prev) => {
+        observedProps
+          .map((k) => [k, prev[k], viewmodel[k]])
+          .filter(([_, a, b]) => a !== b)
+          .forEach(([k, _, v]) => {
+            this.updateAttribute(k, v);
+          });
+
+        puc(prev);
+      };
     }
     updateAttribute(k, v) {
       let { name, value } = propToAttribute(k, v);
