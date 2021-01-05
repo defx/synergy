@@ -1,4 +1,10 @@
-import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
+import {
+  ATTRIBUTE,
+  INPUT,
+  TEXT,
+  LIST,
+  LIST_ITEM,
+} from './constants.js';
 
 import {
   getParts,
@@ -83,9 +89,9 @@ export default (templateFragment, BINDING_ID) => {
 
     node.__bindings__ = [
       {
-        childIndex: Array.from(node.parentNode.childNodes).findIndex(
-          (v) => v === node
-        ),
+        childIndex: Array.from(
+          node.parentNode.childNodes
+        ).findIndex((v) => v === node),
         parts: getParts(value, context),
         type: TEXT,
         context: context.slice(),
@@ -103,7 +109,11 @@ export default (templateFragment, BINDING_ID) => {
     return context;
   };
 
-  let parseAttributeNode = ({ name, value }, node, context) => {
+  let parseAttributeNode = (
+    { name, value },
+    node,
+    context
+  ) => {
     if (name.startsWith('on')) {
       node.removeAttribute(name);
       let lastContext = last(context);
@@ -123,6 +133,7 @@ export default (templateFragment, BINDING_ID) => {
 
     if (
       name === 'name' &&
+      value &&
       (node.nodeName === 'INPUT' ||
         node.nodeName === 'SELECT' ||
         node.nodeName === 'TEXTAREA')
