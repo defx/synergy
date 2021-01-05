@@ -25,9 +25,10 @@ function render(
     BINDING_ID
   );
 
+  let vm;
+
   let update = Updater(BINDING_ID, (prev) => {
-    if (viewmodel.updatedCallback)
-      viewmodel.updatedCallback(prev);
+    if (vm && vm.updatedCallback) vm.updatedCallback(prev);
   });
 
   update(templateFragment, viewmodel);
@@ -46,7 +47,7 @@ function render(
     mountNode.appendChild(templateFragment);
   }
 
-  let vm = proxy(
+  vm = proxy(
     viewmodel,
     debounce(() => update(mountNode, viewmodel))
   );
