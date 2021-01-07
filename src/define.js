@@ -2,7 +2,7 @@ import synergy from './index.js';
 import mergeSlots from './mergeSlots.js';
 import {
   templateFromString,
-  propToAttribute,
+  applyAttribute,
   attributeToProp,
 } from './helpers.js';
 
@@ -63,20 +63,12 @@ const define = (
         observedProps
           .map((k) => [k, prev[k], viewmodel[k]])
           .filter(([_, a, b]) => a !== b)
-          .forEach(([k, _, v]) => {
-            this.updateAttribute(k, v);
-          });
+          .forEach(([k, _, v]) =>
+            applyAttribute(this, k, v)
+          );
 
         puc.call(this.viewmodel, prev);
       };
-    }
-    updateAttribute(k, v) {
-      let { name, value } = propToAttribute(k, v);
-      if (value) {
-        this.setAttribute(name, value);
-      } else {
-        this.removeAttribute(name);
-      }
     }
     attributeChangedCallback(k, _, v) {
       if (this.viewmodel) {

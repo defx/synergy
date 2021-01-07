@@ -159,3 +159,13 @@ export const propToAttribute = (k, v) => {
   }
   return { name, value: v };
 };
+
+export function applyAttribute(node, name, value) {
+  let a = propToAttribute(name, value);
+
+  if ([null, undefined, false].includes(a.value)) {
+    node.removeAttribute(a.name);
+  } else {
+    node.setAttribute(a.name, a.value);
+  }
+}

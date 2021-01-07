@@ -35,7 +35,10 @@ describe('iterations', () => {
     let todos = Array.from(view.todos);
 
     $$('#container li').forEach((li, i) => {
-      assert.equal(li.querySelector('p').textContent, todos[i].title);
+      assert.equal(
+        li.querySelector('p').textContent,
+        todos[i].title
+      );
     });
   });
 
@@ -48,7 +51,7 @@ describe('iterations', () => {
       html`
         <ul>
           <!-- #each colour in colours -->
-          <li id="item-{{ # }}">
+          <li data-index="{{ # }}">
             <p>{{ # }}</p>
             <p>{{ colour }}</p>
           </li>
@@ -59,6 +62,7 @@ describe('iterations', () => {
 
     $$('#container li').forEach((li, i) => {
       assert.equal(li.querySelector('p').textContent, i);
+      assert.equal(li.dataset.index, i);
     });
   });
 
@@ -75,7 +79,9 @@ describe('iterations', () => {
       html`
         <select name="chosenName">
           <!-- #each name in names -->
-          <option value="{{name}}" onclick="handleClick">{{name}}</option>
+          <option value="{{name}}" onclick="handleClick">
+            {{name}}
+          </option>
           <!-- /each -->
         </select>
       `

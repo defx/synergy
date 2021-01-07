@@ -13,7 +13,7 @@ import {
   removeNodes,
   last,
   pascalToKebab,
-  propToAttribute,
+  applyAttribute,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
@@ -101,7 +101,12 @@ const convertStyles = (o) =>
     return a;
   }, {});
 
-const applyAttribute = (node, rawName, value, previous) => {
+const applyComplexAttribute = (
+  node,
+  rawName,
+  value,
+  previous
+) => {
   let v = value;
   if (rawName === 'style') {
     v = joinStyles(
@@ -127,18 +132,17 @@ const applyAttribute = (node, rawName, value, previous) => {
     }
   }
 
-  let a = propToAttribute(rawName, v);
-
-  if (v) {
-    node.setAttribute(a.name, a.value);
-  } else {
-    node.removeAttribute(a.name);
-  }
+  applyAttribute(node, rawName, v);
 };
 
 const updateNode = (node, binding, newValue, oldValue) =>
   binding.type === ATTRIBUTE
-    ? applyAttribute(node, binding.name, newValue, oldValue)
+    ? applyComplexAttribute(
+        node,
+        binding.name,
+        newValue,
+        oldValue
+      )
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p) => {
