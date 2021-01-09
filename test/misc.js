@@ -4,7 +4,9 @@ describe('misc', () => {
     class X extends HTMLElement {
       constructor() {
         super();
-        const shadowRoot = this.attachShadow({ mode: 'open' });
+        const shadowRoot = this.attachShadow({
+          mode: 'open',
+        });
         v1 = synergy.render(
           shadowRoot,
           {
@@ -30,11 +32,15 @@ describe('misc', () => {
     await nextFrame();
 
     assert.equal(
-      rootNode.querySelector('x-x').shadowRoot.querySelector('button')
-        .textContent,
+      rootNode
+        .querySelector('x-x')
+        .shadowRoot.querySelector('button').textContent,
       'Helló Világ!'
     );
 
-    assert.equal(rootNode.querySelector('x-x').textContent, 'こんにちは世界！');
+    assert.equal(
+      rootNode.querySelector('x-x').textContent,
+      'こんにちは世界！'
+    );
   });
 });

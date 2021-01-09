@@ -21,12 +21,9 @@ const forwards = [
   'adoptedCallback',
 ];
 
-const define = (
-  name,
-  factory,
-  template,
-  { observedAttributes = [] } = {}
-) => {
+const define = (name, factory, template, options = {}) => {
+  let { observedAttributes = [] } = options;
+
   template =
     typeof template === 'string'
       ? templateFromString(template)
@@ -48,11 +45,17 @@ const define = (
         this
       );
 
-      viewmodel.beforeMountCallback = (frag) =>
-        mergeSlots(this, frag);
+      if (options.shadowRoot) {
+        this.attachShadow({
+          mode: options.shadowRoot,
+        });
+      } else {
+        viewmodel.beforeMountCallback = (frag) =>
+          mergeSlots(this, frag);
+      }
 
       this.viewmodel = synergy.render(
-        this,
+        this.shadowRoot || this,
         viewmodel,
         template
       );

@@ -195,4 +195,30 @@ describe('define', () => {
     document.querySelector(name).remove();
     assert.ok(disconnected);
   });
+
+  it('should optionally support shadow root', () => {
+    let factory = () => ({});
+
+    let template = html`
+      <style>
+        :host {
+          background-color: gold;
+          color: #222;
+          padding: 1rem;
+        }
+      </style>
+      <slot></slot>
+    `;
+
+    synergy.define('x-shadow', factory, template, {
+      shadowRoot: 'open',
+    });
+
+    mount(html`<x-shadow>hello shadow</x-shadow>`);
+
+    let node = document.querySelector('x-shadow');
+
+    assert.ok(node.shadowRoot);
+    assert.equal(node.shadowRoot.innerHTML, template);
+  });
 });
