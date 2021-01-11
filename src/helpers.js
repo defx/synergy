@@ -154,8 +154,12 @@ export const attributeToProp = (k, v) => {
 
 export const propToAttribute = (k, v) => {
   let name = pascalToKebab(k);
-  if (typeof v === 'boolean' && name.startsWith('aria-')) {
-    v = v.toString();
+  if (typeof v === 'boolean') {
+    if (name.startsWith('aria-')) {
+      v = v.toString();
+    } else {
+      v = v ? '' : null;
+    }
   }
   return { name, value: v };
 };
