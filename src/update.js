@@ -14,6 +14,7 @@ import {
   last,
   pascalToKebab,
   applyAttribute,
+  attributeToProp,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
@@ -47,6 +48,20 @@ const resolve = (path, ctx) => {
     }
   }
   return parts.join('.');
+};
+
+let getPreviousValue = (node, binding) => {
+  switch (binding.type) {
+    case 'ATTRIBUTE':
+      return attributeToProp(
+        binding.name,
+        node.getAttribute(binding.name)
+      ).value;
+    case 'TEXT':
+      return node.textContent;
+    default:
+      return binding.data;
+  }
 };
 
 const getValue = (path, ctx, target, binding) => {
@@ -141,7 +156,7 @@ const updateNode = (node, binding, newValue, oldValue) =>
         node,
         binding.name,
         newValue,
-        oldValue
+        binding.data
       )
     : (node.textContent = newValue);
 
@@ -155,7 +170,7 @@ const updateBinding = (binding, node, ctx, p) => {
   if (binding.type === LIST_ITEM)
     return (ctx[binding.path] = node.__index__);
 
-  let oldValue = binding.data;
+  let oldValue = getPreviousValue(node, binding);
 
   if (binding.path) {
     const { path } = binding;
@@ -255,10 +270,11 @@ const Updater = (
 
     let bindings = node.__bindings__;
 
-    if (bindings)
+    if (bindings) {
       bindings.forEach((binding) =>
         updateBinding(binding, node, ctx, p)
       );
+    }
   });
 
   if (prev) updatedCallback(prev);
