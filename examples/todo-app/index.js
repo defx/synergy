@@ -145,45 +145,47 @@ export const markup = html`
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
-      <!-- #each todo in filteredTodos -->
-      <li
-        class="todo"
-        is-done="{{todo.completed}}"
-        editing="{{todo.editing}}"
-        key="id"
-      >
-        <input
-          class="toggle"
-          type="checkbox"
-          name="todo.completed"
-        />
-        <label ondblclick="startEdit">{{todo.title}}</label>
-        <input
-          class="edit"
-          name="titleEdit"
-          onblur="saveEdit"
-          onkeydown="dispatchKeyDown"
-        />
-        <button class="delete" onclick="deleteTodo">
-          [delete]
-        </button>
-      </li>
-      <!-- /each -->
+      <template each="todo in filteredTodos">
+        <li
+          class="todo"
+          is-done="{{todo.completed}}"
+          editing="{{todo.editing}}"
+          key="id"
+        >
+          <input
+            class="toggle"
+            type="checkbox"
+            name="todo.completed"
+          />
+          <label ondblclick="startEdit"
+            >{{todo.title}}</label
+          >
+          <input
+            class="edit"
+            name="titleEdit"
+            onblur="saveEdit"
+            onkeydown="dispatchKeyDown"
+          />
+          <button class="delete" onclick="deleteTodo">
+            [delete]
+          </button>
+        </li>
+      </template>
     </ul>
   </main>
   <footer hidden="{{ !todos.length }}">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
-      <!-- #each filter in filters -->
-      <li>
-        <input
-          type="radio"
-          name="activeFilter"
-          value="{{filter}}"
-        />
-        <label>{{ filter }}</label>
-      </li>
-      <!-- /each -->
+      <template each="filter in filters">
+        <li>
+          <input
+            type="radio"
+            name="activeFilter"
+            value="{{filter}}"
+          />
+          <label>{{ filter }}</label>
+        </li>
+      </template>
     </ul>
     <button
       id="clearCompleted"

@@ -32,10 +32,32 @@ const getBlockInfo = (node) => {
   return res;
 };
 
+function getTemplateBlockInfo(node) {
+  let each = node.getAttribute('each');
+  if (!each) return;
+
+  let [valueIdentifier, prop] = each.split(/\s+in\s+/);
+  let key = node.getAttribute('key') || 'id';
+
+  return {
+    valueIdentifier,
+    prop,
+    key,
+  };
+}
+
 const stack = [];
 
 function walk(node, callback) {
-  let { openBlock, elementNode, textNode, closeBlock, each } = callback;
+  let {
+    openBlock,
+    elementNode,
+    textNode,
+    closeBlock,
+    each,
+    openRepeatedBlock,
+    closeRepeatedBlock,
+  } = callback;
 
   each(node);
 
@@ -50,7 +72,11 @@ function walk(node, callback) {
         }
         if (op === '/') {
           let openingNode = stack.pop();
-          closeBlock(openingNode, middleSiblings(openingNode, node), node);
+          closeBlock(
+            openingNode,
+            middleSiblings(openingNode, node),
+            node
+          );
         }
       }
       break;
@@ -60,7 +86,16 @@ function walk(node, callback) {
       break;
     }
     case node.ELEMENT_NODE: {
-      elementNode(node);
+      if (node.nodeName === 'TEMPLATE') {
+        let info = getTemplateBlockInfo(node);
+        if (info) {
+          openRepeatedBlock(node, info);
+          walk(node.content, callback);
+          closeRepeatedBlock(node);
+        }
+      } else {
+        elementNode(node);
+      }
     }
   }
 

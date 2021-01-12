@@ -5,6 +5,26 @@ describe('iterations', () => {
   });
 
   it('should iterate over Array', () => {
+    let tpl1 = html`
+      <ul>
+        <template each="todo in todos">
+          <li style="background-color: {{todo.colour}}">
+            <p>{{todo.title}}</p>
+          </li>
+        </template>
+      </ul>
+    `;
+
+    let tpl2 = html`
+      <ul>
+        <template each="todo in todos">
+          <li style="background-color: {{todo.colour}}">
+            <p>{{todo.title}}</p>
+          </li>
+        </template>
+      </ul>
+    `;
+
     view = synergy.render(
       rootNode,
       {
@@ -21,15 +41,7 @@ describe('iterations', () => {
           },
         ],
       },
-      html`
-        <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{todo.title}}</p>
-          </li>
-          <!-- /each -->
-        </ul>
-      `
+      tpl2
     );
 
     let todos = Array.from(view.todos);
@@ -50,12 +62,12 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <!-- #each colour in colours -->
-          <li data-index="{{ # }}">
-            <p>{{ # }}</p>
-            <p>{{ colour }}</p>
-          </li>
-          <!-- /each -->
+          <template each="colour in colours">
+            <li data-index="{{ # }}">
+              <p>{{ # }}</p>
+              <p>{{ colour }}</p>
+            </li>
+          </template>
         </ul>
       `
     );
@@ -78,11 +90,11 @@ describe('iterations', () => {
       },
       html`
         <select name="chosenName">
-          <!-- #each name in names -->
-          <option value="{{name}}" onclick="handleClick">
-            {{name}}
-          </option>
-          <!-- /each -->
+          <template each="name in names">
+            <option value="{{name}}" onclick="handleClick">
+              {{name}}
+            </option>
+          </template>
         </select>
       `
     );
@@ -107,9 +119,9 @@ describe('iterations', () => {
         ],
       },
       html`
-        <!-- #each colour in colours -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
+        <template each="colour in colours">
+          <p>{{colour.name}}</p>
+        </template>
       `
     );
 
@@ -156,9 +168,9 @@ describe('iterations', () => {
         ],
       },
       html`
-        <!-- #each colour in colours -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
+        <template each="colour in colours">
+          <p>{{colour.name}}</p>
+        </template>
       `
     );
 
@@ -208,9 +220,9 @@ describe('iterations', () => {
         ],
       },
       html`
-        <!-- #each colour in colours (key=foo) -->
-        <p>{{colour.name}}</p>
-        <!-- /each -->
+        <template each="colour in colours" key="foo">
+          <p>{{colour.name}}</p>
+        </template>
       `
     );
 
@@ -261,10 +273,10 @@ describe('iterations', () => {
       },
       html`
         <div>
-          <!-- #each colour in colours -->
-          <p>{{colour.name}}</p>
-          <p>{{colour.id}}</p>
-          <!-- /each -->
+          <template each="colour in colours">
+            <p>{{colour.name}}</p>
+            <p>{{colour.id}}</p>
+          </template>
         </div>
       `
     );

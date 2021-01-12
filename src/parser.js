@@ -29,8 +29,50 @@ export default (templateFragment, BINDING_ID) => {
       each(node) {
         node.bindingId = BINDING_ID;
       },
+      openRepeatedBlock(node, context) {
+        stack.push(context);
+      },
+      closeRepeatedBlock(node) {
+        let { key, prop } = last(stack);
+        let path = resolve(prop, stack);
+
+        let binding = {
+          parts: [
+            {
+              type: 'key',
+              value: path,
+            },
+          ],
+          uid: key,
+          path,
+        };
+
+        let nodes = Array.from(node.content.children);
+
+        node.__bindings__ = [
+          {
+            ...binding,
+            type: LIST,
+            nodes,
+            listItems: [],
+          },
+        ];
+
+        let listNodeBinding = {
+          ...binding,
+          type: LIST_ITEM,
+        };
+
+        nodes.forEach((child) => {
+          child.__bindings__.unshift(listNodeBinding);
+        });
+
+        stack.pop();
+      },
       openBlock(expr, args) {
-        stack.push(parseEachDeclaration(expr, stack, args));
+        let x = parseEachDeclaration(expr, stack, args);
+
+        stack.push(x);
       },
       textNode(node) {
         parseTextNode(node.nodeValue, node, stack);

@@ -109,7 +109,14 @@ describe('hydrate', () => {
   it('should hydrate all of the things', async () => {
     mount(html`
       <div id="app-container">
-        <!-- #each item in items -->
+        <template each="item in items">
+          <x-drawer
+            title="{{ item.name }}"
+            open="{{ item.open }}"
+          >
+            <p>hi, my name is {{ item.name }}</p>
+          </x-drawer>
+        </template>
         <x-drawer open="" title="kim">
           <h3>
             <button aria-expanded="true">kim</button>
@@ -134,8 +141,6 @@ describe('hydrate', () => {
             <p>hi, my name is ericka</p>
           </div>
         </x-drawer>
-
-        <!-- /each -->
       </div>
     `);
 
@@ -186,14 +191,14 @@ describe('hydrate', () => {
       synergy.render(
         document.getElementById('app-container'),
         factory(),
-        html` <!-- #each item in items -->
+        html`<template each="item in items">
           <x-drawer
             title="{{ item.name }}"
             open="{{ item.open }}"
           >
             <p>hi, my name is {{ item.name }}</p>
           </x-drawer>
-          <!-- /each -->`
+        </template>`
       );
     })();
 

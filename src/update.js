@@ -19,6 +19,8 @@ import {
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
 
+/*
+
 const updateList = (placeholder, binding, delta) => {
   let listItems = binding.listItems;
   let fragment = document.createDocumentFragment();
@@ -37,6 +39,33 @@ const updateList = (placeholder, binding, delta) => {
     return nodes;
   });
   placeholder.after(fragment);
+};
+
+*/
+
+const updateList = (template, binding, delta) => {
+  let listItems = binding.listItems;
+  let fragment = document.createDocumentFragment();
+  listItems.forEach(removeNodes);
+
+  binding.listItems = delta.map((i, newIndex) => {
+    let nodes =
+      i === -1
+        ? binding.nodes.map((node) => {
+            let x = cloneNode(node);
+
+            return x;
+          })
+        : listItems[i];
+
+    nodes.forEach((el) => {
+      el.__index__ = newIndex;
+      fragment.appendChild(el);
+    });
+
+    return nodes;
+  });
+  template.after(fragment);
 };
 
 const resolve = (path, ctx) => {

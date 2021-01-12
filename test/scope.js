@@ -25,20 +25,32 @@ describe('context', () => {
       },
       html` <h1 first>{{todo}}</h1>
         <ul>
-          <!-- #each todo in todos -->
-          <li style="background-color: {{todo.colour}}">
-            <p>{{todo.title}}</p>
-            <p>{{message}}</p>
-          </li>
-          <!-- /each -->
+          <template each="todo in todos">
+            <li style="background-color: {{todo.colour}}">
+              <p>{{todo.title}}</p>
+              <p>{{message}}</p>
+            </li>
+          </template>
         </ul>
         <h1 second>{{todo}}</h1>`
     );
 
-    assert.equal($('h1[first]').textContent.trim(), 'feed the dog');
-    assert.equal($('li p').textContent.trim(), 'walk the cat');
-    assert.equal($('li p:last-child').textContent.trim(), 'Hej!');
-    assert.equal($('h1[second]').textContent.trim(), 'feed the dog');
+    assert.equal(
+      $('h1[first]').textContent.trim(),
+      'feed the dog'
+    );
+    assert.equal(
+      $('li p').textContent.trim(),
+      'walk the cat'
+    );
+    assert.equal(
+      $('li p:last-child').textContent.trim(),
+      'Hej!'
+    );
+    assert.equal(
+      $('h1[second]').textContent.trim(),
+      'feed the dog'
+    );
   });
 
   it('should support nested scopes', async () => {
@@ -59,16 +71,16 @@ describe('context', () => {
         ],
       },
       html`
-        <!-- #each artist in artists -->
-        <article>
-          <h4>{{artist.name}}</h4>
-          <ul>
-            <!-- #each tag in artist.tags -->
-            <li>{{tag}}</li>
-            <!-- /each -->
-          </ul>
-        </article>
-        <!-- /each -->
+        <template each="artist in artists">
+          <article>
+            <h4>{{artist.name}}</h4>
+            <ul>
+              <template each="tag in artist.tags">
+                <li>{{tag}}</li>
+              </template>
+            </ul>
+          </article>
+        </template>
       `
     );
   });
@@ -90,21 +102,26 @@ describe('context', () => {
           },
           {
             name: 'salvador dali',
-            tags: ['painter', 'sculptor', 'photographer', 'writer'],
+            tags: [
+              'painter',
+              'sculptor',
+              'photographer',
+              'writer',
+            ],
           },
         ],
       },
       html`
-        <!-- #each artist in artists -->
-        <article>
-          <h4>{{artist.name}}</h4>
-          <ul>
-            <!-- #each tag in artist.tags -->
-            <li>{{tag}}</li>
-            <!-- /each -->
-          </ul>
-        </article>
-        <!-- /each -->
+        <template each="artist in artists">
+          <article>
+            <h4>{{artist.name}}</h4>
+            <ul>
+              <template each="tag in artist.tags">
+                <li>{{tag}}</li>
+              </template>
+            </ul>
+          </article>
+        </template>
       `
     );
 
