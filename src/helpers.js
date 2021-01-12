@@ -62,38 +62,6 @@ export const typeOf = (v) =>
 export const copy = (v) =>
   v && JSON.parse(JSON.stringify(v));
 
-const parseEach = (str) => {
-  let [left, prop] = str
-    .split(/\s+in\s+/)
-    .map((v) => v.trim());
-  return { valueIdentifier: left, prop };
-};
-
-const parseArgs = (args) =>
-  args
-    ? args
-        .split(',')
-        .map((v) => v.split('='))
-        .reduce((a, [k, v]) => {
-          a[k] = v;
-          return a;
-        }, {})
-    : {};
-
-export const parseEachDeclaration = (
-  str,
-  context,
-  args
-) => {
-  let v = parseEach(str);
-
-  return {
-    ...parseArgs(args),
-    ...v,
-    prop: resolve(v.prop, context),
-  };
-};
-
 export const getValueAtPath = (path, target) =>
   path.split('.').reduce((o, k) => o && o[k], target);
 

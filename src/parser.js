@@ -11,8 +11,6 @@ import {
   last,
   resolve,
   hasMustache,
-  parseEachDeclaration,
-  removeNodes,
 } from './helpers.js';
 
 import walk from './walk.js';
@@ -29,7 +27,7 @@ export default (templateFragment, BINDING_ID) => {
       each(node) {
         node.bindingId = BINDING_ID;
       },
-      openRepeatedBlock(node, context) {
+      openRepeatedBlock(context) {
         stack.push(context);
       },
       closeRepeatedBlock(node) {
@@ -69,54 +67,12 @@ export default (templateFragment, BINDING_ID) => {
 
         stack.pop();
       },
-      openBlock(expr, args) {
-        let x = parseEachDeclaration(expr, stack, args);
-
-        stack.push(x);
-      },
       textNode(node) {
         parseTextNode(node.nodeValue, node, stack);
       },
       elementNode(node) {
         node.__bindings__ = [];
         parseElementNode(node, stack);
-      },
-      closeBlock(openingComment, nodes, closingComment) {
-        removeNodes(nodes);
-
-        let { key, prop } = last(stack);
-        let path = resolve(prop, stack);
-
-        let binding = {
-          parts: [
-            {
-              type: 'key',
-              value: path,
-            },
-          ],
-          uid: key,
-          path,
-        };
-
-        openingComment.__bindings__ = [
-          {
-            ...binding,
-            type: LIST,
-            nodes,
-            listItems: [],
-          },
-        ];
-
-        let listNodeBinding = {
-          ...binding,
-          type: LIST_ITEM,
-        };
-
-        nodes.forEach((node) => {
-          node.__bindings__.unshift(listNodeBinding);
-        });
-
-        stack.pop();
       },
     });
 

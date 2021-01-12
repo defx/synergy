@@ -7,12 +7,7 @@ import { debounce, templateFromString } from './helpers.js';
 
 let counter = 1;
 
-function render(
-  mountNode,
-  viewmodel,
-  template,
-  options = {}
-) {
+function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
   let templateNode = (typeof template === 'string'

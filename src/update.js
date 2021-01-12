@@ -1,7 +1,6 @@
 import {
   LIST,
   LIST_ITEM,
-  TEXT,
   ATTRIBUTE,
   INPUT,
 } from './constants.js';
@@ -18,30 +17,6 @@ import {
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
-
-/*
-
-const updateList = (placeholder, binding, delta) => {
-  let listItems = binding.listItems;
-  let fragment = document.createDocumentFragment();
-  listItems.forEach(removeNodes);
-  binding.listItems = delta.map((i, newIndex) => {
-    let nodes =
-      i === -1
-        ? binding.nodes.map((node) => cloneNode(node))
-        : listItems[i];
-
-    nodes.forEach((el) => {
-      el.__index__ = newIndex;
-      fragment.appendChild(el);
-    });
-
-    return nodes;
-  });
-  placeholder.after(fragment);
-};
-
-*/
 
 const updateList = (template, binding, delta) => {
   let listItems = binding.listItems;
