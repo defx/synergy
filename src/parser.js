@@ -11,9 +11,8 @@ import {
   last,
   resolve,
   hasMustache,
+  walk,
 } from './helpers.js';
-
-import walk from './walk.js';
 
 const EMPTY = Symbol('empty');
 
@@ -127,58 +126,64 @@ export default (templateFragment, BINDING_ID) => {
   let parse = () => {
     let stack = [];
 
-    walk(templateFragment, {
-      each(node) {
-        node.bindingId = BINDING_ID;
-      },
-      openRepeatedBlock(node) {
-        stack.push(parseRepeatedBlock(node));
-      },
-      closeRepeatedBlock(node) {
-        let { key, prop } = last(stack);
-        let path = resolve(prop, stack);
+    function dispatch(node) {
+      node.bindingId = BINDING_ID;
 
-        let binding = {
-          parts: [
-            {
-              type: 'key',
-              value: path,
-            },
-          ],
-          uid: key,
-          path,
-        };
+      switch (node.nodeType) {
+        case node.TEXT_NODE: {
+          parseTextNode(node.nodeValue, node, stack);
+          break;
+        }
+        case node.ELEMENT_NODE: {
+          if (node.nodeName === 'TEMPLATE') {
+            if (node.hasAttribute('each')) {
+              stack.push(parseRepeatedBlock(node));
+              walk(node.content, dispatch);
+              let { key, prop } = last(stack);
+              let path = resolve(prop, stack);
 
-        let nodes = Array.from(node.content.children);
+              let binding = {
+                parts: [
+                  {
+                    type: 'key',
+                    value: path,
+                  },
+                ],
+                uid: key,
+                path,
+              };
 
-        node.__bindings__ = [
-          {
-            ...binding,
-            type: LIST,
-            nodes,
-            listItems: [],
-          },
-        ];
+              let nodes = Array.from(node.content.children);
 
-        let listNodeBinding = {
-          ...binding,
-          type: LIST_ITEM,
-        };
+              node.__bindings__ = [
+                {
+                  ...binding,
+                  type: LIST,
+                  nodes,
+                  listItems: [],
+                },
+              ];
 
-        nodes.forEach((child) => {
-          child.__bindings__.unshift(listNodeBinding);
-        });
+              let listNodeBinding = {
+                ...binding,
+                type: LIST_ITEM,
+              };
 
-        stack.pop();
-      },
-      textNode(node) {
-        parseTextNode(node.nodeValue, node, stack);
-      },
-      elementNode(node) {
-        node.__bindings__ = [];
-        parseElementNode(node, stack);
-      },
-    });
+              nodes.forEach((child) => {
+                child.__bindings__.unshift(listNodeBinding);
+              });
+
+              stack.pop();
+            }
+          } else {
+            node.__bindings__ = [];
+            parseElementNode(node, stack);
+          }
+        }
+      }
+    }
+
+    walk(templateFragment, dispatch);
 
     return {
       templateFragment,
