@@ -37,4 +37,17 @@ function walk(node, callback) {
   }
 }
 
+// export function walk(node, callback, path = [0]) {
+//   if (callback(node, path) === false) return;
+
+//   let i = 0;
+//   node = node.firstChild;
+
+//   while (node) {
+//     if (!isWhitespace(node))
+//       walk(node, callback, path.concat(++i));
+//     node = node.nextSibling;
+//   }
+// }
+
 export default walk;
