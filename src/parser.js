@@ -14,8 +14,6 @@ import {
   walk,
 } from './helpers.js';
 
-const EMPTY = Symbol('empty');
-
 let subscribers;
 
 function parseElementNode(node, context) {
@@ -101,7 +99,6 @@ function parseTextNode(value, node, context) {
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),
-      data: EMPTY,
     },
   ];
 }
