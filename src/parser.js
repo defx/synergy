@@ -17,18 +17,122 @@ import walk from './walk.js';
 
 const EMPTY = Symbol('empty');
 
-export default (templateFragment, BINDING_ID) => {
-  let subscribers = new Set();
+let subscribers;
 
-  let parse = (v) => {
+function parseElementNode(node, context) {
+  let attrs = node.attributes;
+  let i = attrs.length;
+  while (i--) {
+    parseAttributeNode(attrs[i], node, context);
+  }
+  return context;
+}
+
+function parseAttributeNode(
+  { name, value },
+  node,
+  context
+) {
+  if (name.startsWith('on')) {
+    node.removeAttribute(name);
+    let lastContext = last(context);
+    let eventName = name.split('on')[1];
+
+    subscribers.add(eventName);
+
+    node.__bindings__.push({
+      eventName: eventName,
+      type: 'call',
+      method: value,
+      path: lastContext && `${lastContext.prop}.*`,
+    });
+
+    return;
+  }
+
+  if (
+    name === 'name' &&
+    value &&
+    (node.nodeName === 'INPUT' ||
+      node.nodeName === 'SELECT' ||
+      node.nodeName === 'TEXTAREA')
+  ) {
+    let path = resolve(value, context);
+
+    subscribers.add('input');
+
+    let binding = {
+      parts: [
+        {
+          type: 'key',
+          value: path,
+        },
+      ],
+      type: INPUT,
+      path,
+    };
+
+    node.__bindings__.push(binding, {
+      type: 'set',
+      eventName: 'input',
+      path,
+    });
+  }
+
+  if (hasMustache(value)) {
+    node.removeAttribute(name);
+
+    node.__bindings__.push({
+      name,
+      parts: getParts(value, context),
+      type: ATTRIBUTE,
+      context: context.slice(),
+    });
+  }
+}
+
+function parseTextNode(value, node, context) {
+  if (!hasMustache(value)) return;
+
+  node.__bindings__ = [
+    {
+      childIndex: Array.from(
+        node.parentNode.childNodes
+      ).findIndex((v) => v === node),
+      parts: getParts(value, context),
+      type: TEXT,
+      context: context.slice(),
+      data: EMPTY,
+    },
+  ];
+}
+
+function parseRepeatedBlock(node) {
+  let each = node.getAttribute('each');
+  if (!each) return;
+
+  let [valueIdentifier, prop] = each.split(/\s+in\s+/);
+  let key = node.getAttribute('key') || 'id';
+
+  return {
+    valueIdentifier,
+    prop,
+    key,
+  };
+}
+
+export default (templateFragment, BINDING_ID) => {
+  subscribers = new Set();
+
+  let parse = () => {
     let stack = [];
 
     walk(templateFragment, {
       each(node) {
         node.bindingId = BINDING_ID;
       },
-      openRepeatedBlock(context) {
-        stack.push(context);
+      openRepeatedBlock(node) {
+        stack.push(parseRepeatedBlock(node));
       },
       closeRepeatedBlock(node) {
         let { key, prop } = last(stack);
@@ -80,94 +184,6 @@ export default (templateFragment, BINDING_ID) => {
       templateFragment,
       subscribers: Array.from(subscribers),
     };
-  };
-
-  let parseTextNode = (value, node, context) => {
-    if (!hasMustache(value)) return;
-
-    node.__bindings__ = [
-      {
-        childIndex: Array.from(
-          node.parentNode.childNodes
-        ).findIndex((v) => v === node),
-        parts: getParts(value, context),
-        type: TEXT,
-        context: context.slice(),
-        data: EMPTY,
-      },
-    ];
-  };
-
-  let parseElementNode = (node, context) => {
-    let attrs = node.attributes;
-    let i = attrs.length;
-    while (i--) {
-      parseAttributeNode(attrs[i], node, context);
-    }
-    return context;
-  };
-
-  let parseAttributeNode = (
-    { name, value },
-    node,
-    context
-  ) => {
-    if (name.startsWith('on')) {
-      node.removeAttribute(name);
-      let lastContext = last(context);
-      let eventName = name.split('on')[1];
-
-      subscribers.add(eventName);
-
-      node.__bindings__.push({
-        eventName: eventName,
-        type: 'call',
-        method: value,
-        path: lastContext && `${lastContext.prop}.*`,
-      });
-
-      return;
-    }
-
-    if (
-      name === 'name' &&
-      value &&
-      (node.nodeName === 'INPUT' ||
-        node.nodeName === 'SELECT' ||
-        node.nodeName === 'TEXTAREA')
-    ) {
-      let path = resolve(value, context);
-
-      subscribers.add('input');
-
-      let binding = {
-        parts: [
-          {
-            type: 'key',
-            value: path,
-          },
-        ],
-        type: INPUT,
-        path,
-      };
-
-      node.__bindings__.push(binding, {
-        type: 'set',
-        eventName: 'input',
-        path,
-      });
-    }
-
-    if (hasMustache(value)) {
-      node.removeAttribute(name);
-
-      node.__bindings__.push({
-        name,
-        parts: getParts(value, context),
-        type: ATTRIBUTE,
-        context: context.slice(),
-      });
-    }
   };
 
   return parse();

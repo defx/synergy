@@ -1,19 +1,5 @@
 import { isWhitespace } from './helpers.js';
 
-function getTemplateBlockInfo(node) {
-  let each = node.getAttribute('each');
-  if (!each) return;
-
-  let [valueIdentifier, prop] = each.split(/\s+in\s+/);
-  let key = node.getAttribute('key') || 'id';
-
-  return {
-    valueIdentifier,
-    prop,
-    key,
-  };
-}
-
 function walk(node, callback) {
   let {
     elementNode,
@@ -32,9 +18,8 @@ function walk(node, callback) {
     }
     case node.ELEMENT_NODE: {
       if (node.nodeName === 'TEMPLATE') {
-        let info = getTemplateBlockInfo(node);
-        if (info) {
-          openRepeatedBlock(info);
+        if (node.hasAttribute('each')) {
+          openRepeatedBlock(node);
           walk(node.content, callback);
           closeRepeatedBlock(node);
         }
