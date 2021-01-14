@@ -1,6 +1,6 @@
 {
   "name": "synergy",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Simple and declarative data binding for the DOM",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
