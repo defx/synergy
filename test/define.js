@@ -53,18 +53,18 @@ describe('define', () => {
   });
   it('should reflect viewmodel changes back on to attributes', async () => {
     let name = `x-${count++}`;
-    let factory = ({ hidden = true }) => ({
-      hidden,
+    let factory = ({ show }) => ({
+      show,
       toggle() {
-        this.hidden = !this.hidden;
+        this.show = !this.show;
       },
     });
     synergy.define(
       name,
       factory,
-      '<p hidden={{ hidden }}>hello world!</p><button onclick="toggle">toggle</button>',
+      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle">toggle</button>',
       {
-        observedAttributes: ['hidden'],
+        observedAttributes: ['show'],
       }
     );
     mount(`
@@ -73,7 +73,7 @@ describe('define', () => {
     document.querySelector(`${name} button`).click();
     await nextFrame();
     let el = document.querySelector(name);
-    assert.equal(el.hasAttribute('hidden'), false);
+    assert.ok(el.hasAttribute('show'));
   });
 
   it('should merge default slot', () => {
@@ -114,7 +114,7 @@ describe('define', () => {
 
   it('should convert between kebab and pascal casing', async () => {
     let name = `x-${count++}`;
-    let factory = ({ fooBar = false }) => ({
+    let factory = ({ fooBar }) => ({
       fooBar,
       toggle() {
         this.fooBar = !this.fooBar;
@@ -132,7 +132,7 @@ describe('define', () => {
     <${name} foo-bar></${name}>
     `);
 
-    assert.equal($(`${name}`).getAttribute('foo-bar'), '');
+    assert.equal($(name).getAttribute('foo-bar'), '');
 
     $('button').click();
     await nextFrame();
@@ -220,5 +220,43 @@ describe('define', () => {
 
     assert.ok(node.shadowRoot);
     assert.equal(node.shadowRoot.innerHTML, template);
+  });
+
+  it('should accept rich data as properties', () => {
+    let factory = ({ arr = [], obj = {} }) => ({
+      arr,
+      obj,
+    });
+
+    let template = `
+    <h2>{{ obj.org }}</h2>  
+    <h3>{{ obj.repo }}</h3>
+      <template each="item in arr">
+        <p>{{ item }}</p>
+      </template>
+    `;
+
+    synergy.define('rich-props', factory, template, {
+      observedAttributes: ['arr', 'obj'],
+    });
+
+    mount(html` <div id="container"></div> `);
+
+    synergy.render(
+      document.getElementById('container'),
+      {
+        letters: 'synergy'.split(''),
+        library: {
+          org: 'synergyjs',
+          repo: 'defx/synergy',
+        },
+      },
+      html`
+        <rich-props
+          arr="{{ letters }}"
+          obj="{{ library }}"
+        ></rich-props>
+      `
+    );
   });
 });

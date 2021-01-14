@@ -14,6 +14,8 @@ import {
   pascalToKebab,
   applyAttribute,
   attributeToProp,
+  isPrimitive,
+  kebabToPascal,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
@@ -122,26 +124,25 @@ const convertStyles = (o) =>
 
 const applyComplexAttribute = (
   node,
-  rawName,
+  name,
   value,
   previous
 ) => {
-  let v = value;
-  if (rawName === 'style') {
-    v = joinStyles(
+  if (name === 'style') {
+    value = joinStyles(
       mergeStyles(
         parseStyles(previous),
         parseStyles(node.getAttribute('style')),
         parseStyles(value)
       )
     );
-  } else {
+  } else if (name === 'class') {
     switch (typeOf(value)) {
       case 'Array':
-        v = value.join(' ');
+        value = value.join(' ');
         break;
       case 'Object':
-        v = Object.keys(value)
+        value = Object.keys(value)
           .reduce((a, k) => {
             if (value[k]) a.push(k);
             return a;
@@ -149,12 +150,14 @@ const applyComplexAttribute = (
           .join(' ');
         break;
     }
+  } else if (!isPrimitive(value)) {
+    return (node[kebabToPascal(name)] = value);
   }
 
-  applyAttribute(node, rawName, v);
+  applyAttribute(node, name, value);
 };
 
-const updateNode = (node, binding, newValue, oldValue) =>
+const updateNode = (node, binding, newValue) =>
   binding.type === ATTRIBUTE
     ? applyComplexAttribute(
         node,
@@ -257,7 +260,7 @@ const updateBinding = (binding, node, ctx, p) => {
 
   binding.data = newValue;
 
-  updateNode(node, binding, newValue, oldValue);
+  updateNode(node, binding, newValue);
 };
 
 let prev;

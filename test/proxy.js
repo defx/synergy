@@ -1,16 +1,5 @@
 import proxy from '../src/proxy.js';
 
-/*
-
-proxy(
-  root = {},
-  callbackAny,
-  callbackObserved = NOOP,
-  observedProperties = []
-)
-
-*/
-
 describe('proxy', () => {
   describe('callbackAny', () => {
     it('should callback when new value is added', async () => {

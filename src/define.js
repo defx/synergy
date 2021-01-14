@@ -4,6 +4,7 @@ import {
   templateFromString,
   applyAttribute,
   attributeToProp,
+  isPrimitive,
 } from './helpers.js';
 
 const initialAttributes = (node) => {
@@ -40,52 +41,69 @@ const define = (name, factory, template, options = {}) => {
     constructor() {
       super();
 
-      let viewmodel = factory(
+      this.viewmodel = factory(
         initialAttributes(this),
         this
       );
+
+      observedAttributes.forEach((name) => {
+        let property = attributeToProp(name).name;
+
+        let value = this.hasAttribute(name)
+          ? this.getAttribute(name)
+          : this[property];
+
+        Object.defineProperty(this, property, {
+          get() {
+            return this.viewmodel[property];
+          },
+          set(v) {
+            this.viewmodel[property] = v;
+            isPrimitive(v) &&
+              applyAttribute(this, property, v);
+          },
+        });
+
+        this[property] = value;
+      });
 
       if (options.shadowRoot) {
         this.attachShadow({
           mode: options.shadowRoot,
         });
       } else {
-        viewmodel.beforeMountCallback = (frag) =>
+        this.viewmodel.beforeMountCallback = (frag) =>
           mergeSlots(this, frag);
       }
 
       this.viewmodel = synergy.render(
         this.shadowRoot || this,
-        viewmodel,
+        this.viewmodel,
         template
       );
 
-      let puc = viewmodel.updatedCallback || function () {};
+      let puc =
+        this.viewmodel.updatedCallback || function () {};
 
-      viewmodel.updatedCallback = (prev) => {
-        observedProps
-          .map((k) => [k, prev[k], viewmodel[k]])
-          .filter(([_, a, b]) => a !== b)
-          .forEach(([k, _, v]) =>
-            applyAttribute(this, k, v)
-          );
+      this.viewmodel.updatedCallback = (prev) => {
+        observedProps.forEach((k) => {
+          let v = this.viewmodel[k];
+          isPrimitive(v) && applyAttribute(this, k, v);
+        });
 
         puc.call(this.viewmodel, prev);
       };
     }
     attributeChangedCallback(k, _, v) {
-      if (this.viewmodel) {
-        let { name, value } = attributeToProp(k, v);
-        this.viewmodel[name] = value;
-      }
+      let { name, value } = attributeToProp(k, v);
+      this.viewmodel[name] = value;
     }
   };
 
   forwards.forEach((k) =>
     Object.assign(X.prototype, {
       [k]() {
-        if (this.viewmodel && this.viewmodel[k])
-          this.viewmodel[k]();
+        this.viewmodel[k] && this.viewmodel[k]();
       },
     })
   );
