@@ -287,4 +287,42 @@ describe('iterations', () => {
       )
     );
   });
+
+  it('should support negations within repeated block', () => {
+    view = synergy.render(
+      rootNode,
+      {
+        colours: [
+          {
+            name: 'red',
+            id: 1,
+            show: true,
+          },
+          {
+            name: 'green',
+            id: 2,
+            show: false,
+          },
+          {
+            name: 'gold',
+            id: 3,
+            show: false,
+          },
+        ],
+      },
+      html`
+        <div>
+          <template each="colour in colours">
+            <div class="colour" hidden="{{ !colour.show }}">
+              <p>{{colour.name}}</p>
+              <p>{{colour.id}}</p>
+            </div>
+          </template>
+        </div>
+      `
+    );
+    assert.equal($$('.colour')[0].hidden, false);
+    assert.equal($$('.colour')[1].hidden, true);
+    assert.equal($$('.colour')[2].hidden, true);
+  });
 });

@@ -42,11 +42,16 @@ export const getParts = (value, context) =>
     .map((v) => {
       let match = v.match(/{{([^{}]+)}}/);
 
-      if (match)
+      if (match) {
+        let [_, a = '', b] = match[1]
+          .trim()
+          .match(/(!)?(.+)/);
+
         return {
           type: 'key',
-          value: resolve(match[1].trim(), context),
+          value: a + resolve(b, context),
         };
+      }
 
       return {
         type: 'value',
