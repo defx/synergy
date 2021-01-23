@@ -41,7 +41,7 @@ function setData(element, value) {
 
 function getData(element) {
   let script = getDataScript(element);
-  return script && JSON.parse(script.textContent);
+  return (script && JSON.parse(script.textContent)) || {};
 }
 
 function addData(element, k, v) {
@@ -69,10 +69,9 @@ const define = (name, factory, template, options = {}) => {
     constructor() {
       super();
 
-      this.viewmodel = factory(
-        initialAttributes(this),
-        this
-      );
+      this.viewmodel = factory(initialAttributes(this));
+
+      Object.assign(this, getData(this));
 
       observedAttributes.forEach((name) => {
         let property = attributeToProp(name).name;
@@ -120,7 +119,11 @@ const define = (name, factory, template, options = {}) => {
       this.viewmodel.updatedCallback = (prev) => {
         observedProps.forEach((k) => {
           let v = this.viewmodel[k];
-          isPrimitive(v) && applyAttribute(this, k, v);
+          if (isPrimitive(v)) {
+            applyAttribute(this, k, v);
+          } else {
+            addData(this, k, v);
+          }
         });
 
         puc.call(this.viewmodel, prev);
