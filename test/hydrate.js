@@ -390,7 +390,7 @@ describe('hydrate', () => {
 
     mount(html`
       <div id="app">
-        <x-accordion>
+        <y-accordion>
           <script type="data">
             {
               "items": [{},{},{}]
@@ -439,11 +439,11 @@ describe('hydrate', () => {
               </div>
             </li>
           </ul>
-        </x-accordion>
+        </y-accordion>
       </div>
     `);
 
-    let before = $('x-accordion');
+    let before = $('y-accordion');
 
     (() => {
       let factory = ({ items = [] }) => {
@@ -462,7 +462,7 @@ describe('hydrate', () => {
       };
 
       synergy.define(
-        'x-accordion',
+        'y-accordion',
         factory,
         html`
           <ul>
@@ -517,13 +517,13 @@ describe('hydrate', () => {
       synergy.render(
         app,
         view,
-        html`<x-accordion
+        html`<y-accordion
           items="{{ items }}"
-        ></x-accordion>`
+        ></y-accordion>`
       );
     })();
 
-    let after = $('x-accordion');
+    let after = $('y-accordion');
 
     assert.ok(after.isSameNode(before));
   });
