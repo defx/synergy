@@ -234,6 +234,25 @@ describe('hydrate', () => {
     mount(html`
       <div id="app">
         <x-accordion>
+          <script type="data">
+            {
+              "items": [
+                {
+                  "title": "HTML",
+                  "description": "something about HTML...",
+                  "open": true
+                },
+                {
+                  "title": "CSS",
+                  "description": "something about CSS..."
+                },
+                {
+                  "title": "JavaScript",
+                  "description": "something about JavaScript..."
+                }
+              ]
+            }
+          </script>
           <ul>
             <template each="item in items">
               <li>
@@ -280,6 +299,8 @@ describe('hydrate', () => {
         </x-accordion>
       </div>
     `);
+
+    let before = $('x-accordion');
 
     (() => {
       let factory = ({ items = [] }) => {
@@ -358,5 +379,152 @@ describe('hydrate', () => {
         ></x-accordion>`
       );
     })();
+
+    let after = $('x-accordion');
+
+    assert.ok(after.isSameNode(before));
+  });
+
+  it('should hydrate with rich data (empty array items)', () => {
+    /* just to show that this is possible because primitive values will always be read from the attributes and text nodes. Need to do a little more testing before commiting to this strategy though. */
+
+    mount(html`
+      <div id="app">
+        <x-accordion>
+          <script type="data">
+            {
+              "items": [{},{},{}]
+            }
+          </script>
+          <ul>
+            <template each="item in items">
+              <li>
+                <h3>
+                  <button>{{ item.title }}</button>
+                </h3>
+                <div>{{ item.description }}</div>
+              </li>
+            </template>
+            <li>
+              <h3>
+                <button
+                  aria-controls="drawer__0"
+                  aria-expanded="true"
+                >
+                  HTML
+                </button>
+              </h3>
+              <div id="drawer__0">
+                something about HTML...
+              </div>
+            </li>
+            <li>
+              <h3>
+                <button aria-controls="drawer__1">
+                  CSS
+                </button>
+              </h3>
+              <div hidden="" id="drawer__1">
+                something about CSS...
+              </div>
+            </li>
+            <li>
+              <h3>
+                <button aria-controls="drawer__2">
+                  JavaScript
+                </button>
+              </h3>
+              <div hidden="" id="drawer__2">
+                something about JavaScript...
+              </div>
+            </li>
+          </ul>
+        </x-accordion>
+      </div>
+    `);
+
+    let before = $('x-accordion');
+
+    (() => {
+      let factory = ({ items = [] }) => {
+        return {
+          items,
+          toggle(e, item) {
+            item.open = !item.open;
+
+            if (!item.open) return;
+
+            this.items = this.items.map((v) =>
+              v === item ? v : { ...v, open: false }
+            );
+          },
+        };
+      };
+
+      synergy.define(
+        'x-accordion',
+        factory,
+        html`
+          <ul>
+            <template each="item in items">
+              <li>
+                <h3>
+                  <button
+                    onclick="toggle"
+                    aria-expanded="{{ item.open }}"
+                    aria-controls="drawer__{{ # }}"
+                  >
+                    {{ item.title }}
+                  </button>
+                </h3>
+                <div
+                  id="drawer__{{ # }}"
+                  hidden="{{ !item.open }}"
+                >
+                  {{ item.description }}
+                </div>
+              </li>
+            </template>
+          </ul>
+        `,
+        {
+          observedAttributes: ['items'],
+        }
+      );
+    })();
+
+    (() => {
+      let view = {
+        items: [
+          {
+            title: 'HTML',
+            description: 'something about HTML...',
+            open: true,
+          },
+          {
+            title: 'CSS',
+            description: 'something about CSS...',
+          },
+          {
+            title: 'JavaScript',
+            description: 'something about JavaScript...',
+          },
+        ],
+      };
+
+      const app = document.getElementById('app');
+
+      synergy.render(
+        app,
+        view,
+        html`<x-accordion
+          items="{{ items }}"
+        ></x-accordion>`
+      );
+    })();
+
+    let after = $('x-accordion');
+
+    assert.ok(after.isSameNode(before));
   });
 });
