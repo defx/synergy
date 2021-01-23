@@ -24,19 +24,25 @@ const forwards = [
 
 function createDataScript(element) {
   let script = document.createElement('script');
-  script.setAttribute('type', 'data');
-  element.insertBefore(script, element.firstChild);
+  script.type = 'data';
+  element.prepend(script);
   return script;
 }
 
 function getDataScript(element) {
-  return element.querySelector('script[type="data"]');
+  let fc = element.firstElementChild;
+  return (
+    fc &&
+    fc.nodeName === 'SCRIPT' &&
+    fc.type === 'data' &&
+    fc
+  );
 }
 
 function setData(element, value) {
   let script =
     getDataScript(element) || createDataScript(element);
-  script.textContent = JSON.stringify(value, null, 2);
+  script.textContent = JSON.stringify(value);
 }
 
 function getData(element) {
@@ -45,7 +51,7 @@ function getData(element) {
 }
 
 function addData(element, k, v) {
-  let data = getData(element) || {};
+  let data = getData(element);
   data[k] = v;
   setData(element, data);
 }
