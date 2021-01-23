@@ -22,6 +22,34 @@ const forwards = [
   'adoptedCallback',
 ];
 
+function createDataScript(element) {
+  let script = document.createElement('script');
+  script.setAttribute('type', 'data');
+  element.appendChild(script);
+  return script;
+}
+
+function getDataScript(element) {
+  return element.querySelector('script[type="data"]');
+}
+
+function setData(element, value) {
+  let script =
+    getDataScript(element) || createDataScript(element);
+  script.textContent = JSON.stringify(value, null, 2);
+}
+
+function getData(element) {
+  let script = getDataScript(element);
+  return script && JSON.parse(script.textContent);
+}
+
+function addData(element, k, v) {
+  let data = getData(element) || {};
+  data[k] = v;
+  setData(element, data);
+}
+
 const define = (name, factory, template, options = {}) => {
   let { observedAttributes = [] } = options;
 
@@ -59,8 +87,12 @@ const define = (name, factory, template, options = {}) => {
           },
           set(v) {
             this.viewmodel[property] = v;
-            isPrimitive(v) &&
+
+            if (isPrimitive(v)) {
               applyAttribute(this, property, v);
+            } else {
+              addData(this, property, v);
+            }
           },
         });
 

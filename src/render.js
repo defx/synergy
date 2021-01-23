@@ -34,8 +34,8 @@ function render(mountNode, viewmodel, template) {
     if (viewmodel.beforeMountCallback)
       viewmodel.beforeMountCallback(templateFragment);
 
-    while (mountNode.firstChild) {
-      mountNode.removeChild(mountNode.lastChild);
+    for (let child of mountNode.children) {
+      if (child.nodeName !== 'SCRIPT') child.remove();
     }
 
     mountNode.appendChild(templateFragment);
