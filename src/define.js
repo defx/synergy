@@ -39,21 +39,17 @@ function getDataScript(element) {
   );
 }
 
-function setData(element, value) {
-  let script =
-    getDataScript(element) || createDataScript(element);
-  script.textContent = JSON.stringify(value);
-}
-
 function getData(element) {
   let script = getDataScript(element);
   return (script && JSON.parse(script.textContent)) || {};
 }
 
-function addData(element, k, v) {
+function setData(element, k, v) {
   let data = getData(element);
   data[k] = v;
-  setData(element, data);
+  let script =
+    getDataScript(element) || createDataScript(element);
+  script.textContent = JSON.stringify(data);
 }
 
 const define = (name, factory, template, options = {}) => {
@@ -96,7 +92,7 @@ const define = (name, factory, template, options = {}) => {
             if (isPrimitive(v)) {
               applyAttribute(this, property, v);
             } else {
-              addData(this, property, v);
+              setData(this, property, v);
             }
           },
         });
@@ -128,7 +124,7 @@ const define = (name, factory, template, options = {}) => {
           if (isPrimitive(v)) {
             applyAttribute(this, k, v);
           } else {
-            addData(this, k, v);
+            setData(this, k, v);
           }
         });
 
