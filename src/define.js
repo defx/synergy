@@ -25,7 +25,7 @@ const forwards = [
 function createDataScript(element) {
   let script = document.createElement('script');
   script.setAttribute('type', 'data');
-  element.appendChild(script);
+  element.insertBefore(script, element.firstChild);
   return script;
 }
 
