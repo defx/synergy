@@ -3,20 +3,17 @@ import subscribe from './subscribe.js';
 import hydrate from './hydrate.js';
 import Updater from './update.js';
 import proxy from './proxy.js';
-import { debounce, templateFromString } from './helpers.js';
+import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
 function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
-  let templateNode = (typeof template === 'string'
-    ? templateFromString(template)
-    : template
-  ).cloneNode(true).content;
+  template = templateNode(template).cloneNode(true).content;
 
   let { subscribers, templateFragment } = parse(
-    templateNode,
+    template,
     BINDING_ID
   );
 

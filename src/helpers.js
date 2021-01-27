@@ -83,7 +83,8 @@ export const removeNodes = (nodes) =>
     node.parentNode.removeChild(node)
   );
 
-export function templateFromString(v = '') {
+export function templateNode(v = '') {
+  if (v.nodeName === 'TEMPLATE') return v;
   let tpl = document.createElement('template');
   tpl.innerHTML = v;
   return tpl;
