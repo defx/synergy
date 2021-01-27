@@ -101,11 +101,10 @@ export const debounce = (fn) => {
   };
 };
 
-export const pascalToKebab = (string) => {
-  return string.replace(/[\w]([A-Z])/g, function (m) {
+export const pascalToKebab = (string) =>
+  string.replace(/[\w]([A-Z])/g, function (m) {
     return m[0] + '-' + m[1].toLowerCase();
   });
-};
 
 export const kebabToPascal = (string) =>
   string.replace(/[\w]-([\w])/g, function (m) {
