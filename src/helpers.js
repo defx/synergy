@@ -124,25 +124,24 @@ export const attributeToProp = (k, v) => {
   };
 };
 
-export const propToAttribute = (k, v) => {
-  let name = pascalToKebab(k);
-  if (typeof v === 'boolean') {
+export function applyAttribute(node, name, value) {
+  name = pascalToKebab(name);
+
+  if (typeof value === 'boolean') {
     if (name.startsWith('aria-')) {
-      v = v.toString();
-    } else {
-      v = v ? '' : null;
+      value = value.toString();
+    } else if (value) {
+      value = '';
     }
   }
-  return { name, value: v };
-};
 
-export function applyAttribute(node, name, value) {
-  let a = propToAttribute(name, value);
-
-  if ([null, undefined, false].includes(a.value)) {
-    node.removeAttribute(a.name);
+  if (
+    typeof value === 'string' ||
+    typeof value === 'number'
+  ) {
+    node.setAttribute(name, value);
   } else {
-    node.setAttribute(a.name, a.value);
+    node.removeAttribute(name);
   }
 }
 
