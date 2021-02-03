@@ -129,7 +129,7 @@ export function applyAttribute(node, name, value) {
 
   if (typeof value === 'boolean') {
     if (name.startsWith('aria-')) {
-      value = value.toString();
+      value = '' + value;
     } else if (value) {
       value = '';
     }

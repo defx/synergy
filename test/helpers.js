@@ -18,21 +18,21 @@ describe('applyAttribute', () => {
   it('', () => {
     let node = document.createElement('div');
 
-    applyAttribute(node, 'aria-foo', false);
+    applyAttribute(node, 'ariaFoo', false);
 
     assert.equal(node.getAttribute('aria-foo'), 'false');
   });
   it('', () => {
     let node = document.createElement('div');
 
-    applyAttribute(node, 'aria-foo', true);
+    applyAttribute(node, 'ariaFoo', true);
 
     assert.equal(node.getAttribute('aria-foo'), 'true');
   });
   it('', () => {
     let node = document.createElement('div');
 
-    applyAttribute(node, 'data-index', 0);
+    applyAttribute(node, 'dataIndex', 0);
 
     assert.equal(node.getAttribute('data-index'), '0');
   });
