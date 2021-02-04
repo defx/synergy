@@ -1,7 +1,6 @@
 import synergy from './index.js';
 import mergeSlots from './mergeSlots.js';
 import {
-  templateNode,
   applyAttribute,
   attributeToProp,
   isPrimitive,
@@ -54,8 +53,6 @@ function setData(element, k, v) {
 
 const define = (name, factory, template, options = {}) => {
   let { observedAttributes = [] } = options;
-
-  template = templateNode(template);
 
   let observedProps = observedAttributes.map(
     (v) => attributeToProp(v).name
