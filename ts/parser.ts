@@ -1,10 +1,12 @@
+import { RepeatedBlock } from './types';
+
 import {
   ATTRIBUTE,
   INPUT,
   TEXT,
   LIST,
   LIST_ITEM,
-} from './constants.js';
+} from './constants';
 
 import {
   getParts,
@@ -12,11 +14,14 @@ import {
   resolve,
   hasMustache,
   walk,
-} from './helpers.js';
+} from './helpers';
 
-let subscribers;
+let subscribers: Set<string>;
 
-function parseElementNode(node, context) {
+function parseElementNode(
+  node: Element,
+  context: RepeatedBlock[]
+) {
   let attrs = node.attributes;
   let i = attrs.length;
   while (i--) {
@@ -26,9 +31,9 @@ function parseElementNode(node, context) {
 }
 
 function parseAttributeNode(
-  { name, value },
-  node,
-  context
+  { name, value }: Attr,
+  node: Element,
+  context: RepeatedBlock[]
 ) {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
@@ -88,14 +93,20 @@ function parseAttributeNode(
   }
 }
 
-function parseTextNode(value, node, context) {
+function parseTextNode(
+  value: string,
+  node: Element,
+  context: RepeatedBlock[]
+) {
   if (!hasMustache(value)) return;
 
   node.__bindings__ = [
     {
-      childIndex: Array.from(
-        node.parentNode.childNodes
-      ).findIndex((v) => v === node),
+      childIndex: node.parentNode
+        ? Array.from(node.parentNode.childNodes).findIndex(
+            (v) => v === node
+          )
+        : 0,
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),
@@ -103,7 +114,7 @@ function parseTextNode(value, node, context) {
   ];
 }
 
-function parseRepeatedBlock(node) {
+function parseRepeatedBlock(node: HTMLTemplateElement) {
   let each = node.getAttribute('each');
   if (!each) return;
 
@@ -117,63 +128,78 @@ function parseRepeatedBlock(node) {
     };
 }
 
-export default (templateFragment, BINDING_ID) => {
+function dispatchTemplate(
+  node: HTMLTemplateElement,
+  stack: RepeatedBlock[],
+  dispatch: Function
+) {
+  let each = parseRepeatedBlock(node);
+
+  if (!each) return;
+
+  stack.push(each);
+  walk(node.content, dispatch);
+  let { key, prop } = each;
+  let path = resolve(prop, stack);
+
+  let binding = {
+    parts: [
+      {
+        type: 'key',
+        value: path,
+      },
+    ],
+    uid: key,
+    path,
+  };
+
+  let nodes = Array.from(node.content.children);
+
+  node.__bindings__ = [
+    {
+      ...binding,
+      type: LIST,
+      nodes,
+      listItems: [],
+    },
+  ];
+
+  let listNodeBinding = {
+    ...binding,
+    type: LIST_ITEM,
+  };
+
+  nodes.forEach((child) => {
+    child.__bindings__.unshift(listNodeBinding);
+  });
+
+  stack.pop();
+}
+
+export default (
+  templateFragment: Node,
+  BINDING_ID: number
+) => {
   subscribers = new Set();
 
   let parse = () => {
-    let stack = [];
+    let stack: RepeatedBlock[] = [];
 
-    function dispatch(node) {
+    function dispatch(node: Element) {
       node.bindingId = BINDING_ID;
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
-          parseTextNode(node.nodeValue, node, stack);
+          parseTextNode(node.nodeValue!, node, stack);
           break;
         }
         case node.ELEMENT_NODE: {
           if (node.nodeName === 'TEMPLATE') {
-            let each = parseRepeatedBlock(node);
-
-            if (each) {
-              stack.push(each);
-              walk(node.content, dispatch);
-              let { key, prop } = each;
-              let path = resolve(prop, stack);
-
-              let binding = {
-                parts: [
-                  {
-                    type: 'key',
-                    value: path,
-                  },
-                ],
-                uid: key,
-                path,
-              };
-
-              let nodes = Array.from(node.content.children);
-
-              node.__bindings__ = [
-                {
-                  ...binding,
-                  type: LIST,
-                  nodes,
-                  listItems: [],
-                },
-              ];
-
-              let listNodeBinding = {
-                ...binding,
-                type: LIST_ITEM,
-              };
-
-              nodes.forEach((child) => {
-                child.__bindings__.unshift(listNodeBinding);
-              });
-
-              stack.pop();
-            }
+            dispatchTemplate(
+              node as HTMLTemplateElement,
+              stack,
+              dispatch
+            );
           } else {
             node.__bindings__ = [];
             parseElementNode(node, stack);

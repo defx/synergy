@@ -10,7 +10,7 @@ let counter = 1;
 function render(mountNode, viewmodel, template) {
   const BINDING_ID = counter++;
 
-  template = templateNode(template).cloneNode(true).content;
+  template = templateNode(template).content.cloneNode(true);
 
   let { subscribers, templateFragment } = parse(
     template,
