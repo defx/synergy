@@ -1,12 +1,4 @@
-import { RepeatedBlock } from './types';
-
-import {
-  ATTRIBUTE,
-  INPUT,
-  TEXT,
-  LIST,
-  LIST_ITEM,
-} from './constants';
+import { BindingType, RepeatedBlock } from './types';
 
 import {
   getParts,
@@ -44,7 +36,7 @@ function parseAttributeNode(
 
     node.__bindings__.push({
       eventName: eventName,
-      type: 'call',
+      type: BindingType.CALL,
       method: value,
       path: lastContext && `${lastContext.prop}.*`,
     });
@@ -70,12 +62,12 @@ function parseAttributeNode(
           value: path,
         },
       ],
-      type: INPUT,
+      type: BindingType.INPUT,
       path,
     };
 
     node.__bindings__.push(binding, {
-      type: 'set',
+      type: BindingType.SET,
       eventName: 'input',
       path,
     });
@@ -87,7 +79,7 @@ function parseAttributeNode(
     node.__bindings__.push({
       name,
       parts: getParts(value, context),
-      type: ATTRIBUTE,
+      type: BindingType.ATTRIBUTE,
       context: context.slice(),
     });
   }
@@ -95,7 +87,7 @@ function parseAttributeNode(
 
 function parseTextNode(
   value: string,
-  node: Element,
+  node: Text,
   context: RepeatedBlock[]
 ) {
   if (!hasMustache(value)) return;
@@ -108,7 +100,7 @@ function parseTextNode(
           )
         : 0,
       parts: getParts(value, context),
-      type: TEXT,
+      type: BindingType.TEXT,
       context: context.slice(),
     },
   ];
@@ -158,7 +150,7 @@ function dispatchTemplate(
   node.__bindings__ = [
     {
       ...binding,
-      type: LIST,
+      type: BindingType.LIST,
       nodes,
       listItems: [],
     },
@@ -166,7 +158,7 @@ function dispatchTemplate(
 
   let listNodeBinding = {
     ...binding,
-    type: LIST_ITEM,
+    type: BindingType.LIST_ITEM,
   };
 
   nodes.forEach((child) => {
@@ -185,12 +177,16 @@ export default (
   let parse = () => {
     let stack: RepeatedBlock[] = [];
 
-    function dispatch(node: Element) {
+    function dispatch(node: Element | Node) {
       node.bindingId = BINDING_ID;
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
-          parseTextNode(node.nodeValue!, node, stack);
+          parseTextNode(
+            node.nodeValue!,
+            node as Text,
+            stack
+          );
           break;
         }
         case node.ELEMENT_NODE: {
@@ -202,7 +198,7 @@ export default (
             );
           } else {
             node.__bindings__ = [];
-            parseElementNode(node, stack);
+            parseElementNode(node as Element, stack);
           }
         }
       }

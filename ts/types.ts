@@ -14,8 +14,18 @@ declare global {
 
 */
 
+export enum BindingType {
+  ATTRIBUTE,
+  INPUT,
+  LIST,
+  LIST_ITEM,
+  TEXT,
+  CALL,
+  SET,
+}
+
 export interface Binding {
-  type: string;
+  type: BindingType;
   uid?: string;
   path?: string;
   nodes?: Node[];
