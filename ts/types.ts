@@ -1,15 +1,24 @@
 declare global {
-  interface Element {
+  interface Node {
     bindingId: number;
     __bindings__: Binding[];
   }
 }
 
+/*
+
+@todo:
+
+- type needs to be an enum
+- extend core interface for each type
+
+*/
+
 export interface Binding {
   type: string;
   uid?: string;
   path?: string;
-  nodes?: Element[];
+  nodes?: Node[];
   parts?: { type: string; value: string }[];
   listItems?: [];
   childIndex?: number;
