@@ -258,8 +258,6 @@ const updateBinding = (binding, node, ctx, p) => {
 
   if (newValue === oldValue) return;
 
-  binding.data = newValue;
-
   updateNode(node, binding, newValue);
 };
 
