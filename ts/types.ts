@@ -30,11 +30,12 @@ type Part = {
 type ListBinding = {
   type: Binding.LIST;
   uid: string;
-  listItems: ListItemBinding[];
+  listItems: Node[][];
   nodes: Node[];
   path: string;
   context: RepeatedBlock[];
   parts: Part[];
+  data: any[];
 };
 
 type ListItemBinding = {
@@ -42,6 +43,7 @@ type ListItemBinding = {
   parts: Part[];
   uid: string;
   path: string;
+  context: RepeatedBlock[];
 };
 
 type AttributeBinding = {
@@ -57,7 +59,6 @@ type TextBinding = {
   context: RepeatedBlock[];
   parts: Part[];
   childIndex: number;
-  // data: any;
 };
 
 type InputBinding = {
@@ -65,6 +66,7 @@ type InputBinding = {
   path: string;
   parts: Part[];
   data: any;
+  context: RepeatedBlock[];
 };
 
 type SetBinding = {
@@ -73,6 +75,7 @@ type SetBinding = {
   method: string;
   path: string;
   realPath: string;
+  context: RepeatedBlock[];
 };
 
 type BindingType =

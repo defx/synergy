@@ -14,7 +14,11 @@ import {
 import cloneNode from './cloneNode';
 import compareKeyedLists from './compareKeyedLists';
 
-const updateList = (template, binding, delta) => {
+const updateList = (
+  template: HTMLTemplateElement,
+  binding: ListBinding,
+  delta: number[]
+) => {
   let listItems = binding.listItems;
   let fragment = document.createDocumentFragment();
   listItems.forEach(removeNodes);
@@ -22,11 +26,7 @@ const updateList = (template, binding, delta) => {
   binding.listItems = delta.map((i, newIndex) => {
     let nodes =
       i === -1
-        ? binding.nodes.map((node) => {
-            let x = cloneNode(node);
-
-            return x;
-          })
+        ? binding.nodes.map((node) => cloneNode(node))
         : listItems[i];
 
     nodes.forEach((el) => {
@@ -39,8 +39,11 @@ const updateList = (template, binding, delta) => {
   template.after(fragment);
 };
 
-const resolve = (path, ctx) => {
-  let parts = path.split('.');
+const resolve = (
+  path: string,
+  ctx: Record<string, number>
+) => {
+  let parts: (string | number)[] = path.split('.');
   let i = parts.length;
   while (i--) {
     if (parts[i] === '*') {
@@ -50,21 +53,23 @@ const resolve = (path, ctx) => {
   return parts.join('.');
 };
 
-let getPreviousValue = (node, binding) => {
-  switch (binding.type) {
-    case 'ATTRIBUTE':
-      return attributeToProp(
+let getPreviousValue = (
+  node: Node,
+  binding: TextBinding | AttributeBinding
+) =>
+  binding.type === Binding.TEXT
+    ? node.textContent
+    : attributeToProp(
         binding.name,
         node.getAttribute(binding.name)
       ).value;
-    case 'TEXT':
-      return node.textContent;
-    default:
-      return binding.data;
-  }
-};
 
-const getValue = (path, ctx, target, binding) => {
+const getValue = (
+  path: string,
+  ctx: Record<string, number>,
+  target: Record<string, any>,
+  binding: BindingType
+): any => {
   if (path === '#') return ctx[last(binding.context).prop];
 
   let negated = path.charAt(0) === '!';
@@ -76,28 +81,39 @@ const getValue = (path, ctx, target, binding) => {
   return negated ? !value : value;
 };
 
-const parseStyles = (value) => {
+const parseStyles = (value: any) => {
   let type = typeof value;
 
   if (type === 'string')
-    return value.split(';').reduce((o, value) => {
-      const [k, v] = value.split(':').map((v) => v.trim());
-      if (k) o[k] = v;
-      return o;
-    }, {});
+    return value
+      .split(';')
+      .reduce(
+        (o: { [key: string]: string }, value: string) => {
+          const [k, v] = value
+            .split(':')
+            .map((v) => v.trim());
+          if (k) o[k] = v;
+          return o;
+        },
+        {}
+      );
 
   if (type === 'object') return value;
 
   return {};
 };
 
-const joinStyles = (value) =>
+const joinStyles = (value: Record<string, string>) =>
   Object.entries(value)
     .map(([k, v]) => `${k}: ${v};`)
     .join(' ');
 
-const mergeStyles = (previous, current, next) => {
-  let o = {};
+const mergeStyles = (
+  previous: Record<string, string>,
+  current: Record<string, string>,
+  next: Record<string, string>
+) => {
+  let o = <Record<string, string>>{};
   //remove previous values, preserving anything else
   for (let k in current) {
     if (!previous[k]) o[k] = current[k];
@@ -110,17 +126,17 @@ const mergeStyles = (previous, current, next) => {
   return convertStyles(o);
 };
 
-const convertStyles = (o) =>
+const convertStyles = (o: Record<string, any>) =>
   Object.keys(o).reduce((a, k) => {
     a[pascalToKebab(k)] = o[k];
     return a;
-  }, {});
+  }, <Record<string, any>>{});
 
 const applyComplexAttribute = (
-  node,
-  name,
-  value,
-  previous
+  node: Node,
+  name: string,
+  value: any,
+  previous: string
 ) => {
   if (name === 'style') {
     value = joinStyles(
@@ -130,28 +146,37 @@ const applyComplexAttribute = (
         parseStyles(value)
       )
     );
-  } else if (name === 'class') {
+  }
+
+  if (name === 'class') {
     switch (typeOf(value)) {
       case 'Array':
         value = value.join(' ');
         break;
       case 'Object':
         value = Object.keys(value)
-          .reduce((a, k) => {
+          .reduce((a: string[], k: string) => {
             if (value[k]) a.push(k);
             return a;
           }, [])
           .join(' ');
         break;
     }
-  } else if (!isPrimitive(value)) {
+  }
+
+  if (!isPrimitive(value)) {
     return (node[kebabToPascal(name)] = value);
   }
 
   applyAttribute(node, name, value);
 };
 
-const updateBinding = (binding, node, ctx, p) => {
+const updateBinding = (
+  binding: BindingType,
+  node: Node,
+  ctx: Record<string, number>,
+  p: Record<string, any>
+) => {
   switch (binding.type) {
     case Binding.SET: {
       return (
@@ -163,7 +188,7 @@ const updateBinding = (binding, node, ctx, p) => {
       return (ctx[binding.path] = node.__index__);
     }
     case Binding.LIST: {
-      let oldValue = getPreviousValue(node, binding);
+      let oldValue = binding.data;
       let newValue = getValue(
         binding.path,
         ctx,
@@ -176,7 +201,17 @@ const updateBinding = (binding, node, ctx, p) => {
         oldValue,
         newValue
       );
-      return delta && updateList(node, binding, delta);
+
+      binding.data = newValue;
+
+      return (
+        delta &&
+        updateList(
+          node as HTMLTemplateElement,
+          binding,
+          delta
+        )
+      );
     }
     case Binding.INPUT: {
       const newValue = getValue(
@@ -225,6 +260,8 @@ const updateBinding = (binding, node, ctx, p) => {
           );
           break;
       }
+
+      return;
     }
     default: {
       let { parts } = binding;
@@ -264,16 +301,16 @@ const updateBinding = (binding, node, ctx, p) => {
   }
 };
 
-let prev;
+let prev: Record<string, any>;
 
 const Updater = (
   BINDING_ID: number,
   updatedCallback: Function = () => {}
-) => (rootNode, viewmodel) => {
+) => (rootNode: Node, viewmodel: Record<string, any>) => {
   let ctx = {};
   let p = copy(viewmodel);
 
-  walk(rootNode, (node) => {
+  walk(rootNode, (node: Node) => {
     if (node.bindingId !== BINDING_ID) return;
 
     let bindings = node.__bindings__;

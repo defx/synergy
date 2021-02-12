@@ -136,7 +136,9 @@ const applyComplexAttribute = (
         parseStyles(value)
       )
     );
-  } else if (name === 'class') {
+  }
+
+  if (name === 'class') {
     switch (typeOf(value)) {
       case 'Array':
         value = value.join(' ');
@@ -150,7 +152,9 @@ const applyComplexAttribute = (
           .join(' ');
         break;
     }
-  } else if (!isPrimitive(value)) {
+  }
+
+  if (!isPrimitive(value)) {
     return (node[kebabToPascal(name)] = value);
   }
 

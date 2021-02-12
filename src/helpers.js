@@ -79,12 +79,10 @@ export const setValueAtPath = (path, value, target) => {
 };
 
 export const removeNodes = (nodes) =>
-  nodes.forEach((node) =>
-    node.parentNode.removeChild(node)
-  );
+  nodes.forEach((node) => node.remove());
 
 export function templateNode(v = '') {
-  if (v.nodeName === 'TEMPLATE') return v;
+  if (v instanceof HTMLTemplateElement) return v;
   let tpl = document.createElement('template');
   tpl.innerHTML = v;
   return tpl;

@@ -1,12 +1,12 @@
 import { walk } from './helpers.js';
 
-function flatten(node) {
-  const res = [];
-  walk(node, (x) => res.push(x));
+function flatten(node: Node) {
+  const res: Node[] = [];
+  walk(node, (x: Node) => res.push(x));
   return res;
 }
 
-const cloneNodeWithBindings = (node) => {
+const cloneNodeWithBindings = (node: Node) => {
   let newNode = node.cloneNode(true);
   let fa = flatten(node);
   let fb = flatten(newNode);
@@ -15,7 +15,11 @@ const cloneNodeWithBindings = (node) => {
   while (i--) {
     fb[i].bindingId = fa[i].bindingId;
     if (fa[i].__bindings__) {
-      fb[i].__bindings__ = fa[i].__bindings__.map((v) => ({ ...v }));
+      fb[i].__bindings__ = fa[i].__bindings__.map(
+        (v: BindingType) => ({
+          ...v,
+        })
+      );
     }
   }
 

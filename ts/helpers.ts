@@ -1,28 +1,31 @@
-export const isWhitespace = (node) =>
+export const isWhitespace = (node: Node) =>
   node.nodeType === node.TEXT_NODE &&
-  node.nodeValue.match(/^\s+$/);
+  node.nodeValue!.match(/^\s+$/);
 
-export function walk(node, callback) {
+export function walk(node: Node, callback: Function) {
   if (callback(node) === false) return;
 
-  node = node.firstChild;
+  let next = node.firstChild;
 
-  while (node) {
-    if (!isWhitespace(node)) walk(node, callback);
-    node = node.nextSibling;
+  while (next) {
+    if (!isWhitespace(next)) walk(next, callback);
+    next = next.nextSibling;
   }
 }
 
-export const last = (v = []) => v[v.length - 1];
+export const last = (v: any[] = []) => v[v.length - 1];
 
-export const resolve = (path, context) => {
+export const resolve = (
+  path: string,
+  context: RepeatedBlock[]
+) => {
   let i = context.length;
   while (i--) {
     let { valueIdentifier, prop } = context[i];
 
     path = path
       .split('.')
-      .map((v) => {
+      .map((v: string) => {
         if (v === valueIdentifier) return `${prop}.*`;
 
         return v;
@@ -32,9 +35,13 @@ export const resolve = (path, context) => {
   return path;
 };
 
-export const hasMustache = (v) => v.match(/({{[^{}]+}})/);
+export const hasMustache = (v: string) =>
+  v.match(/({{[^{}]+}})/);
 
-export const getParts = (value, context) =>
+export const getParts = (
+  value: string,
+  context: RepeatedBlock[]
+) =>
   value
     .trim()
     .split(/({{[^{}]+}})/)
@@ -45,7 +52,7 @@ export const getParts = (value, context) =>
       if (match) {
         let [_, a = '', b] = match[1]
           .trim()
-          .match(/(!)?(.+)/);
+          .match(/(!)?(.+)/)!;
 
         return {
           type: 'key',
@@ -59,16 +66,24 @@ export const getParts = (value, context) =>
       };
     });
 
-export const typeOf = (v) =>
-  Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
+export const typeOf = (v: any) =>
+  Object.prototype.toString
+    .call(v)
+    .match(/\s(.+[^\]])/)![1];
 
-export const copy = (v) =>
+export const copy = (v: any) =>
   v && JSON.parse(JSON.stringify(v));
 
-export const getValueAtPath = (path, target) =>
-  path.split('.').reduce((o, k) => o && o[k], target);
+export const getValueAtPath = (
+  path: string,
+  target: Record<string, any>
+) => path.split('.').reduce((o, k) => o && o[k], target);
 
-export const setValueAtPath = (path, value, target) => {
+export const setValueAtPath = (
+  path: string,
+  value: any,
+  target: Record<string, any>
+) => {
   let parts = path.split('.');
   if (parts.length === 1) return (target[path] = value);
   target = getValueAtPath(
@@ -78,10 +93,8 @@ export const setValueAtPath = (path, value, target) => {
   target[last(parts)] = value;
 };
 
-export const removeNodes = (nodes) =>
-  nodes.forEach((node) =>
-    node.parentNode.removeChild(node)
-  );
+export const removeNodes = (nodes: Node[]) =>
+  nodes.forEach((node) => node.remove());
 
 export function templateNode(
   v: HTMLTemplateElement | string
@@ -92,41 +105,46 @@ export function templateNode(
   return tpl;
 }
 
-export const debounce = (fn) => {
-  let t;
+export const debounce = (fn: Function) => {
+  let t: number;
   return function () {
     if (t) return;
     t = requestAnimationFrame(() => {
       fn();
-      t = null;
+      t = 0;
     });
   };
 };
 
-export const pascalToKebab = (string) =>
+export const pascalToKebab = (string: string) =>
   string.replace(/[\w]([A-Z])/g, function (m) {
     return m[0] + '-' + m[1].toLowerCase();
   });
 
-export const kebabToPascal = (string) =>
+export const kebabToPascal = (string: string) =>
   string.replace(/[\w]-([\w])/g, function (m) {
     return m[0] + m[2].toUpperCase();
   });
 
-export const attributeToProp = (k, v) => {
+export const attributeToProp = (k: string, v: string) => {
   let name = kebabToPascal(k);
-  if (v === '') v = true;
+  let value: string | boolean = v;
+  if (v === '') value = true;
   if (k.startsWith('aria-')) {
-    if (v === 'true') v = true;
-    if (v === 'false') v = false;
+    if (v === 'true') value = true;
+    if (v === 'false') value = false;
   }
   return {
     name,
-    value: v,
+    value,
   };
 };
 
-export function applyAttribute(node, name, value) {
+export function applyAttribute(
+  node: Node,
+  name: string,
+  value: any
+) {
   name = pascalToKebab(name);
 
   if (typeof value === 'boolean') {
@@ -147,5 +165,5 @@ export function applyAttribute(node, name, value) {
   }
 }
 
-export const isPrimitive = (v) =>
+export const isPrimitive = (v: any) =>
   v === null || typeof v !== 'object';
