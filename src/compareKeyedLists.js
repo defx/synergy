@@ -1,4 +1,4 @@
-const compareKeyedLists = (key = 'id', a = [], b) => {
+const compareKeyedLists = (key = 'id', a = [], b = []) => {
   let delta = b.map((item, i) =>
     item[key] === undefined
       ? i in a
@@ -7,7 +7,11 @@ const compareKeyedLists = (key = 'id', a = [], b) => {
       : a.findIndex((v) => v[key] === item[key])
   );
 
-  if (a.length !== b.length || !delta.every((a, b) => a === b)) return delta;
+  if (
+    a.length !== b.length ||
+    !delta.every((a, b) => a === b)
+  )
+    return delta;
 };
 
 export default compareKeyedLists;
