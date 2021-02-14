@@ -20,6 +20,7 @@ enum Binding {
   SET,
   LIST,
   LIST_ITEM,
+  CALL,
 }
 
 type Part = {
@@ -33,9 +34,9 @@ type ListBinding = {
   listItems: Node[][];
   nodes: Node[];
   path: string;
-  context: RepeatedBlock[];
+  context?: RepeatedBlock[];
   parts: Part[];
-  data: any[];
+  data?: any[];
 };
 
 type ListItemBinding = {
@@ -43,13 +44,13 @@ type ListItemBinding = {
   parts: Part[];
   uid: string;
   path: string;
-  context: RepeatedBlock[];
+  context?: RepeatedBlock[];
 };
 
 type AttributeBinding = {
   type: Binding.ATTRIBUTE;
   name: string;
-  data: any;
+  data?: any;
   context: RepeatedBlock[];
   parts: Part[];
 };
@@ -65,9 +66,13 @@ type InputBinding = {
   type: Binding.INPUT;
   path: string;
   parts: Part[];
-  data: any;
-  context: RepeatedBlock[];
+  data?: any;
+  context?: RepeatedBlock[];
 };
+
+// the following two are only used within event handlers...
+// would probably make more sense to separate them from the other (data) bindings.
+// they could be keyed by eventName to avoid the filtering (subscribe.js)
 
 type SetBinding = {
   type: Binding.SET;
@@ -78,10 +83,18 @@ type SetBinding = {
   context: RepeatedBlock[];
 };
 
+type CallBinding = {
+  type: Binding.CALL;
+  method: string;
+  eventName: string;
+  path?: string;
+};
+
 type BindingType =
   | ListBinding
   | ListItemBinding
   | InputBinding
   | AttributeBinding
   | TextBinding
-  | SetBinding;
+  | SetBinding
+  | CallBinding;
