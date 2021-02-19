@@ -240,21 +240,22 @@ const updateBinding = (binding, node, ctx, p) => {
     }
   }
 
-  const { parts } = binding;
+  const newValue = binding.parts.reduce(
+    (a, { type, value }) => {
+      if (type === 'key') {
+        let v = getValue(value, ctx, p, binding);
 
-  const newValue =
-    parts.length === 1
-      ? getValue(parts[0].value, ctx, p, binding)
-      : parts.reduce((a, { type, value }) => {
-          if (type === 'key') {
-            let v = getValue(value, ctx, p, binding);
-            return [undefined, null].includes(v)
-              ? a
-              : a + v;
-          } else {
-            return a + value;
-          }
-        }, '');
+        if (!a) {
+          return v;
+        } else {
+          return [undefined, null].includes(v) ? a : a + v;
+        }
+      } else {
+        return a + value;
+      }
+    },
+    ''
+  );
 
   if (newValue === oldValue) return;
 

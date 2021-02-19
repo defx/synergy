@@ -140,12 +140,6 @@ export default (templateFragment, BINDING_ID) => {
               let path = resolve(prop, stack);
 
               let binding = {
-                parts: [
-                  {
-                    type: 'key',
-                    value: path,
-                  },
-                ],
                 uid: key,
                 path,
               };
