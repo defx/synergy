@@ -35,13 +35,11 @@ type ListBinding = {
   nodes: Node[];
   path: string;
   context?: RepeatedBlock[];
-  parts: Part[];
   data?: any[];
 };
 
 type ListItemBinding = {
   type: Binding.LIST_ITEM;
-  parts: Part[];
   uid: string;
   path: string;
   context?: RepeatedBlock[];
@@ -77,10 +75,10 @@ type InputBinding = {
 type SetBinding = {
   type: Binding.SET;
   eventName: string;
-  method: string;
+  method?: string;
   path: string;
-  realPath: string;
-  context: RepeatedBlock[];
+  realPath?: string;
+  context?: RepeatedBlock[];
 };
 
 type CallBinding = {

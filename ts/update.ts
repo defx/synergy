@@ -68,7 +68,11 @@ const getValue = (
   path: string,
   ctx: Record<string, number>,
   target: Record<string, any>,
-  binding: BindingType
+  binding:
+    | ListBinding
+    | TextBinding
+    | AttributeBinding
+    | InputBinding
 ): any => {
   if (path === '#') return ctx[last(binding.context).prop];
 
@@ -178,6 +182,9 @@ const updateBinding = (
   p: Record<string, any>
 ) => {
   switch (binding.type) {
+    case Binding.CALL: {
+      return;
+    }
     case Binding.SET: {
       return (
         binding.path &&
@@ -264,23 +271,26 @@ const updateBinding = (
       return;
     }
     default: {
-      let { parts } = binding;
-
       let oldValue = getPreviousValue(node, binding);
 
-      let newValue =
-        parts.length === 1
-          ? getValue(parts[0].value, ctx, p, binding)
-          : parts.reduce((a, { type, value }) => {
-              if (type === 'key') {
-                let v = getValue(value, ctx, p, binding);
-                return [undefined, null].includes(v)
-                  ? a
-                  : a + v;
-              } else {
-                return a + value;
-              }
-            }, '');
+      const newValue = binding.parts.reduce(
+        (a, { type, value }) => {
+          if (type === 'key') {
+            let v = getValue(value, ctx, p, binding);
+
+            if (!a) {
+              return v;
+            } else {
+              return [undefined, null].includes(v)
+                ? a
+                : a + v;
+            }
+          } else {
+            return a + value;
+          }
+        },
+        ''
+      );
 
       if (newValue === oldValue) return;
 
