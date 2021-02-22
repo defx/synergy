@@ -72,10 +72,15 @@ type InputBinding = {
 // would probably make more sense to separate them from the other (data) bindings.
 // they could be keyed by eventName to avoid the filtering (subscribe.js)
 
+/*
+
+yeah, coming back to this again, its a little akward.
+
+*/
+
 type SetBinding = {
   type: Binding.SET;
   eventName: string;
-  method?: string;
   path: string;
   realPath?: string;
   context?: RepeatedBlock[];
@@ -83,8 +88,8 @@ type SetBinding = {
 
 type CallBinding = {
   type: Binding.CALL;
-  method: string;
   eventName: string;
+  method: string;
   path?: string;
 };
 
