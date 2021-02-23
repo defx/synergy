@@ -6,7 +6,7 @@ import {
   walk,
 } from './helpers';
 
-let subscribers = new Set();
+let subscribers = new Set<string>();
 
 function parseElementNode(
   node: Node,

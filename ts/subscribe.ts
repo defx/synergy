@@ -27,13 +27,13 @@ const getEventBindings = (
   BINDING_ID: number,
   type: string,
   node: EventTarget | null
-): (SetBinding | CallBinding)[] | undefined => {
+): (SetBinding | CallBinding)[] => {
   if (
     !node ||
     node.bindingId !== BINDING_ID ||
     !node.__bindings__
   )
-    return;
+    return [];
 
   let bindings = node.__bindings__.filter(
     (binding): binding is SetBinding | CallBinding =>
@@ -55,15 +55,11 @@ const subscribe = (
     eventDelegate.addEventListener(
       type,
       (e) => {
-        let bindings = getEventBindings(
+        getEventBindings(
           BINDING_ID,
           type,
           e.target
-        );
-
-        if (!bindings) return;
-
-        bindings.forEach((binding) => {
+        ).forEach((binding) => {
           if (binding.type === Binding.CALL) {
             let v =
               binding.realPath &&
@@ -75,7 +71,7 @@ const subscribe = (
             }
           } else {
             setValueAtPath(
-              binding.realPath,
+              binding.realPath!,
               inputValue(e.target!),
               proxy
             );
