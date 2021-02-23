@@ -82,7 +82,7 @@ type SetBinding = {
   type: Binding.SET;
   eventName: string;
   path: string;
-  realPath?: string;
+  realPath: string;
   context?: RepeatedBlock[];
 };
 
@@ -91,6 +91,7 @@ type CallBinding = {
   eventName: string;
   method: string;
   path?: string;
+  realPath?: string;
 };
 
 type BindingType =
