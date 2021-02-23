@@ -6,18 +6,14 @@ import {
 const inputValue = (
   node: EventTarget
 ): string | string[] => {
-  if (
-    node.hasAttribute('multiple') &&
-    node.nodeName === 'SELECT'
-  ) {
+  if ('selectedOptions' in node) {
     /* @todo: avoid the assertion?  */
     return Array.from(node.selectedOptions).map(
-      (node) => (node as HTMLSelectElement).value
+      (node) => (node as HTMLOptionElement).value
     );
   }
-  let type = node.getAttribute('type') || 'text';
 
-  switch (type) {
+  switch (node.getAttribute('type')) {
     case 'checkbox':
       return node.checked;
     case 'radio':
