@@ -126,7 +126,7 @@ export const kebabToPascal = (string: string) =>
     return m[0] + m[2].toUpperCase();
   });
 
-export const attributeToProp = (k: string, v: string) => {
+export const attributeToProp = (k: string, v?: any) => {
   let name = kebabToPascal(k);
   let value: string | boolean = v;
   if (v === '') value = true;
