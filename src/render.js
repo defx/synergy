@@ -7,7 +7,23 @@ import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
-function render(mountNode, viewmodel, template) {
+const NOOP = () => {}
+
+let defaultHooks = {
+  adoptedCallback: NOOP,
+  connectedCallback: NOOP,
+  disconnectedCallback: NOOP,
+  updatedCallback: NOOP,
+  beforeMountCallback: NOOP,
+}
+
+function render(mountNode, viewmodel, template, options = {}) {
+
+  let hooks = {
+    ...defaultHooks,
+    ...options.hooks
+  }
+
   const BINDING_ID = counter++;
 
   template = templateNode(template).cloneNode(true).content;
@@ -17,19 +33,17 @@ function render(mountNode, viewmodel, template) {
     BINDING_ID
   );
 
-  let vm;
+  let vm, mounted;
 
-  let update = Updater(BINDING_ID, (prev) => {
-    if (vm && vm.updatedCallback) vm.updatedCallback(prev);
-  });
+  let update = Updater(BINDING_ID, (prev) => mounted && hooks.updatedCallback(vm, prev));
 
   update(templateFragment, viewmodel);
 
   if (hydrate(BINDING_ID, templateFragment, mountNode)) {
     update(mountNode, viewmodel);
   } else {
-    if (viewmodel.beforeMountCallback)
-      viewmodel.beforeMountCallback(templateFragment);
+
+    hooks.beforeMountCallback(templateFragment);
 
     for (let child of mountNode.children) {
       if (child.nodeName !== 'SCRIPT') child.remove();
@@ -44,6 +58,8 @@ function render(mountNode, viewmodel, template) {
   );
 
   subscribe(mountNode, subscribers, vm, BINDING_ID);
+
+  mounted = true;
 
   return vm;
 }

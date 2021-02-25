@@ -8,11 +8,15 @@ describe('updateCallback lifecycle event', () => {
       document.getElementById('container'),
       {
         message: 'hi!',
-        updatedCallback(prevState) {
-          stack.push(true);
-        },
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{message}}</p>`,
+      {
+        hooks: {
+          updatedCallback() {
+            stack.push(true);
+          }
+        }
+      }
     );
 
     assert.equal(stack.length, 0);
@@ -32,11 +36,15 @@ describe('updateCallback lifecycle event', () => {
       document.getElementById('container'),
       {
         message: 'hi!',
-        updatedCallback(prevState) {
-          stack.push(prevState.message);
-        },
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{message}}</p>`,
+      {
+        hooks: {
+          updatedCallback(currState, prevState) {
+            stack.push(prevState.message);
+          }
+        }
+      }
     );
 
     assert.equal(stack.length, 0);
@@ -57,15 +65,19 @@ describe('updateCallback lifecycle event', () => {
     let view = synergy.render(
       document.getElementById('container'),
       {
-        message: 'hi!',
-        updatedCallback(prevState) {
-          stack.push({
-            prev: prevState.message,
-            next: this.message,
-          });
-        },
+        message: 'hi!'
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{message}}</p>`,
+      {
+        hooks: {
+          updatedCallback(currState, prevState) {
+            stack.push({
+              prev: prevState.message,
+              next: currState.message,
+            });
+          },
+        }
+      }
     );
 
     assert.equal(stack.length, 0);

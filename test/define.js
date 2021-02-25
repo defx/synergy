@@ -177,16 +177,18 @@ describe('define', () => {
     let connected = false;
     let disconnected = false;
     let factory = () => {
-      return {
+      return {};
+    };
+    synergy.define(name, factory, '', {
+      hooks: {
         connectedCallback() {
           connected = true;
         },
         disconnectedCallback() {
           disconnected = true;
         },
-      };
-    };
-    synergy.define(name, factory, '');
+      }
+    });
     mount(`
     <${name}></${name}>
     `);

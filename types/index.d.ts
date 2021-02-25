@@ -1,6 +1,5 @@
 export = synergy;
 export as namespace synergy;
-
 declare namespace synergy {
   interface Hooks {
     connectedCallback?: (f: (currentState: Model) => void) => void;
@@ -24,7 +23,7 @@ declare namespace synergy {
     factory: ModelFactory,
     template: HTMLTemplateElement | string,
     options: {
-      watch?: Array<string>;
+      observedAttributes?: Array<string>; // now includes props...
       shadowRoot?: "open" | "closed";
       hooks?: Hooks;
     }

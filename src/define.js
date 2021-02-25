@@ -16,12 +16,6 @@ const initialAttributes = (node) => {
   return o;
 };
 
-const forwards = [
-  'connectedCallback',
-  'disconnectedCallback',
-  'adoptedCallback',
-];
-
 function createDataScript(element) {
   let script = document.createElement('script');
   script.type = 'data';
@@ -30,13 +24,7 @@ function createDataScript(element) {
 }
 
 function getDataScript(element) {
-  let fc = element.firstElementChild;
-  return (
-    fc &&
-    fc.nodeName === 'SCRIPT' &&
-    fc.type === 'data' &&
-    fc
-  );
+  return element.querySelector('script[type="data"]');
 }
 
 function getData(element) {
@@ -52,8 +40,16 @@ function setData(element, k, v) {
   script.textContent = JSON.stringify(data);
 }
 
+function wrap(target, property, fn) {
+  let o = target[property];
+  target[property] = function() {
+    fn(...arguments);
+    o?.(...arguments);
+  }
+}
+
 const define = (name, factory, template, options = {}) => {
-  let { observedAttributes = [] } = options;
+  let { observedAttributes = [], hooks = {} } = options;
 
   template = templateNode(template);
 
@@ -102,20 +98,18 @@ const define = (name, factory, template, options = {}) => {
           mode: options.shadowRoot,
         });
       } else {
-        this.viewmodel.beforeMountCallback = (frag) =>
-          mergeSlots(this, frag);
+        wrap(hooks, 'beforeMountCallback', (frag) =>
+        mergeSlots(this, frag))
       }
 
-      this.viewmodel = synergy.render(
-        this.shadowRoot || this,
-        this.viewmodel,
-        template
-      );
+      wrap(hooks, 'updatedCallback', (prev) => {
 
-      let puc =
-        this.viewmodel.updatedCallback || function () {};
+        /*
+        
+        @todo: check to see if the value actually changed!
+        
+        */
 
-      this.viewmodel.updatedCallback = (prev) => {
         observedProps.forEach((k) => {
           let v = this.viewmodel[k];
           if (isPrimitive(v)) {
@@ -124,25 +118,37 @@ const define = (name, factory, template, options = {}) => {
             setData(this, k, v);
           }
         });
+      })
 
-        puc.call(this.viewmodel, prev);
-      };
+      this.viewmodel = synergy.render(
+        this.shadowRoot || this,
+        this.viewmodel,
+        template,
+        { hooks }
+      );
     }
     attributeChangedCallback(k, _, v) {
       let { name, value } = attributeToProp(k, v);
       this.viewmodel[name] = value;
     }
+    connectedCallback() {
+      hooks.connectedCallback?.(this.viewmodel)
+    }
+    disconnectedCallback() {
+      hooks.disconnectedCallback?.(this.viewmodel)
+    }
+    adoptedCallback() {
+      hooks.adoptedCallback?.(this.viewmodel)
+    }
   };
-
-  forwards.forEach((k) =>
-    Object.assign(X.prototype, {
-      [k]() {
-        this.viewmodel[k] && this.viewmodel[k]();
-      },
-    })
-  );
 
   customElements.define(name, X);
 };
 
 export default define;
+
+//3852
+//3849
+//3847
+//3841
+//3839

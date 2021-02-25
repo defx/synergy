@@ -2,6 +2,7 @@ import {
   TodoApp,
   markup,
   storage,
+  hooks
 } from '../examples/todo-app/index.js';
 
 describe('Todo List', () => {
@@ -14,7 +15,10 @@ describe('Todo List', () => {
     view = synergy.render(
       rootNode,
       TodoApp(),
-      markup
+      markup,
+      {
+        hooks
+      }
     );
   });
 

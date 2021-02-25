@@ -22,12 +22,15 @@ const KEYS = {
   ESCAPE: 27,
 };
 
+export const hooks = {
+  updatedCallback(curr) {
+    storage.set('todos', curr.todos);
+  },
+}
+
 export const TodoApp = () => {
   let todos = [];
   return {
-    updatedCallback() {
-      storage.set('todos', this.todos);
-    },
     filters: Object.keys(filters),
     todos: [],
     activeFilter: 'all',
