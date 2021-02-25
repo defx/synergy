@@ -4,7 +4,7 @@ The high-level Synergy API is comprised of just two functions, \(`define` and `r
 
 In addition, the instances created by both `define` and `render` have a set of lifecycle events available for you to hook into with your own custom handler functions.
 
-### define
+## define
 
 The `define()` function registers a new Custom Element.
 
@@ -14,18 +14,17 @@ The `define()` function registers a new Custom Element.
 define(tagName, factory, template, options);
 ```
 
-#### **Parameters** 
+### **Parameters**
 
 * `tagName` \(string\) - Name for the new custom element. As per the Custom Element spec, an elements name must include a hyphen.
 * `factory` \(function\) - A factory function that will be called whenever a new instance of your custom element is created. It will be provided with two arguments: an object representing the elements initial attribute name/value pairs, and the element node itself. Returns a plain JavaScript object to provide the data for your custom element.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-
   * `observedAttributes` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
   * `shadowRoot` \(string\) - A string representing the shadow _mode_. Can be one of either "open" or "closed". If this option is omitted, then Shadow DOM is not used and `<slot>` functionality is polyfilled.
   * `hooks` \(object\) - An object containing one or more lifecycle hooks.
 
-### render
+## render
 
 The `render()` function combines an HTML template with a JavaScript object and then appends the rendered HTML to an existing DOM element node.
 
@@ -39,7 +38,7 @@ let view = render(
 );
 ```
 
-#### **Parameters** 
+### **Parameters**
 
 * `element` \(HTMLElement\) - An existing DOM element node to which the rendered HTML should be appended.
 * `viewmodel` \(object\) - A plain JavaScript object that contains the data for your view.
@@ -47,7 +46,7 @@ let view = render(
 * `options` \(object\) - The available options are:
   * `hooks` \(object\) - An object containing one or more lifecycle hooks.
 
-#### Return value
+### Return value
 
 A proxied version of your JavaScript object that will automatically update the UI whenever any of its values change
 
@@ -63,11 +62,9 @@ view.message = "¡Hola Mundo!";
 
 In the example above, we initialise the view with a paragraph that reads "Hello World!". We then change the value of message to '¡Hola Mundo!' and Synergy updates the DOM automatically.
 
+## Lifecycle Callbacks
 
-
-### Lifecycle Hooks
-
-This section lists all of the lifecycle hooks that you can define.
+This section lists all of the lifecycle callbacks that you can define.
 
 ```javascript
 ({
@@ -93,6 +90,4 @@ This section lists all of the lifecycle hooks that you can define.
   },
 });
 ```
-
- 
 
