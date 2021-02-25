@@ -20,9 +20,9 @@ define(tagName, factory, template, options);
 * `factory` \(function\) - A factory function that will be called whenever a new instance of your custom element is created. It will be provided with two arguments: an object representing the elements initial attribute name/value pairs, and the element node itself. Returns a plain JavaScript object to provide the data for your custom element.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-  * `observe` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
+  * `observedAttributes` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
   * `shadowRoot` \(string\) - A string representing the shadow _mode_. Can be one of either "open" or "closed". If this option is omitted, then Shadow DOM is not used and `<slot>` functionality is polyfilled.
-  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
+  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
 
 ## render
 
@@ -44,7 +44,7 @@ let view = render(
 * `viewmodel` \(object\) - A plain JavaScript object that contains the data for your view.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
+  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
 
 ### Return value
 
