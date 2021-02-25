@@ -5,14 +5,15 @@
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
   "unpkg": "dist/synergy.min.js",
-  "directories": {
-    "test": "test"
-  },
   "module": "src/index.js",
+  "types": "types/index.d.ts",
   "files": [
     "src",
     "dist"
   ],
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
     "test": "karma start --coverage",
     "test:watch": "karma start --auto-watch=true --single-run=false",
@@ -20,7 +21,7 @@
     "size": "gzip -c9 ./dist/synergy.min.js | wc -c",
     "coveralls": "cat ./coverage/chrome/lcov.info | coveralls",
     "prepublish": "npm t && npm run build",
-    "release": "standard-version"
+    "release": "npm t && standard-version"
   },
   "repository": {
     "type": "git",
