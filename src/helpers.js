@@ -83,7 +83,7 @@ export const removeNodes = (nodes) =>
     node.parentNode.removeChild(node)
   );
 
-export function templateNode(v = '') {
+export function templateNode(v) {
   if (v.nodeName === 'TEMPLATE') return v;
   let tpl = document.createElement('template');
   tpl.innerHTML = v;
@@ -124,7 +124,7 @@ export const attributeToProp = (k, v) => {
   };
 };
 
-export function applyAttribute(node, name, value) {
+export const applyAttribute = (node, name, value) => {
   name = pascalToKebab(name);
 
   if (typeof value === 'boolean') {

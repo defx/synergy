@@ -56,8 +56,7 @@ const define = (name, factory, template, options = {}) => {
   let observedProps = observedAttributes.map(
     (v) => attributeToProp(v).name
   );
-
-  let X = class extends HTMLElement {
+  customElements.define(name, class extends HTMLElement {
     static get observedAttributes() {
       return observedAttributes;
     }
@@ -143,9 +142,7 @@ const define = (name, factory, template, options = {}) => {
     adoptedCallback() {
       lifecycle.adoptedCallback?.(this.viewmodel)
     }
-  };
-
-  customElements.define(name, X);
+  });
 };
 
 export default define;
