@@ -3,6 +3,7 @@ import {
   LIST_ITEM,
   ATTRIBUTE,
   INPUT,
+  TEXT
 } from './constants.js';
 import {
   getValueAtPath,
@@ -58,12 +59,12 @@ const resolve = (path, ctx) => {
 
 let getPreviousValue = (node, binding) => {
   switch (binding.type) {
-    case 'ATTRIBUTE':
+    case ATTRIBUTE:
       return attributeToProp(
         binding.name,
         node.getAttribute(binding.name)
       ).value;
-    case 'TEXT':
+    case TEXT:
       return node.textContent;
     default:
       return binding.data;

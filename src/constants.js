@@ -1,5 +1,5 @@
-export const ATTRIBUTE = 'ATTRIBUTE';
-export const TEXT = 'TEXT';
-export const INPUT = 'INPUT';
-export const LIST = 'LIST';
-export const LIST_ITEM = 'LIST_ITEM';
+export const ATTRIBUTE = 1;
+export const TEXT = 2;
+export const INPUT = 3;
+export const LIST = 4;
+export const LIST_ITEM = 5;
