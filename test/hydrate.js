@@ -171,7 +171,7 @@ describe('hydrate', () => {
           <div hidden="{{ !open }}">
             <slot></slot>
           </div>`,
-        { observedAttributes: ['open'] }
+        { observe: ['open'] }
       );
     })();
 
@@ -345,7 +345,7 @@ describe('hydrate', () => {
           </ul>
         `,
         {
-          observedAttributes: ['items'],
+          observe: ['items'],
         }
       );
     })();
@@ -488,7 +488,7 @@ describe('hydrate', () => {
           </ul>
         `,
         {
-          observedAttributes: ['items'],
+          observe: ['items'],
         }
       );
     })();

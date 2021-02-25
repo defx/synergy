@@ -49,16 +49,16 @@ function wrap(target, property, fn) {
 }
 
 const define = (name, factory, template, options = {}) => {
-  let { observedAttributes = [], lifecycle = {} } = options;
+  let { observe = [], lifecycle = {} } = options;
 
   template = templateNode(template);
 
-  let observedProps = observedAttributes.map(
+  let observedProps = observe.map(
     (v) => attributeToProp(v).name
   );
   customElements.define(name, class extends HTMLElement {
     static get observedAttributes() {
-      return observedAttributes;
+      return observe;
     }
     constructor() {
       super();
@@ -67,7 +67,7 @@ const define = (name, factory, template, options = {}) => {
 
       Object.assign(this, getData(this));
 
-      observedAttributes.forEach((name) => {
+      observe.forEach((name) => {
         let property = attributeToProp(name).name;
 
         let value = this.hasAttribute(name)

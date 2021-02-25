@@ -20,7 +20,7 @@ declare namespace synergy {
       /**
        * An array of attribute or property names that you would like your element to react to changes for.
        */
-      observedAttributes?: Array<string>;
+      observe?: Array<string>;
       /**
        * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
        */

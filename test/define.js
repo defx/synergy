@@ -37,7 +37,7 @@ describe('define', () => {
       title,
     });
     synergy.define(name, factory, '<p>{{ title }}</p>', {
-      observedAttributes: ['title'],
+      observe: ['title'],
     });
     mount(`
       <${name} title="ok!"></${name}>
@@ -64,7 +64,7 @@ describe('define', () => {
       factory,
       '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle">toggle</button>',
       {
-        observedAttributes: ['show'],
+        observe: ['show'],
       }
     );
     mount(`
@@ -125,7 +125,7 @@ describe('define', () => {
       factory,
       html`<button onclick="toggle">ok</button>`,
       {
-        observedAttributes: ['foo-bar'],
+        observe: ['foo-bar'],
       }
     );
     mount(`
@@ -156,7 +156,7 @@ describe('define', () => {
       factory,
       html`<button onclick="toggle">ok</button>`,
       {
-        observedAttributes: ['aria-hidden'],
+        observe: ['aria-hidden'],
       }
     );
     mount(`
@@ -239,7 +239,7 @@ describe('define', () => {
     `;
 
     synergy.define('rich-props', factory, template, {
-      observedAttributes: ['arr', 'obj'],
+      observe: ['arr', 'obj'],
     });
 
     mount(html` <div id="container"></div> `);
