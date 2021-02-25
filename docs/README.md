@@ -1,22 +1,22 @@
 ---
-description: Introduction
+description: 3.0.0
 ---
 
 # Synergy
 
-### Declarative
+## Declarative
 
 Express your UI simply in terms of data \(JS\) and templates \(HTML & CSS\) and Synergy will update your UI efficiently whenever your data changes.
 
-### Component-driven
+## Component-driven
 
 Build encapsulated and reusable custom elements and then compose them together to make complex UIs.
 
-### Interoperable
+## Interoperable
 
 Create standalone components that will work together with any other framework or library.
 
-### A Simple Custom Element...
+## A Simple Custom Element...
 
 ```javascript
 <script type="module">
