@@ -7,6 +7,4 @@ branches:
   only:
     - master
 after_success:
-  - 'npm run coveralls'
-addons:
-  firefox: 'latest'
+  - "npm run coveralls"
