@@ -22,7 +22,7 @@ define(tagName, factory, template, options);
 * `options` \(object\) - The available options are:
   * `observe` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
   * `shadowRoot` \(string\) - A string representing the shadow _mode_. Can be one of either "open" or "closed". If this option is omitted, then Shadow DOM is not used and `<slot>` functionality is polyfilled.
-  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
+  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
 
 ## render
 
@@ -44,7 +44,7 @@ let view = render(
 * `viewmodel` \(object\) - A plain JavaScript object that contains the data for your view.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
+  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
 
 ### Return value
 
