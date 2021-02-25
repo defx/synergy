@@ -49,7 +49,7 @@ function wrap(target, property, fn) {
 }
 
 const define = (name, factory, template, options = {}) => {
-  let { observedAttributes = [], hooks = {} } = options;
+  let { observedAttributes = [], lifecycle = {} } = options;
 
   template = templateNode(template);
 
@@ -93,16 +93,18 @@ const define = (name, factory, template, options = {}) => {
         this[property] = value;
       });
 
+      let extras = {};
+
       if (options.shadowRoot) {
         this.attachShadow({
           mode: options.shadowRoot,
         });
       } else {
-        wrap(hooks, 'beforeMountCallback', (frag) =>
-        mergeSlots(this, frag))
+        extras.beforeMountCallback = (frag) =>
+          mergeSlots(this, frag)
       }
 
-      wrap(hooks, 'updatedCallback', (prev) => {
+      wrap(lifecycle, 'updatedCallback', (prev) => {
 
         /*
         
@@ -124,7 +126,8 @@ const define = (name, factory, template, options = {}) => {
         this.shadowRoot || this,
         this.viewmodel,
         template,
-        { hooks }
+        { lifecycle },
+        extras
       );
     }
     attributeChangedCallback(k, _, v) {
@@ -132,13 +135,13 @@ const define = (name, factory, template, options = {}) => {
       this.viewmodel[name] = value;
     }
     connectedCallback() {
-      hooks.connectedCallback?.(this.viewmodel)
+      lifecycle.connectedCallback?.(this.viewmodel)
     }
     disconnectedCallback() {
-      hooks.disconnectedCallback?.(this.viewmodel)
+      lifecycle.disconnectedCallback?.(this.viewmodel)
     }
     adoptedCallback() {
-      hooks.adoptedCallback?.(this.viewmodel)
+      lifecycle.adoptedCallback?.(this.viewmodel)
     }
   };
 

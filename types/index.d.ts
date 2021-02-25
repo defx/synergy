@@ -9,7 +9,7 @@ declare namespace synergy {
     name: string,
     /**
      * A factory function that will be called whenever a new instance of your
-     * custom element is created and return the object that will provide the data for your custom element. Also see the definition of ModelFactory.
+     * custom element is created. Returns the object that will provide the data for your custom element.
      */
     factory: ModelFactory,
     /**
@@ -26,9 +26,9 @@ declare namespace synergy {
        */
       shadowRoot?: "open" | "closed";
       /**
-       * An object containing one or more lifecycle hooks. Also see the definition of Hooks.
+       * An object containing one or more lifecycle callbacks.
        */
-      hooks?: Hooks;
+      lifecycle?: LifecycleCallbacks;
     }
   ): void;
 
@@ -47,9 +47,9 @@ declare namespace synergy {
     template: HTMLTemplateElement | string,
     options: {
       /**
-       * An object containing one or more lifecycle hooks. Also see the definition of Hooks.
+       * An object containing one or more lifecycle callbacks.
        */
-      hooks?: Hooks;
+      lifecycle?: LifecycleCallbacks;
     }
   ): Model;
 
@@ -70,7 +70,7 @@ declare namespace synergy {
     ): Model;
   };
 
-  interface Hooks {
+  interface LifecycleCallbacks {
     /**
      * Invoked each time the custom element is appended into a
      * document-connected element
@@ -90,9 +90,5 @@ declare namespace synergy {
      * Invoked each time the custom element is moved into a new document
      */
     adoptedCallback?: (f: (currentState: Model) => void) => void;
-    /**
-     * Invoked directly before the custom element is connected to the document
-     */
-    beforeConnectedCallback?: (f: (currentState: Model) => void) => void;
   }
 }

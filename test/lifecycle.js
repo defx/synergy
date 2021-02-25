@@ -11,7 +11,7 @@ describe('updateCallback lifecycle event', () => {
       },
       html`<p>{{message}}</p>`,
       {
-        hooks: {
+        lifecycle: {
           updatedCallback() {
             stack.push(true);
           }
@@ -39,7 +39,7 @@ describe('updateCallback lifecycle event', () => {
       },
       html`<p>{{message}}</p>`,
       {
-        hooks: {
+        lifecycle: {
           updatedCallback(currState, prevState) {
             stack.push(prevState.message);
           }
@@ -69,7 +69,7 @@ describe('updateCallback lifecycle event', () => {
       },
       html`<p>{{message}}</p>`,
       {
-        hooks: {
+        lifecycle: {
           updatedCallback(currState, prevState) {
             stack.push({
               prev: prevState.message,

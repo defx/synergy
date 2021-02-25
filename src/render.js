@@ -7,22 +7,7 @@ import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
-const NOOP = () => {}
-
-let defaultHooks = {
-  adoptedCallback: NOOP,
-  connectedCallback: NOOP,
-  disconnectedCallback: NOOP,
-  updatedCallback: NOOP,
-  beforeMountCallback: NOOP,
-}
-
-function render(mountNode, viewmodel, template, options = {}) {
-
-  let hooks = {
-    ...defaultHooks,
-    ...options.hooks
-  }
+function render(mountNode, viewmodel, template, options = {}, extras = {}) {
 
   const BINDING_ID = counter++;
 
@@ -35,7 +20,7 @@ function render(mountNode, viewmodel, template, options = {}) {
 
   let vm, mounted;
 
-  let update = Updater(BINDING_ID, (prev) => mounted && hooks.updatedCallback(vm, prev));
+  let update = Updater(BINDING_ID, (prev) => mounted && options.lifecycle?.updatedCallback?.(vm, prev));
 
   update(templateFragment, viewmodel);
 
@@ -43,7 +28,7 @@ function render(mountNode, viewmodel, template, options = {}) {
     update(mountNode, viewmodel);
   } else {
 
-    hooks.beforeMountCallback(templateFragment);
+    extras.beforeMountCallback?.(templateFragment);
 
     for (let child of mountNode.children) {
       if (child.nodeName !== 'SCRIPT') child.remove();

@@ -2,7 +2,7 @@ import {
   TodoApp,
   markup,
   storage,
-  hooks
+  lifecycle
 } from '../examples/todo-app/index.js';
 
 describe('Todo List', () => {
@@ -17,7 +17,7 @@ describe('Todo List', () => {
       TodoApp(),
       markup,
       {
-        hooks
+        lifecycle
       }
     );
   });

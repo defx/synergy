@@ -22,14 +22,14 @@ const KEYS = {
   ESCAPE: 27,
 };
 
-export const hooks = {
+export const lifecycle = {
   updatedCallback(curr) {
     storage.set('todos', curr.todos);
   },
 }
 
 export const TodoApp = () => {
-  let todos = [];
+  
   return {
     filters: Object.keys(filters),
     todos: [],

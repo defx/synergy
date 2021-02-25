@@ -180,7 +180,7 @@ describe('define', () => {
       return {};
     };
     synergy.define(name, factory, '', {
-      hooks: {
+      lifecycle: {
         connectedCallback() {
           connected = true;
         },
