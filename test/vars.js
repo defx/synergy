@@ -1,4 +1,4 @@
-import synergy from '../src/index.js';
+import { define, render } from '../src/index.js';
 
 const html = (strings, ...values) =>
   strings.reduce(
@@ -20,7 +20,7 @@ const nextFrame = () =>
 const textContent = (node) =>
   node.textContent.trim();
 
-window.synergy = synergy;
+window.synergy = { define, render };
 window.mount = mount;
 window.html = html;
 window.nextFrame = nextFrame;

@@ -1,4 +1,4 @@
-import synergy from './index.js';
+import { render } from './index.js';
 import mergeSlots from './mergeSlots.js';
 import {
   templateNode,
@@ -120,7 +120,7 @@ const define = (name, factory, template, options = {}) => {
         });
       })
 
-      this.viewmodel = synergy.render(
+      this.viewmodel = render(
         this.shadowRoot || this,
         this.viewmodel,
         template,
@@ -146,10 +146,3 @@ const define = (name, factory, template, options = {}) => {
 };
 
 export default define;
-
-//3852
-//3849
-//3847
-//3841
-//3839
-//3814

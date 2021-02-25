@@ -1,4 +1,2 @@
-import render from './render.js';
-import define from './define.js';
-
-export default { define, render };
+export { default as  render } from './render.js';
+export { default as define } from './define.js';
