@@ -14,7 +14,17 @@ export function walk(node, callback) {
 
 export const last = (v = []) => v[v.length - 1];
 
+const resolveSquares = (str) => {
+  let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
+  return parts.reduce((a, part) => {
+    let v = part.charAt(0) === '[' ? '.' + part.replaceAll('.', ':') : part;
+    return a + v;
+  }, '');
+};
+
 export const resolve = (path, context) => {
+  path = resolveSquares(path);
+
   let i = context.length;
   while (i--) {
     let { valueIdentifier, prop } = context[i];
@@ -22,9 +32,13 @@ export const resolve = (path, context) => {
     path = path
       .split('.')
       .map((v) => {
-        if (v === valueIdentifier) return `${prop}.*`;
+        let m = v.charAt(0) === '[';
 
-        return v;
+        if (m) v = v.slice(1, -1);
+
+        if (v === valueIdentifier) v = prop + (m ? ':*' : '.*');
+
+        return m ? `[${v}]` : v;
       })
       .join('.');
   }

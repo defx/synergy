@@ -40,14 +40,18 @@ const updateList = (template, binding, delta) => {
   template.after(fragment);
 };
 
-const resolve = (path, ctx) => {
+const resolve = (path, ctx, target) => {
   let parts = path.split('.');
   let i = parts.length;
   while (i--) {
-    if (parts[i] === '*') {
+    if (parts[i].charAt(0) === '[') {
+      let p = parts[i].slice(1, -1).replaceAll(':', '.');
+      parts[i] = getValueAtPath(resolve(p, ctx), target);
+    } else if (parts[i] === '*') {
       parts[i] = ctx[parts.slice(0, i).join('.')];
     }
   }
+
   return parts.join('.');
 };
 
@@ -68,7 +72,7 @@ const getValue = (part, ctx, target, binding) => {
 
   if (value === '#') return ctx[last(binding.context).prop];
 
-  let v = getValueAtPath(resolve(value, ctx), target);
+  let v = getValueAtPath(resolve(value, ctx, target), target);
 
   return negated ? !v : v;
 };

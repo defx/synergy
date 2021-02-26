@@ -202,4 +202,51 @@ describe('attributes', () => {
 
     assert.ok($('p').hidden);
   });
+
+  it('should support square brackets', () => {
+    view = synergy.render(
+      rootNode,
+      {
+        columns: ['one', 'two', 'three'],
+        rows: [
+          {
+            one: 1,
+            two: 2,
+            three: 3,
+          },
+          {
+            one: 3,
+            two: 2,
+            three: 1,
+          },
+          {
+            one: 1,
+            two: 3,
+            three: 2,
+          },
+        ],
+      },
+      html`
+        <table>
+          <template each="column in columns">
+            <th>{{ column }}</th>
+          </template>
+          <template each="row in rows">
+            <tr>
+              <template each="column in columns">
+                <td>{{ row[column] }}</td>
+              </template>
+            </tr>
+          </template>
+        </table>
+      `
+    );
+
+    assert.equal($$('th').length, 3);
+    assert.equal($$('tr').length, 3);
+    assert.deepEqual(
+      $$('tr').map((v) => v.textContent.trim()),
+      ['123', '321', '132']
+    );
+  });
 });
