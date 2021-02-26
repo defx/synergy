@@ -1,18 +1,6 @@
-import {
-  ATTRIBUTE,
-  INPUT,
-  TEXT,
-  LIST,
-  LIST_ITEM,
-} from './constants.js';
+import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 
-import {
-  getParts,
-  last,
-  resolve,
-  hasMustache,
-  walk,
-} from './helpers.js';
+import { getParts, last, resolve, hasMustache, walk } from './helpers.js';
 
 let subscribers;
 
@@ -25,11 +13,7 @@ function parseElementNode(node, context) {
   return context;
 }
 
-function parseAttributeNode(
-  { name, value },
-  node,
-  context
-) {
+function parseAttributeNode({ name, value }, node, context) {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
     let lastContext = last(context);
@@ -59,12 +43,6 @@ function parseAttributeNode(
     subscribers.add('input');
 
     let binding = {
-      parts: [
-        {
-          type: 'key',
-          value: path,
-        },
-      ],
       type: INPUT,
       path,
     };
@@ -93,9 +71,9 @@ function parseTextNode(value, node, context) {
 
   node.__bindings__ = [
     {
-      childIndex: Array.from(
-        node.parentNode.childNodes
-      ).findIndex((v) => v === node),
+      childIndex: Array.from(node.parentNode.childNodes).findIndex(
+        (v) => v === node
+      ),
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),

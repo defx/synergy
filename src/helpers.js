@@ -1,6 +1,5 @@
 export const isWhitespace = (node) =>
-  node.nodeType === node.TEXT_NODE &&
-  node.nodeValue.match(/^\s+$/);
+  node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
 
 export function walk(node, callback) {
   if (callback(node) === false) return;
@@ -43,13 +42,15 @@ export const getParts = (value, context) =>
       let match = v.match(/{{([^{}]+)}}/);
 
       if (match) {
-        let [_, a = '', b] = match[1]
-          .trim()
-          .match(/(!)?(.+)/);
+        let m = match[1].trim();
+        let negated = m.charAt(0) === '!';
+
+        if (negated) m = m.slice(1);
 
         return {
           type: 'key',
-          value: a + resolve(b, context),
+          value: resolve(m, context),
+          negated,
         };
       }
 
@@ -62,8 +63,7 @@ export const getParts = (value, context) =>
 export const typeOf = (v) =>
   Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
-export const copy = (v) =>
-  v && JSON.parse(JSON.stringify(v));
+export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
 export const getValueAtPath = (path, target) =>
   path.split('.').reduce((o, k) => o && o[k], target);
@@ -71,17 +71,12 @@ export const getValueAtPath = (path, target) =>
 export const setValueAtPath = (path, value, target) => {
   let parts = path.split('.');
   if (parts.length === 1) return (target[path] = value);
-  target = getValueAtPath(
-    parts.slice(0, -1).join('.'),
-    target
-  );
+  target = getValueAtPath(parts.slice(0, -1).join('.'), target);
   target[last(parts)] = value;
 };
 
 export const removeNodes = (nodes) =>
-  nodes.forEach((node) =>
-    node.parentNode.removeChild(node)
-  );
+  nodes.forEach((node) => node.parentNode.removeChild(node));
 
 export function templateNode(v) {
   if (v.nodeName === 'TEMPLATE') return v;
@@ -135,15 +130,11 @@ export const applyAttribute = (node, name, value) => {
     }
   }
 
-  if (
-    typeof value === 'string' ||
-    typeof value === 'number'
-  ) {
+  if (typeof value === 'string' || typeof value === 'number') {
     node.setAttribute(name, value);
   } else {
     node.removeAttribute(name);
   }
-}
+};
 
-export const isPrimitive = (v) =>
-  v === null || typeof v !== 'object';
+export const isPrimitive = (v) => v === null || typeof v !== 'object';

@@ -1,10 +1,4 @@
-import {
-  LIST,
-  LIST_ITEM,
-  ATTRIBUTE,
-  INPUT,
-  TEXT
-} from './constants.js';
+import { LIST, LIST_ITEM, ATTRIBUTE, INPUT, TEXT } from './constants.js';
 import {
   getValueAtPath,
   walk,
@@ -60,10 +54,8 @@ const resolve = (path, ctx) => {
 let getPreviousValue = (node, binding) => {
   switch (binding.type) {
     case ATTRIBUTE:
-      return attributeToProp(
-        binding.name,
-        node.getAttribute(binding.name)
-      ).value;
+      return attributeToProp(binding.name, node.getAttribute(binding.name))
+        .value;
     case TEXT:
       return node.textContent;
     default:
@@ -71,16 +63,14 @@ let getPreviousValue = (node, binding) => {
   }
 };
 
-const getValue = (path, ctx, target, binding) => {
-  if (path === '#') return ctx[last(binding.context).prop];
+const getValue = (part, ctx, target, binding) => {
+  let { value, negated } = part;
 
-  let negated = path.charAt(0) === '!';
+  if (value === '#') return ctx[last(binding.context).prop];
 
-  if (negated) path = path.slice(1);
+  let v = getValueAtPath(resolve(value, ctx), target);
 
-  let value = getValueAtPath(resolve(path, ctx), target);
-
-  return negated ? !value : value;
+  return negated ? !v : v;
 };
 
 const parseStyles = (value) => {
@@ -123,12 +113,7 @@ const convertStyles = (o) =>
     return a;
   }, {});
 
-const applyComplexAttribute = (
-  node,
-  name,
-  value,
-  previous
-) => {
+const applyComplexAttribute = (node, name, value, previous) => {
   if (name === 'style') {
     value = joinStyles(
       mergeStyles(
@@ -160,55 +145,35 @@ const applyComplexAttribute = (
 
 const updateNode = (node, binding, newValue) =>
   binding.type === ATTRIBUTE
-    ? applyComplexAttribute(
-        node,
-        binding.name,
-        newValue,
-        binding.data
-      )
+    ? applyComplexAttribute(node, binding.name, newValue, binding.data)
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p) => {
   if (binding.eventName)
-    return (
-      binding.path &&
-      (binding.realPath = resolve(binding.path, ctx))
-    );
+    return binding.path && (binding.realPath = resolve(binding.path, ctx));
 
-  if (binding.type === LIST_ITEM)
-    return (ctx[binding.path] = node.__index__);
+  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
 
   let oldValue = getPreviousValue(node, binding);
 
   if (binding.path) {
     const { path } = binding;
-    const newValue = getValue(path, ctx, p, binding);
+    const newValue = getValue({ value: path }, ctx, p, binding);
 
     binding.data = newValue;
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(
-        binding.uid,
-        oldValue,
-        newValue
-      );
+      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
       return delta && updateList(node, binding, delta);
     }
 
     if (oldValue === newValue) return;
 
     if (binding.type === INPUT) {
-      if (
-        node.hasAttribute('multiple') &&
-        node.nodeName === 'SELECT'
-      ) {
-        Array.from(node.querySelectorAll('option')).forEach(
-          (option) => {
-            option.selected = newValue.includes(
-              option.value
-            );
-          }
-        );
+      if (node.hasAttribute('multiple') && node.nodeName === 'SELECT') {
+        Array.from(node.querySelectorAll('option')).forEach((option) => {
+          option.selected = newValue.includes(option.value);
+        });
         return;
       }
 
@@ -222,8 +187,7 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         case 'radio':
-          node.checked =
-            newValue === node.getAttribute('value');
+          node.checked = newValue === node.getAttribute('value');
           if (node.checked) {
             node.setAttribute('checked', '');
           } else {
@@ -231,32 +195,27 @@ const updateBinding = (binding, node, ctx, p) => {
           }
           break;
         default:
-          node.setAttribute(
-            'value',
-            (node.value = newValue || '')
-          );
+          node.setAttribute('value', (node.value = newValue || ''));
           break;
       }
       return;
     }
   }
 
-  const newValue = binding.parts.reduce(
-    (a, { type, value }) => {
-      if (type === 'key') {
-        let v = getValue(value, ctx, p, binding);
+  const newValue = binding.parts.reduce((a, part) => {
+    let { type, value } = part;
+    if (type === 'key') {
+      let v = getValue(part, ctx, p, binding);
 
-        if (!a) {
-          return v;
-        } else {
-          return [undefined, null].includes(v) ? a : a + v;
-        }
+      if (!a) {
+        return v;
       } else {
-        return a + value;
+        return [undefined, null].includes(v) ? a : a + v;
       }
-    },
-    ''
-  );
+    } else {
+      return a + value;
+    }
+  }, '');
 
   if (newValue === oldValue) return;
 
@@ -265,10 +224,10 @@ const updateBinding = (binding, node, ctx, p) => {
 
 let prev;
 
-const Updater = (
-  BINDING_ID,
-  updatedCallback = () => {}
-) => (rootNode, viewmodel) => {
+const Updater = (BINDING_ID, updatedCallback = () => {}) => (
+  rootNode,
+  viewmodel
+) => {
   let ctx = {};
   let p = copy(viewmodel);
 
@@ -278,9 +237,7 @@ const Updater = (
     let bindings = node.__bindings__;
 
     if (bindings) {
-      bindings.forEach((binding) =>
-        updateBinding(binding, node, ctx, p)
-      );
+      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
     }
   });
 

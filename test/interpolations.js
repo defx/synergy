@@ -42,10 +42,7 @@ describe('attributes', () => {
       },
       html` <p>{{c1}} + {{c2}}</p> `
     );
-    assert.equal(
-      rootNode.querySelector('p').textContent,
-      'red + green'
-    );
+    assert.equal(rootNode.querySelector('p').textContent, 'red + green');
   });
 
   it('should apply all the values', () => {
@@ -116,9 +113,7 @@ describe('attributes', () => {
     $('section').style.opacity = '0.5';
 
     assert.ok(
-      $('section')
-        .getAttribute('style')
-        .includes('background-color: gold;')
+      $('section').getAttribute('style').includes('background-color: gold;')
     );
 
     view.foo = `
@@ -131,16 +126,10 @@ describe('attributes', () => {
     await nextFrame();
 
     assert.ok(
-      $('section')
-        .getAttribute('style')
-        .includes('background-color: tomato;')
+      $('section').getAttribute('style').includes('background-color: tomato;')
     );
 
-    assert.ok(
-      $('section')
-        .getAttribute('style')
-        .includes('opacity: 0.5;')
-    );
+    assert.ok($('section').getAttribute('style').includes('opacity: 0.5;'));
   });
 
   it('should apply styles (Object / kebab)', () => {
