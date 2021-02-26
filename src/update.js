@@ -11,6 +11,7 @@ import {
   attributeToProp,
   isPrimitive,
   kebabToPascal,
+  resolve,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
@@ -38,21 +39,6 @@ const updateList = (template, binding, delta) => {
     return nodes;
   });
   template.after(fragment);
-};
-
-const resolve = (path, ctx, target) => {
-  let parts = path.split('.');
-  let i = parts.length;
-  while (i--) {
-    if (parts[i].charAt(0) === '[') {
-      let p = parts[i].slice(1, -1).replaceAll(':', '.');
-      parts[i] = getValueAtPath(resolve(p, ctx), target);
-    } else if (parts[i] === '*') {
-      parts[i] = ctx[parts.slice(0, i).join('.')];
-    }
-  }
-
-  return parts.join('.');
 };
 
 let getPreviousValue = (node, binding) => {
@@ -153,8 +139,11 @@ const updateNode = (node, binding, newValue) =>
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p) => {
-  if (binding.eventName)
-    return binding.path && (binding.realPath = resolve(binding.path, ctx));
+  if (binding.eventName) {
+    binding.ctx = copy(ctx);
+    binding.path && (binding.realPath = resolve(binding.path, ctx)); // @delete
+    return;
+  }
 
   if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
 
