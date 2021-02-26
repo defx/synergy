@@ -12,53 +12,24 @@ export function walk(node, callback) {
   }
 }
 
-export const last = (v = []) => v[v.length - 1];
-
-export const resolve = (path, context) => {
-  let i = context.length;
+export const resolve = (path, ctx, target) => {
+  let parts = path.split('.');
+  let i = parts.length;
   while (i--) {
-    let { valueIdentifier, prop } = context[i];
-
-    path = path
-      .split('.')
-      .map((v) => {
-        if (v === valueIdentifier) return `${prop}.*`;
-
-        return v;
-      })
-      .join('.');
+    if (parts[i].charAt(0) === '[') {
+      let p = parts[i].slice(1, -1).replaceAll(':', '.');
+      parts[i] = getValueAtPath(resolve(p, ctx), target);
+    } else if (parts[i] === '*') {
+      parts[i] = ctx[parts.slice(0, i).join('.')];
+    }
   }
-  return path;
+
+  return parts.join('.');
 };
 
+export const last = (v = []) => v[v.length - 1];
+
 export const hasMustache = (v) => v.match(/({{[^{}]+}})/);
-
-export const getParts = (value, context) =>
-  value
-    .trim()
-    .split(/({{[^{}]+}})/)
-    .filter((v) => v)
-    .map((v) => {
-      let match = v.match(/{{([^{}]+)}}/);
-
-      if (match) {
-        let m = match[1].trim();
-        let negated = m.charAt(0) === '!';
-
-        if (negated) m = m.slice(1);
-
-        return {
-          type: 'key',
-          value: resolve(m, context),
-          negated,
-        };
-      }
-
-      return {
-        type: 'value',
-        value: v,
-      };
-    });
 
 export const typeOf = (v) =>
   Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];

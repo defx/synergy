@@ -11,6 +11,7 @@ import {
   attributeToProp,
   isPrimitive,
   kebabToPascal,
+  resolve,
 } from './helpers.js';
 import cloneNode from './cloneNode.js';
 import compareKeyedLists from './compareKeyedLists.js';
@@ -40,17 +41,6 @@ const updateList = (template, binding, delta) => {
   template.after(fragment);
 };
 
-const resolve = (path, ctx) => {
-  let parts = path.split('.');
-  let i = parts.length;
-  while (i--) {
-    if (parts[i] === '*') {
-      parts[i] = ctx[parts.slice(0, i).join('.')];
-    }
-  }
-  return parts.join('.');
-};
-
 let getPreviousValue = (node, binding) => {
   switch (binding.type) {
     case ATTRIBUTE:
@@ -68,7 +58,7 @@ const getValue = (part, ctx, target, binding) => {
 
   if (value === '#') return ctx[last(binding.context).prop];
 
-  let v = getValueAtPath(resolve(value, ctx), target);
+  let v = getValueAtPath(resolve(value, ctx, target), target);
 
   return negated ? !v : v;
 };
@@ -149,8 +139,11 @@ const updateNode = (node, binding, newValue) =>
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p) => {
-  if (binding.eventName)
-    return binding.path && (binding.realPath = resolve(binding.path, ctx));
+  if (binding.eventName) {
+    binding.ctx = copy(ctx);
+    binding.path && (binding.realPath = resolve(binding.path, ctx)); // @delete
+    return;
+  }
 
   if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.__index__);
 

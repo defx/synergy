@@ -1,6 +1,64 @@
 import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 
-import { getParts, last, resolve, hasMustache, walk } from './helpers.js';
+import { last, hasMustache, walk } from './helpers.js';
+
+const resolveSquares = (str) => {
+  let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
+  return parts.reduce((a, part) => {
+    let v = part.charAt(0) === '[' ? '.' + part.replaceAll('.', ':') : part;
+    return a + v;
+  }, '');
+};
+
+export const resolve = (path, context) => {
+  path = resolveSquares(path);
+
+  let i = context.length;
+  while (i--) {
+    let { valueIdentifier, prop } = context[i];
+
+    path = path
+      .split('.')
+      .map((v) => {
+        let m = v.charAt(0) === '[';
+
+        if (m) v = v.slice(1, -1);
+
+        if (v === valueIdentifier) v = prop + (m ? ':*' : '.*');
+
+        return m ? `[${v}]` : v;
+      })
+      .join('.');
+  }
+  return path;
+};
+
+const getParts = (value, context) =>
+  value
+    .trim()
+    .split(/({{[^{}]+}})/)
+    .filter((v) => v)
+    .map((v) => {
+      let match = v.match(/{{([^{}]+)}}/);
+
+      if (match) {
+        let m = match[1].trim();
+        let negated = m.charAt(0) === '!';
+
+        if (negated) m = m.slice(1);
+
+        return {
+          type: 'key',
+          value: resolve(m, context),
+          negated,
+        };
+      }
+
+      return {
+        type: 'value',
+        value: v,
+      };
+    });
 
 let subscribers;
 
@@ -13,6 +71,52 @@ function parseElementNode(node, context) {
   return context;
 }
 
+const xparseEventHandler = (value, context) => {
+  let m = value.match(/([^\(]+)(\(([^\)]*)\))?/);
+
+  if (!m) return;
+
+  let method = m[1],
+    args = m[3];
+
+  args =
+    args &&
+    args
+      .split(',')
+      .filter((v) => v)
+      .map((v) => v.trim())
+      .map((k) => resolve(k, context));
+
+  return {
+    method,
+    args,
+  };
+};
+
+const parseEventHandler = (value, context) => {
+  let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))?/);
+
+  if (!m) return;
+
+  let event = m[1],
+    method = m[2],
+    args = m[3] && m[3].trim();
+
+  args = args
+    ? args
+        .split(',')
+        .filter((v) => v)
+        .map((v) => v.trim())
+        .map((k) => resolve(k, context))
+    : null;
+
+  return {
+    event,
+    method,
+    args,
+  };
+};
+
 function parseAttributeNode({ name, value }, node, context) {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
@@ -21,11 +125,17 @@ function parseAttributeNode({ name, value }, node, context) {
 
     subscribers.add(eventName);
 
+    let { event, method, args } = parseEventHandler(value, context);
+
+    // console.log(event, method, args);
+
     node.__bindings__.push({
-      eventName: eventName,
       type: 'call',
-      method: value,
-      path: lastContext && `${lastContext.prop}.*`,
+      eventName: eventName,
+      event,
+      method,
+      args,
+      path: lastContext && `${lastContext.prop}.*`, // @delete
     });
 
     return;

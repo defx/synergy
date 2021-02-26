@@ -5,7 +5,7 @@ describe('context', () => {
   });
 
   it('should observe context', () => {
-    let view = synergy.render(
+    synergy.render(
       rootNode,
       {
         todo: 'feed the dog',
@@ -35,26 +35,14 @@ describe('context', () => {
         <h1 second>{{todo}}</h1>`
     );
 
-    assert.equal(
-      $('h1[first]').textContent.trim(),
-      'feed the dog'
-    );
-    assert.equal(
-      $('li p').textContent.trim(),
-      'walk the cat'
-    );
-    assert.equal(
-      $('li p:last-child').textContent.trim(),
-      'Hej!'
-    );
-    assert.equal(
-      $('h1[second]').textContent.trim(),
-      'feed the dog'
-    );
+    assert.equal($('h1[first]').textContent.trim(), 'feed the dog');
+    assert.equal($('li p').textContent.trim(), 'walk the cat');
+    assert.equal($('li p:last-child').textContent.trim(), 'Hej!');
+    assert.equal($('h1[second]').textContent.trim(), 'feed the dog');
   });
 
   it('should support nested scopes', async () => {
-    let view = synergy.render(
+    synergy.render(
       rootNode,
       {
         artists: [
@@ -102,12 +90,7 @@ describe('context', () => {
           },
           {
             name: 'salvador dali',
-            tags: [
-              'painter',
-              'sculptor',
-              'photographer',
-              'writer',
-            ],
+            tags: ['painter', 'sculptor', 'photographer', 'writer'],
           },
         ],
       },

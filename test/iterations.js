@@ -47,10 +47,7 @@ describe('iterations', () => {
     let todos = Array.from(view.todos);
 
     $$('#container li').forEach((li, i) => {
-      assert.equal(
-        li.querySelector('p').textContent,
-        todos[i].title
-      );
+      assert.equal(li.querySelector('p').textContent, todos[i].title);
     });
   });
 
@@ -83,7 +80,7 @@ describe('iterations', () => {
       rootNode,
       {
         names: ['tim', 'john', 'kim'],
-        handleClick: function (e, d) {
+        handleClick: function (d) {
           assert.equal(d, 'john');
           done();
         },
@@ -91,7 +88,7 @@ describe('iterations', () => {
       html`
         <select name="chosenName">
           <template each="name in names">
-            <option value="{{name}}" onclick="handleClick">
+            <option value="{{name}}" onclick="handleClick(name)">
               {{name}}
             </option>
           </template>
