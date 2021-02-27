@@ -65,7 +65,9 @@ Template:
     <h4>{{ artist.name }}</h4>
     <ul>
       <template each="tag in artist.tags">
-        <li onclick="select(artist, tag)">{{ tag }}</li>
+        <li onclick="select(artist, tag)">
+          {{ tag }}
+        </li>
       </template>
     </ul>
   </article>
