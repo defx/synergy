@@ -24,7 +24,7 @@ declare namespace synergy {
       /**
        * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
        */
-      shadowRoot?: "open" | "closed";
+      shadow?: 'open' | 'closed';
       /**
        * An object containing one or more lifecycle callbacks.
        */

@@ -42,14 +42,9 @@ describe('define', () => {
     mount(`
       <${name} title="ok!"></${name}>
       `);
-    document
-      .querySelector(name)
-      .setAttribute('title', 'foo!');
+    document.querySelector(name).setAttribute('title', 'foo!');
     await nextFrame();
-    assert.equal(
-      document.querySelector(`${name} p`).textContent,
-      'foo!'
-    );
+    assert.equal(document.querySelector(`${name} p`).textContent, 'foo!');
   });
   it('should reflect viewmodel changes back on to attributes', async () => {
     let name = `x-${count++}`;
@@ -79,11 +74,7 @@ describe('define', () => {
   it('should merge default slot', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
-    synergy.define(
-      name,
-      factory,
-      html`hello <slot></slot>!`
-    );
+    synergy.define(name, factory, html`hello <slot></slot>!`);
     mount(`
           <${name}>world</${name}>
           `);
@@ -98,18 +89,14 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      html`<slot name="foo"></slot><slot name="bar"></slot
-        ><slot>hello</slot>`
+      html`<slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);
 
     let el = document.querySelector(name);
-    assert.equal(
-      el.innerHTML.trim(),
-      '<span>!</span>hello'
-    );
+    assert.equal(el.innerHTML.trim(), '<span>!</span>hello');
   });
 
   it('should convert between kebab and pascal casing', async () => {
@@ -120,14 +107,9 @@ describe('define', () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(
-      name,
-      factory,
-      html`<button onclick="toggle">ok</button>`,
-      {
-        observe: ['foo-bar'],
-      }
-    );
+    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+      observe: ['foo-bar'],
+    });
     mount(`
     <${name} foo-bar></${name}>
     `);
@@ -137,10 +119,7 @@ describe('define', () => {
     $('button').click();
     await nextFrame();
 
-    assert.equal(
-      $(`${name}`).hasAttribute('foo-bar'),
-      false
-    );
+    assert.equal($(`${name}`).hasAttribute('foo-bar'), false);
   });
 
   it('should account for aria string booleans', async () => {
@@ -151,24 +130,16 @@ describe('define', () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(
-      name,
-      factory,
-      html`<button onclick="toggle">ok</button>`,
-      {
-        observe: ['aria-hidden'],
-      }
-    );
+    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+      observe: ['aria-hidden'],
+    });
     mount(`
     <${name} aria-hidden="false"></${name}>
     `);
 
     $('button').click();
     await nextFrame();
-    assert.equal(
-      $(`${name}`).getAttribute('aria-hidden'),
-      'true'
-    );
+    assert.equal($(`${name}`).getAttribute('aria-hidden'), 'true');
   });
 
   it('should forward lifecycle events', () => {
@@ -187,7 +158,7 @@ describe('define', () => {
         disconnectedCallback() {
           disconnected = true;
         },
-      }
+      },
     });
     mount(`
     <${name}></${name}>
@@ -213,7 +184,7 @@ describe('define', () => {
     `;
 
     synergy.define('x-shadow', factory, template, {
-      shadowRoot: 'open',
+      shadow: 'open',
     });
 
     mount(html`<x-shadow>hello shadow</x-shadow>`);
@@ -253,12 +224,7 @@ describe('define', () => {
           repo: 'defx/synergy',
         },
       },
-      html`
-        <rich-props
-          arr="{{ letters }}"
-          obj="{{ library }}"
-        ></rich-props>
-      `
+      html` <rich-props arr="{{ letters }}" obj="{{ library }}"></rich-props> `
     );
   });
 });
