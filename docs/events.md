@@ -24,7 +24,7 @@ Template:
 
 ### Function arguments
 
-When triggering events from within repeated blocks it can be useful to pass data back into your viewmodel so that you know which particular item in the block raised the event. You can do this using the function invocation syntax...
+When triggering events from within repeated blocks it can be useful to pass data back into your viewmodel so that you have direct access to the relevant list item. You can do this using the function invocation syntax...
 
 Viewmodel:
 
@@ -43,7 +43,12 @@ Viewmodel:
     },
     {
       name: 'salvador dali',
-      tags: ['painter', 'sculptor', 'photographer', 'writer'],
+      tags: [
+        'painter',
+        'sculptor',
+        'photographer',
+        'writer'
+      ],
     },
   ],
   select(artist, tag) {
