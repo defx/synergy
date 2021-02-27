@@ -2,7 +2,7 @@
 
 Synergy assumes any attribute name prefixed with "on" to point to an event handler on your viewmodel.
 
-View:
+Viewmodel:
 
 ```javascript
 {

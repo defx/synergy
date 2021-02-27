@@ -17,12 +17,12 @@ define(tagName, factory, template, options);
 ### **Parameters**
 
 * `tagName` \(string\) - Name for the new custom element. As per the Custom Element spec, an elements name must include a hyphen.
-* `factory` \(function\) - A factory function that will be called whenever a new instance of your custom element is created. It will be provided with two arguments: an object representing the elements initial attribute name/value pairs, and the element node itself. Returns a plain JavaScript object to provide the data for your custom element.
+* `factory` \(function\) - A factory function that will be called whenever a new instance of your custom element is created. It will be provided with two arguments: an object representing the elements initial attribute name/value pairs, and the element node itself. Returns a plain JavaScript object to provide the viewmodel for your custom element.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-  * `observedAttributes` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
-  * `shadowRoot` \(string\) - A string representing the shadow _mode_. Can be one of either "open" or "closed". If this option is omitted, then Shadow DOM is not used and `<slot>` functionality is polyfilled.
-  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
+  * `observe` \(string\[\]\) - An array containing the element attributes or properties that you want to observe.
+  * `shadow` \(string\) - A string representing the shadow _mode_. Can be one of either "open" or "closed". If this option is omitted, then Shadow DOM is not used and `<slot>` functionality is polyfilled.
+  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
 
 ## render
 
@@ -41,14 +41,14 @@ let view = render(
 ### **Parameters**
 
 * `element` \(HTMLElement\) - An existing DOM element node to which the rendered HTML should be appended.
-* `viewmodel` \(object\) - A plain JavaScript object that contains the data for your view.
+* `viewmodel` \(object\) - A plain JavaScript object that provides the data and functionality for your view.
 * `template` \(HTMLTemplateElement \| string\) - The HTML for your view.
 * `options` \(object\) - The available options are:
-  * `hooks` \(object\) - An object containing one or more lifecycle hooks.
+  * `lifecycle` \(object\) - An object containing one or more lifecycle hooks.
 
 ### Return value
 
-A proxied version of your JavaScript object that will automatically update the UI whenever any of its values change
+A proxied version of your viewmodel that will automatically update the UI whenever any of its values change
 
 ```javascript
 let view = render(
@@ -73,7 +73,7 @@ This section lists all of the lifecycle callbacks that you can define.
     appended into a document-connected element */
   },
   updatedCallback(prevState) {
-    /* Invoked each time the view is 
+    /* Invoked each time the viewmodel is 
     updated. This method is not called 
     after the initial render. prevState is 
     an object representing the state of 

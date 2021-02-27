@@ -1,6 +1,6 @@
 # Installation
 
-Synergy doesn't require any special toolchain, compiler, plugins etc. Its a tiny \(&lt;4k\) package that gives you everything you need to start building directly in the browser.
+Synergy doesn't require any special toolchain, compiler, plugins etc. Its a tiny \(~4k\) package that gives you everything you need to start building directly in the browser.
 
 The quickest way to get started is to import the Synergy package directly from a CDN.
 

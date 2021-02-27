@@ -2,7 +2,7 @@
 
 Repeat a block of HTML for each item in an array using a template element together with the `each` attribute.
 
-View:
+Viewmodel:
 
 ```javascript
 {
@@ -32,7 +32,7 @@ You can access the current index with the hash character
 </ul>
 ```
 
-### Keyed Arrays
+## Keyed Arrays
 
 Keys help Synergy identify which items in an array of objects have changed.
 
@@ -53,6 +53,6 @@ If you need to nominate another property then you can do so with the `key` attri
 </ul>
 ```
 
-[  
+[    
 ](https://synergyjs.org/class-and-style)
 
