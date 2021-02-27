@@ -71,28 +71,6 @@ function parseElementNode(node, context) {
   return context;
 }
 
-const xparseEventHandler = (value, context) => {
-  let m = value.match(/([^\(]+)(\(([^\)]*)\))?/);
-
-  if (!m) return;
-
-  let method = m[1],
-    args = m[3];
-
-  args =
-    args &&
-    args
-      .split(',')
-      .filter((v) => v)
-      .map((v) => v.trim())
-      .map((k) => resolve(k, context));
-
-  return {
-    method,
-    args,
-  };
-};
-
 const parseEventHandler = (value, context) => {
   let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))?/);
 
@@ -120,14 +98,11 @@ const parseEventHandler = (value, context) => {
 function parseAttributeNode({ name, value }, node, context) {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
-    let lastContext = last(context);
     let eventName = name.split('on')[1];
 
     subscribers.add(eventName);
 
     let { event, method, args } = parseEventHandler(value, context);
-
-    // console.log(event, method, args);
 
     node.__bindings__.push({
       type: 'call',
@@ -135,7 +110,6 @@ function parseAttributeNode({ name, value }, node, context) {
       event,
       method,
       args,
-      path: lastContext && `${lastContext.prop}.*`, // @delete
     });
 
     return;

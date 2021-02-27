@@ -36,8 +36,6 @@ const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
         if (!binding) return;
 
         if (binding.type === 'call') {
-          let v = binding.realPath && getValueAtPath(binding.realPath, proxy);
-
           let args = binding.args
             ? binding.args
                 .map((v) => resolve(v, binding.ctx, proxy))
