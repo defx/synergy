@@ -2,7 +2,7 @@
 
 Synergy makes working with form data a breeze by automagically binding named form controls to properties of the same name on your viewmodel.
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -16,11 +16,13 @@ Template:
 <input name="color" type="color" />
 ```
 
-## Select
+### 
+
+### Select
 
 Attribute a name to your `<select>` and the value of the bound property will reflect that of the currently selected `<option>`
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -61,7 +63,7 @@ The standard HTML `<select>` element also supports the ability to select multipl
 ></select>
 ```
 
-A `<select>` with `[multiple]` binds to an Array on your viewmodel:
+A `<select>` with `[multiple]` binds to an Array on your data:
 
 ```javascript
 {
@@ -69,7 +71,9 @@ A `<select>` with `[multiple]` binds to an Array on your viewmodel:
 }
 ```
 
-## Radio Buttons
+### 
+
+### Radio Buttons
 
 Add a name to each radio button to indicate which _group_ it belongs to.
 

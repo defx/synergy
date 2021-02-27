@@ -20,43 +20,66 @@ Template:
 </button>
 ```
 
-The first argument to your event handler is always a native DOM Event object
+### 
+
+### Function arguments
+
+When triggering events from within repeated blocks it can be useful to pass data back into your viewmodel so that you know which particular item in the block raised the event. You can do this using the function invocation syntax...
+
+Viewmodel:
 
 ```javascript
 {
-  handleClick: function(event) {
-    event.preventDefault();
-    console.log("the link was clicked");
-  }
-};
-```
-
-If the target of the event is within a repeated block, then the second argument to your handler will be the datum for that particular item.
-
-View:
-
-```javascript
-{
-  todos: [
-    /* ... */
+  artists: [
+    {
+      name: 'pablo picasso',
+      tags: [
+        'painter',
+        'sculptor',
+        'printmaker',
+        'ceramicist',
+        'theatre designer',
+      ],
+    },
+    {
+      name: 'salvador dali',
+      tags: ['painter', 'sculptor', 'photographer', 'writer'],
+    },
   ],
-  todoClicked: function(event, todo) {
-    /*... */
-  };
+  select(artist, tag) {
+    //...
+  },
 }
 ```
 
 Template:
 
 ```markup
-<ul>
-  <template each="todo in todos">
-    <li>
-      <h3 onclick="todoClicked">
-        {{ todo.title }}
-      </h3>
-    </li>
-  </template>
-</ul>
+<template each="artist in artists">
+  <article>
+    <h4>{{ artist.name }}</h4>
+    <ul>
+      <template each="tag in artist.tags">
+        <li onclick="select(artist, tag)">{{ tag }}</li>
+      </template>
+    </ul>
+  </article>
+</template>
 ```
+
+
+
+### Event object
+
+You can access the native event object by using the fat arrow syntax...
+
+Viewmodel:
+
+```markup
+<button onclick="e => sayHello(e)">
+  Say hello
+</button>
+```
+
+
 

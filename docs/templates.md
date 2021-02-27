@@ -1,6 +1,6 @@
 # Templates
 
-Synergy takes your HTML template and replaces the tokens inside it with data from your viewmodel, updating your UI whenever that data changes.
+Synergy takes your HTML template and replaces the tokens inside it with data from your JavaScript object, updating your UI whenever that data changes.
 
 In a Synergy template, a **token** is identified by surrounding it with double curly braces.
 
@@ -8,7 +8,7 @@ In a Synergy template, a **token** is identified by surrounding it with double c
 
 Let's take a look at how token replacement works with some simple text.
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -32,7 +32,7 @@ Output:
 
 You can use tokens in the same way for both text and attribute nodes.
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -58,7 +58,7 @@ Some HTML attributes are known as boolean attributes, which means that they're c
 
 Boolean values can be toggled by binding to a boolean value.
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -80,9 +80,9 @@ Output:
 
 ## ARIA attributes
 
-Some ARIA attributes accept the string values "true" and "false". These aren't boolean attributes, but Synergy lets you bind to booleans and it will treat them accordingly.
+Some ARIA attributes accept the string values "true" and "false". These aren't boolean attributes, but Synergy let's you bind to booleans and it will treat them accordingly.
 
-Viewmodel:
+View:
 
 ```javascript
 {
@@ -113,7 +113,7 @@ Output:
 
 As per the example above, you can prefix boolean properties with the exclamation mark to convert a truthy value to a falsy value, and vice versa.
 
-Viewmodel:
+View:
 
 ```javascript
 {

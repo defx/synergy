@@ -1,8 +1,10 @@
 # Class & Style
 
-## Multiple classes with Array
 
-Viewmodel:
+
+### Multiple classes with Array
+
+View:
 
 ```javascript
 {
@@ -29,9 +31,11 @@ Output:
 />
 ```
 
-## Static Conditional Classes with Object
+### 
 
-Viewmodel:
+### Static Conditional Classes with Object
+
+View:
 
 ```javascript
 {
@@ -54,9 +58,11 @@ Output:
 <div class="mx-auto"></div>
 ```
 
-## Dynamic Conditional Classes with Getter + Object
+### 
 
-Viewmodel:
+### Dynamic Conditional Classes with Getter + Object
+
+View:
 
 ```javascript
 {
@@ -81,9 +87,11 @@ Output:
 <form class="errors"></form>
 ```
 
-## Inline Styles
+### 
 
-Viewmodel:
+### Inline Styles
+
+View:
 
 ```javascript
 {
