@@ -24,6 +24,8 @@ export const resolve = (path, context) => {
 
         if (m) v = v.slice(1, -1);
 
+        v = v.trim();
+
         if (v === valueIdentifier) v = prop + (m ? ':*' : '.*');
 
         return m ? `[${v}]` : v;
