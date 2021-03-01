@@ -40,7 +40,7 @@ package directly from a CDN.
 
 ```html
 <script type="module">
-  import synergy from 'https://unpkg.com/synergy';
+  import { define } from 'https://unpkg.com/synergy';
 </script>
 ```
 
@@ -63,9 +63,9 @@ You can find the Synergy documentation
 
 ```html
 <script type="module">
-  import synergy from 'https://unpkg.com/synergy';
+  import { define } from 'https://unpkg.com/synergy';
 
-  synergy.define('hello-world', ({ name }) => ({ name }));
+  define('hello-world', ({ name }) => ({ name }));
 </script>
 <template id="hello-world">
   <p>Hello {{ name }}</p>
