@@ -37,6 +37,12 @@ export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
 export const getValueAtPath = (path, target) => path.split('.').reduce((o, k) => o && o[k], target);
 
+export const callFunctionAtPath = (path, target, args) => {
+  let parts = path.split('.');
+  let t = parts.slice(0, -1).reduce((o, k) => o && o[k], target) || target;
+  return t[last(parts)].apply(t, args);
+};
+
 export const setValueAtPath = (path, value, target) => {
   let parts = path.split('.');
   if (parts.length === 1) return (target[path] = value);

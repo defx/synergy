@@ -1,6 +1,7 @@
 import { LIST, LIST_ITEM, ATTRIBUTE, INPUT, TEXT } from './constants.js';
 import {
   getValueAtPath,
+  callFunctionAtPath,
   walk,
   typeOf,
   copy,
@@ -206,7 +207,8 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
       }
     } else if (type === 'function') {
       let args = part.args.map((value) => getValue({ value }, ctx, p, binding));
-      let v = viewmodel[part.method](...args);
+
+      let v = callFunctionAtPath(part.method, viewmodel, args);
 
       return a ? a + v : v;
     } else {

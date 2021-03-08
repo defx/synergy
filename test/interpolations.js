@@ -266,4 +266,27 @@ describe('attributes', () => {
 
     assert.equal($$('a[aria-current="page"]').length, 1);
   });
+
+  it('should support nested function invocation', () => {
+    synergy.render(
+      rootNode,
+      {
+        foo: {
+          items: [1, 2, 3],
+          isSecond(item) {
+            return item === this.items[1] ? 'page' : null;
+          },
+        },
+      },
+      html`
+        <ul>
+          <template each="item in foo.items">
+            <li><a aria-current="{{ foo.isSecond(item) }}"></a></li>
+          </template>
+        </ul>
+      `
+    );
+
+    assert.equal($$('a[aria-current="page"]').length, 1);
+  });
 });
