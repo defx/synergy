@@ -6,7 +6,7 @@ const childNodes = (node) => {
   return frag;
 };
 
-function mergeSlots(targetNode, sourceNode) {
+const mergeSlots = (targetNode, sourceNode) => {
   let namedSlots = sourceNode.querySelectorAll('slot[name]');
 
   namedSlots.forEach((slot) => {
@@ -28,6 +28,6 @@ function mergeSlots(targetNode, sourceNode) {
       defaultSlot
     );
   }
-}
+};
 
 export default mergeSlots;

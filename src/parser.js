@@ -105,7 +105,7 @@ const parseEventHandler = (value, context) => {
   };
 };
 
-function parseAttributeNode({ name, value }, node, context) {
+const parseAttributeNode = ({ name, value }, node, context) => {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
     let eventName = name.split('on')[1];
@@ -156,9 +156,9 @@ function parseAttributeNode({ name, value }, node, context) {
       context: context.slice(),
     });
   }
-}
+};
 
-function parseTextNode(value, node, context) {
+const parseTextNode = (value, node, context) => {
   if (!hasMustache(value)) return;
 
   node.__bindings__ = [
@@ -169,9 +169,9 @@ function parseTextNode(value, node, context) {
       context: context.slice(),
     },
   ];
-}
+};
 
-function parseRepeatedBlock(node) {
+const parseRepeatedBlock = (node) => {
   let each = node.getAttribute('each');
   if (!each) return;
 
@@ -183,7 +183,7 @@ function parseRepeatedBlock(node) {
     prop,
     key,
   };
-}
+};
 
 export default (templateFragment, BINDING_ID) => {
   subscribers = new Set();

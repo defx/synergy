@@ -11,36 +11,34 @@ const initialAttributes = (node) => {
   return o;
 };
 
-function createDataScript(element) {
+const createDataScript = (element) => {
   let script = document.createElement('script');
   script.type = 'data';
   element.prepend(script);
   return script;
-}
+};
 
-function getDataScript(element) {
-  return element.querySelector('script[type="data"]');
-}
+const getDataScript = (element) => element.querySelector('script[type="data"]');
 
-function getData(element) {
+const getData = (element) => {
   let script = getDataScript(element);
   return (script && JSON.parse(script.textContent)) || {};
-}
+};
 
-function setData(element, k, v) {
+const setData = (element, k, v) => {
   let data = getData(element);
   data[k] = v;
   let script = getDataScript(element) || createDataScript(element);
   script.textContent = JSON.stringify(data);
-}
+};
 
-function wrap(target, property, fn) {
+const wrap = (target, property, fn) => {
   let o = target[property];
   target[property] = function () {
     fn(...arguments);
     o?.(...arguments);
   };
-}
+};
 
 const define = (name, factory, template, options = {}) => {
   let { observe = [], lifecycle = {} } = options;

@@ -1,6 +1,6 @@
 import { typeOf } from './helpers.js';
 
-function observe(root, callbackAny) {
+const observe = (root, callbackAny) => {
   let proxyCache = new WeakMap();
 
   function proxy(target, handler) {
@@ -14,11 +14,7 @@ function observe(root, callbackAny) {
 
   const handler = {
     get(target, property) {
-      if (
-        ['Object', 'Array'].includes(
-          typeOf(target[property])
-        )
-      ) {
+      if (['Object', 'Array'].includes(typeOf(target[property]))) {
         return proxy(target[property], handler);
       } else {
         return Reflect.get(...arguments);
@@ -37,6 +33,6 @@ function observe(root, callbackAny) {
   };
 
   return new Proxy(root, handler);
-}
+};
 
 export default observe;

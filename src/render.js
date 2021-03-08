@@ -7,27 +7,25 @@ import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
-function render(mountNode, viewmodel, template, options = {}, extras = {}) {
-
+const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
   const BINDING_ID = counter++;
 
   template = templateNode(template).cloneNode(true).content;
 
-  let { subscribers, templateFragment } = parse(
-    template,
-    BINDING_ID
-  );
+  let { subscribers, templateFragment } = parse(template, BINDING_ID);
 
   let vm, mounted;
 
-  let update = Updater(BINDING_ID, (prev) => mounted && options.lifecycle?.updatedCallback?.(vm, prev));
+  let update = Updater(
+    BINDING_ID,
+    (prev) => mounted && options.lifecycle?.updatedCallback?.(vm, prev)
+  );
 
   update(templateFragment, viewmodel);
 
   if (hydrate(BINDING_ID, templateFragment, mountNode)) {
     update(mountNode, viewmodel);
   } else {
-
     extras.beforeMountCallback?.(templateFragment);
 
     for (let child of mountNode.children) {
@@ -47,6 +45,6 @@ function render(mountNode, viewmodel, template, options = {}, extras = {}) {
   mounted = true;
 
   return vm;
-}
+};
 
 export default render;
