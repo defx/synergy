@@ -1,10 +1,10 @@
 import { walk } from './helpers.js';
 
-function flatten(node) {
+const flatten = (node) => {
   const res = [];
   walk(node, (x) => res.push(x));
   return res;
-}
+};
 
 const cloneNodeWithBindings = (node) => {
   let newNode = node.cloneNode(true);

@@ -1,7 +1,7 @@
 export const isWhitespace = (node) =>
   node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
 
-export function walk(node, callback) {
+export const walk = (node, callback) => {
   if (callback(node) === false) return;
 
   node = node.firstChild;
@@ -10,7 +10,7 @@ export function walk(node, callback) {
     if (!isWhitespace(node)) walk(node, callback);
     node = node.nextSibling;
   }
-}
+};
 
 export const resolve = (path, ctx, target) => {
   let parts = path.split('.');
@@ -35,29 +35,35 @@ export const typeOf = (v) => Object.prototype.toString.call(v).match(/\s(.+[^\]]
 
 export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
-export const getValueAtPath = (path, target) => path.split('.').reduce((o, k) => o && o[k], target);
-
-export const callFunctionAtPath = (path, target, args) => {
+const getTarget = (path, target) => {
   let parts = path.split('.');
   let t = parts.slice(0, -1).reduce((o, k) => o && o[k], target) || target;
-  return t[last(parts)].apply(t, args);
+  return [t, last(parts)];
+};
+
+export const getValueAtPath = (path, target) => {
+  let [a, b] = getTarget(path, target);
+  return a[b];
+};
+
+export const callFunctionAtPath = (path, target, args) => {
+  let [a, b] = getTarget(path, target);
+  return a[b].apply(a, args);
 };
 
 export const setValueAtPath = (path, value, target) => {
-  let parts = path.split('.');
-  if (parts.length === 1) return (target[path] = value);
-  target = getValueAtPath(parts.slice(0, -1).join('.'), target);
-  target[last(parts)] = value;
+  let [a, b] = getTarget(path, target);
+  return (a[b] = value);
 };
 
 export const removeNodes = (nodes) => nodes.forEach((node) => node.parentNode.removeChild(node));
 
-export function templateNode(v) {
+export const templateNode = (v) => {
   if (v.nodeName === 'TEMPLATE') return v;
   let tpl = document.createElement('template');
   tpl.innerHTML = v;
   return tpl;
-}
+};
 
 export const debounce = (fn) => {
   let t;
