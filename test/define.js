@@ -72,7 +72,7 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle">toggle</button>',
+      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle()">toggle</button>',
       {
         observe: ['show'],
       }
@@ -122,7 +122,7 @@ describe('define', () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
       observe: ['foo-bar'],
     });
     mount(`
@@ -145,7 +145,7 @@ describe('define', () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle">ok</button>`, {
+    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
       observe: ['aria-hidden'],
     });
     mount(`

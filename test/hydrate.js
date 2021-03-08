@@ -8,9 +8,7 @@ const nodeFromString = (str) => {
 
 describe('hydrate', () => {
   it('should return falsy if target node is empty', () => {
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
     let targetNode = document.createElement('div');
     let shouldHydrate = hydrate(1, sourceNode, targetNode);
     assert.notOk(shouldHydrate);
@@ -19,34 +17,18 @@ describe('hydrate', () => {
   it('should return truthy if target node and source node have matching content', () => {
     const bindingId = 1;
     //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
-    let targetNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
-    let shouldHydrate = hydrate(
-      bindingId,
-      sourceNode,
-      targetNode
-    );
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
+    let targetNode = nodeFromString(html`<p>hello world!</p>`);
+    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
     assert.ok(shouldHydrate);
   });
 
   it('should return falsy if target node and source node do not have matching content', () => {
     const bindingId = 1;
     //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
-    let targetNode = nodeFromString(
-      html`<b>hello world!</b>`
-    );
-    let shouldHydrate = hydrate(
-      bindingId,
-      sourceNode,
-      targetNode
-    );
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
+    let targetNode = nodeFromString(html`<b>hello world!</b>`);
+    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
     assert.notOk(shouldHydrate);
   });
 
@@ -54,15 +36,11 @@ describe('hydrate', () => {
     const bindingId = 1;
     const bindings = [{ foo: 'bar' }];
     //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
     let paragraph = sourceNode.firstElementChild;
     paragraph.bindingId = bindingId;
     paragraph.__bindings__ = bindings;
-    let targetNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
+    let targetNode = nodeFromString(html`<p>hello world!</p>`);
     hydrate(bindingId, sourceNode, targetNode);
     assert.deepEqual(
       targetNode.firstElementChild.__bindings__,
@@ -81,28 +59,16 @@ describe('hydrate', () => {
       html`<p>hello world!</p>
         fa la la`
     );
-    let shouldHydrate = hydrate(
-      bindingId,
-      sourceNode,
-      targetNode
-    );
+    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
     assert.ok(shouldHydrate);
   });
 
   it('should ignore minor text differences (could be slotted text)', () => {
     const bindingId = 1;
     //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>`
-    );
-    let targetNode = nodeFromString(
-      html`<p>hello world!fa la la</p>`
-    );
-    let shouldHydrate = hydrate(
-      bindingId,
-      sourceNode,
-      targetNode
-    );
+    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
+    let targetNode = nodeFromString(html`<p>hello world!fa la la</p>`);
+    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
     assert.ok(shouldHydrate);
   });
 
@@ -110,10 +76,7 @@ describe('hydrate', () => {
     mount(html`
       <div id="app-container">
         <template each="item in items">
-          <x-drawer
-            title="{{ item.name }}"
-            open="{{ item.open }}"
-          >
+          <x-drawer title="{{ item.name }}" open="{{ item.open }}">
             <p>hi, my name is {{ item.name }}</p>
           </x-drawer>
         </template>
@@ -161,12 +124,7 @@ describe('hydrate', () => {
         'x-drawer',
         factory,
         html`<h3>
-            <button
-              onclick="toggle"
-              aria-expanded="{{ open }}"
-            >
-              {{ title }}
-            </button>
+            <button onclick="toggle()" aria-expanded="{{ open }}">{{ title }}</button>
           </h3>
           <div hidden="{{ !open }}">
             <slot></slot>
@@ -192,10 +150,7 @@ describe('hydrate', () => {
         document.getElementById('app-container'),
         factory(),
         html`<template each="item in items">
-          <x-drawer
-            title="{{ item.name }}"
-            open="{{ item.open }}"
-          >
+          <x-drawer title="{{ item.name }}" open="{{ item.open }}">
             <p>hi, my name is {{ item.name }}</p>
           </x-drawer>
         </template>`
@@ -204,24 +159,13 @@ describe('hydrate', () => {
 
     let drawersAfter = $$('x-drawer');
 
-    let sameNodes = drawersAfter.every((drawer, i) =>
-      drawer.isSameNode(drawersBefore[i])
-    );
+    let sameNodes = drawersAfter.every((drawer, i) => drawer.isSameNode(drawersBefore[i]));
 
     assert.ok(sameNodes);
 
-    assert.equal(
-      drawersAfter[0].hasAttribute('open'),
-      true
-    );
-    assert.equal(
-      drawersAfter[1].hasAttribute('open'),
-      false
-    );
-    assert.equal(
-      drawersAfter[2].hasAttribute('open'),
-      false
-    );
+    assert.equal(drawersAfter[0].hasAttribute('open'), true);
+    assert.equal(drawersAfter[1].hasAttribute('open'), false);
+    assert.equal(drawersAfter[2].hasAttribute('open'), false);
 
     drawersAfter[1].querySelector('button').click();
 
@@ -264,36 +208,21 @@ describe('hydrate', () => {
             </template>
             <li>
               <h3>
-                <button
-                  aria-controls="drawer__0"
-                  aria-expanded="true"
-                >
-                  HTML
-                </button>
+                <button aria-controls="drawer__0" aria-expanded="true">HTML</button>
               </h3>
-              <div id="drawer__0">
-                something about HTML...
-              </div>
+              <div id="drawer__0">something about HTML...</div>
             </li>
             <li>
               <h3>
-                <button aria-controls="drawer__1">
-                  CSS
-                </button>
+                <button aria-controls="drawer__1">CSS</button>
               </h3>
-              <div hidden="" id="drawer__1">
-                something about CSS...
-              </div>
+              <div hidden="" id="drawer__1">something about CSS...</div>
             </li>
             <li>
               <h3>
-                <button aria-controls="drawer__2">
-                  JavaScript
-                </button>
+                <button aria-controls="drawer__2">JavaScript</button>
               </h3>
-              <div hidden="" id="drawer__2">
-                something about JavaScript...
-              </div>
+              <div hidden="" id="drawer__2">something about JavaScript...</div>
             </li>
           </ul>
         </x-accordion>
@@ -311,9 +240,7 @@ describe('hydrate', () => {
 
             if (!item.open) return;
 
-            this.items = this.items.map((v) =>
-              v === item ? v : { ...v, open: false }
-            );
+            this.items = this.items.map((v) => (v === item ? v : { ...v, open: false }));
           },
         };
       };
@@ -327,19 +254,14 @@ describe('hydrate', () => {
               <li>
                 <h3>
                   <button
-                    onclick="toggle"
+                    onclick="toggle()"
                     aria-expanded="{{ item.open }}"
                     aria-controls="drawer__{{ # }}"
                   >
                     {{ item.title }}
                   </button>
                 </h3>
-                <div
-                  id="drawer__{{ # }}"
-                  hidden="{{ !item.open }}"
-                >
-                  {{ item.description }}
-                </div>
+                <div id="drawer__{{ # }}" hidden="{{ !item.open }}">{{ item.description }}</div>
               </li>
             </template>
           </ul>
@@ -371,13 +293,7 @@ describe('hydrate', () => {
 
       const app = document.getElementById('app');
 
-      synergy.render(
-        app,
-        view,
-        html`<x-accordion
-          items="{{ items }}"
-        ></x-accordion>`
-      );
+      synergy.render(app, view, html`<x-accordion items="{{ items }}"></x-accordion>`);
     })();
 
     let after = $('x-accordion');
@@ -407,36 +323,21 @@ describe('hydrate', () => {
             </template>
             <li>
               <h3>
-                <button
-                  aria-controls="drawer__0"
-                  aria-expanded="true"
-                >
-                  HTML
-                </button>
+                <button aria-controls="drawer__0" aria-expanded="true">HTML</button>
               </h3>
-              <div id="drawer__0">
-                something about HTML...
-              </div>
+              <div id="drawer__0">something about HTML...</div>
             </li>
             <li>
               <h3>
-                <button aria-controls="drawer__1">
-                  CSS
-                </button>
+                <button aria-controls="drawer__1">CSS</button>
               </h3>
-              <div hidden="" id="drawer__1">
-                something about CSS...
-              </div>
+              <div hidden="" id="drawer__1">something about CSS...</div>
             </li>
             <li>
               <h3>
-                <button aria-controls="drawer__2">
-                  JavaScript
-                </button>
+                <button aria-controls="drawer__2">JavaScript</button>
               </h3>
-              <div hidden="" id="drawer__2">
-                something about JavaScript...
-              </div>
+              <div hidden="" id="drawer__2">something about JavaScript...</div>
             </li>
           </ul>
         </y-accordion>
@@ -454,9 +355,7 @@ describe('hydrate', () => {
 
             if (!item.open) return;
 
-            this.items = this.items.map((v) =>
-              v === item ? v : { ...v, open: false }
-            );
+            this.items = this.items.map((v) => (v === item ? v : { ...v, open: false }));
           },
         };
       };
@@ -470,19 +369,14 @@ describe('hydrate', () => {
               <li>
                 <h3>
                   <button
-                    onclick="toggle"
+                    onclick="toggle()"
                     aria-expanded="{{ item.open }}"
                     aria-controls="drawer__{{ # }}"
                   >
                     {{ item.title }}
                   </button>
                 </h3>
-                <div
-                  id="drawer__{{ # }}"
-                  hidden="{{ !item.open }}"
-                >
-                  {{ item.description }}
-                </div>
+                <div id="drawer__{{ # }}" hidden="{{ !item.open }}">{{ item.description }}</div>
               </li>
             </template>
           </ul>
@@ -514,13 +408,7 @@ describe('hydrate', () => {
 
       const app = document.getElementById('app');
 
-      synergy.render(
-        app,
-        view,
-        html`<y-accordion
-          items="{{ items }}"
-        ></y-accordion>`
-      );
+      synergy.render(app, view, html`<y-accordion items="{{ items }}"></y-accordion>`);
     })();
 
     let after = $('y-accordion');

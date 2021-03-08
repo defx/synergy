@@ -3,52 +3,6 @@ describe('events', () => {
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
-  it('should support invocation of named function without parentheses or arguments', async () => {
-    let args;
-
-    let view = synergy.render(
-      rootNode,
-      {
-        artists: [
-          {
-            name: 'pablo picasso',
-            tags: [
-              'painter',
-              'sculptor',
-              'printmaker',
-              'ceramicist',
-              'theatre designer',
-            ],
-          },
-          {
-            name: 'salvador dali',
-            tags: ['painter', 'sculptor', 'photographer', 'writer'],
-          },
-        ],
-        foo(...argz) {
-          args = argz;
-        },
-      },
-      html`
-        <template each="artist in artists">
-          <article>
-            <h4>{{artist.name}}</h4>
-            <ul>
-              <template each="tag in artist.tags">
-                <li onclick="foo">{{tag}}</li>
-              </template>
-            </ul>
-          </article>
-        </template>
-      `
-    );
-
-    $('article:nth-of-type(2) li').click(); //salvador dali painter
-
-    await nextFrame();
-
-    assert.deepEqual(args.length, 0);
-  });
 
   it('should support invocation of named function with parentheses but without arguments', async () => {
     let args;
@@ -59,13 +13,7 @@ describe('events', () => {
         artists: [
           {
             name: 'pablo picasso',
-            tags: [
-              'painter',
-              'sculptor',
-              'printmaker',
-              'ceramicist',
-              'theatre designer',
-            ],
+            tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
           },
           {
             name: 'salvador dali',
@@ -106,13 +54,7 @@ describe('events', () => {
         artists: [
           {
             name: 'pablo picasso',
-            tags: [
-              'painter',
-              'sculptor',
-              'printmaker',
-              'ceramicist',
-              'theatre designer',
-            ],
+            tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
           },
           {
             name: 'salvador dali',
@@ -155,13 +97,7 @@ describe('events', () => {
         artists: [
           {
             name: 'pablo picasso',
-            tags: [
-              'painter',
-              'sculptor',
-              'printmaker',
-              'ceramicist',
-              'theatre designer',
-            ],
+            tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
           },
           {
             name: 'salvador dali',

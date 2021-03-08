@@ -49,6 +49,10 @@ const getParts = (value, context) =>
 
         if (negated) m = m.slice(1);
 
+        // let { event, method, args } = parseEventHandler(m, context);
+
+        // console.log('call?', method, args);
+
         return {
           type: 'key',
           value: resolve(m, context),
@@ -74,7 +78,8 @@ function parseElementNode(node, context) {
 }
 
 const parseEventHandler = (value, context) => {
-  let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))?/);
+  // let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))?/);
+  let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))/);
 
   if (!m) return;
 

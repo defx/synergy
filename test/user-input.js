@@ -10,8 +10,7 @@ describe('input[name]', () => {
       {
         message: '?',
       },
-      html`<input name="message" /> the message is:
-        <span class="message">{{message}}</span>`
+      html`<input name="message" /> the message is: <span class="message">{{message}}</span>`
     );
 
     assert.equal($('span.message').textContent, '?');
@@ -63,14 +62,8 @@ describe('input[name]', () => {
 
     const li = $$('#container li');
 
-    assert.equal(
-      li[0].querySelector('input').checked,
-      true
-    );
-    assert.equal(
-      li[1].querySelector('input').checked,
-      false
-    );
+    assert.equal(li[0].querySelector('input').checked, true);
+    assert.equal(li[1].querySelector('input').checked, false);
   });
 
   it('should check the correct radio button', () => {
@@ -80,33 +73,16 @@ describe('input[name]', () => {
         filter: 'active',
       },
       html`
-        <input
-          type="radio"
-          name="filter"
-          value="all"
-          id="filter.all"
-        />
+        <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
-        <input
-          type="radio"
-          name="filter"
-          value="active"
-          id="filter.active"
-        />
+        <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input
-          type="radio"
-          name="filter"
-          value="complete"
-          id="filter.complete"
-        />
+        <input type="radio" name="filter" value="complete" id="filter.complete" />
         <label for="filter.complete">complete</label>
       `
     );
 
-    let checked = $(
-      `#container input[type="radio"]:checked`
-    );
+    let checked = $(`#container input[type="radio"]:checked`);
     assert.equal(checked.value, 'active');
   });
 
@@ -115,33 +91,16 @@ describe('input[name]', () => {
       rootNode,
       {},
       html`
-        <input
-          type="radio"
-          name="filter"
-          value="all"
-          id="filter.all"
-        />
+        <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
-        <input
-          type="radio"
-          name="filter"
-          value="active"
-          id="filter.active"
-        />
+        <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input
-          type="radio"
-          name="filter"
-          value="complete"
-          id="filter.complete"
-        />
+        <input type="radio" name="filter" value="complete" id="filter.complete" />
         <label for="filter.complete">complete</label>
       `
     );
 
-    let checked = $(
-      `#container input[type="radio"]:checked`
-    );
+    let checked = $(`#container input[type="radio"]:checked`);
     assert.equal(checked, null);
   });
 
@@ -152,33 +111,16 @@ describe('input[name]', () => {
         filter: 'active',
       },
       html`
-        <input
-          type="radio"
-          name="filter"
-          value="all"
-          id="filter.all"
-        />
+        <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
-        <input
-          type="radio"
-          name="filter"
-          value="active"
-          id="filter.active"
-        />
+        <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input
-          type="radio"
-          name="filter"
-          value="complete"
-          id="filter.complete"
-        />
+        <input type="radio" name="filter" value="complete" id="filter.complete" />
         <label for="filter.complete">complete</label>
       `
     );
 
-    $(
-      `#container input[type="radio"][value="complete"]`
-    ).click();
+    $(`#container input[type="radio"][value="complete"]`).click();
     await nextFrame();
     assert.equal(view.filter, 'complete');
   });
@@ -192,9 +134,7 @@ describe('input[name]', () => {
       html`
         <label for="pet-select">Choose a pet:</label>
         <select name="pets" id="pet-select">
-          <option value="">
-            --Please choose an option--
-          </option>
+          <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>
           <option value="hamster">Hamster</option>
@@ -205,10 +145,7 @@ describe('input[name]', () => {
       `
     );
 
-    assert.equal(
-      $('#container select option:checked').value,
-      'hamster'
-    );
+    assert.equal($('#container select option:checked').value, 'hamster');
   });
 
   it('should select multiple', () => {
@@ -220,9 +157,7 @@ describe('input[name]', () => {
       html`
         <label for="pet-select">Choose a pet:</label>
         <select name="pets" id="pet-select" multiple>
-          <option value="">
-            --Please choose an option--
-          </option>
+          <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>
           <option value="hamster">Hamster</option>
@@ -234,9 +169,7 @@ describe('input[name]', () => {
     );
 
     assert.deepEqual(
-      $$('#container select option:checked').map(
-        (option) => option.value
-      ),
+      $$('#container select option:checked').map((option) => option.value),
       ['dog', 'hamster']
     );
   });
@@ -263,7 +196,7 @@ describe('input[name]', () => {
           clicked = true;
         },
       },
-      html`<button onclick="handleClick">
+      html`<button onclick="handleClick()">
         <p></p>
       </button>`
     );

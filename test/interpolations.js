@@ -112,9 +112,7 @@ describe('attributes', () => {
 
     $('section').style.opacity = '0.5';
 
-    assert.ok(
-      $('section').getAttribute('style').includes('background-color: gold;')
-    );
+    assert.ok($('section').getAttribute('style').includes('background-color: gold;'));
 
     view.foo = `
       background-color: tomato;
@@ -125,9 +123,7 @@ describe('attributes', () => {
 
     await nextFrame();
 
-    assert.ok(
-      $('section').getAttribute('style').includes('background-color: tomato;')
-    );
+    assert.ok($('section').getAttribute('style').includes('background-color: tomato;'));
 
     assert.ok($('section').getAttribute('style').includes('opacity: 0.5;'));
   });
@@ -248,5 +244,27 @@ describe('attributes', () => {
       $$('tr').map((v) => v.textContent.trim()),
       ['123', '321', '132']
     );
+  });
+
+  xit('should support function invocation', () => {
+    //@todo
+    synergy.render(
+      rootNode,
+      {
+        items: [1, 2, 3],
+        isSecond(item) {
+          return item === this.items[1] ? 'page' : null;
+        },
+      },
+      html`
+        <ul>
+          <template each="item in items">
+            <li><a aria-current="{{ isSecond(item) }}"></a></li>
+          </template>
+        </ul>
+      `
+    );
+
+    assert.equal($$('div[aria-current="page"]').length, 1);
   });
 });
