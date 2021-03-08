@@ -41,11 +41,6 @@ const getTarget = (path, target) => {
   return [t, last(parts)];
 };
 
-export const getValueAtPath = (path, target) => {
-  let [a, b] = getTarget(path, target);
-  return a[b];
-};
-
 export const callFunctionAtPath = (path, target, args) => {
   let [a, b] = getTarget(path, target);
   return a[b].apply(a, args);
@@ -54,6 +49,11 @@ export const callFunctionAtPath = (path, target, args) => {
 export const setValueAtPath = (path, value, target) => {
   let [a, b] = getTarget(path, target);
   return (a[b] = value);
+};
+
+export const getValueAtPath = (path, target) => {
+  let [a, b] = getTarget(path, target);
+  return a[b];
 };
 
 export const removeNodes = (nodes) => nodes.forEach((node) => node.parentNode.removeChild(node));
