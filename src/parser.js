@@ -54,9 +54,8 @@ const getParts = (value, context) =>
         return fn
           ? {
               type: 'function',
-              args: fn.args,
-              method: fn.method,
               negated,
+              ...fn,
             }
           : {
               type: 'key',
@@ -83,7 +82,6 @@ function parseElementNode(node, context) {
 }
 
 const parseEventHandler = (value, context) => {
-  // let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))?/);
   let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))/);
 
   if (!m) return;
