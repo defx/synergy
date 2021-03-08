@@ -1,11 +1,6 @@
 import { render } from './index.js';
 import mergeSlots from './mergeSlots.js';
-import {
-  templateNode,
-  applyAttribute,
-  attributeToProp,
-  isPrimitive,
-} from './helpers.js';
+import { templateNode, applyAttribute, attributeToProp, isPrimitive } from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -62,16 +57,14 @@ const define = (name, factory, template, options = {}) => {
       constructor() {
         super();
 
-        this.viewmodel = factory(initialAttributes(this));
+        this.viewmodel = factory(initialAttributes(this), this);
 
         Object.assign(this, getData(this));
 
         observe.forEach((name) => {
           let property = attributeToProp(name).name;
 
-          let value = this.hasAttribute(name)
-            ? this.getAttribute(name)
-            : this[property];
+          let value = this.hasAttribute(name) ? this.getAttribute(name) : this[property];
 
           Object.defineProperty(this, property, {
             get() {
@@ -102,12 +95,6 @@ const define = (name, factory, template, options = {}) => {
         }
 
         wrap(lifecycle, 'updatedCallback', (prev) => {
-          /*
-        
-        @todo: check to see if the value actually changed!
-        
-        */
-
           observedProps.forEach((k) => {
             let v = this.viewmodel[k];
             if (isPrimitive(v)) {

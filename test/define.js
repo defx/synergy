@@ -18,6 +18,21 @@ describe('define', () => {
     assert.equal(el.querySelector('p').textContent, 'ok!');
   });
 
+  it('should initialise factory with element', () => {
+    let name = `x-${count++}`;
+    let el1;
+    let factory = (_, element) => {
+      el1 = element;
+      return {};
+    };
+    synergy.define(name, factory, '<p>{{ title }}</p>');
+    mount(`
+      <${name} title="ok!"></${name}>
+      `);
+    let el2 = document.querySelector(name);
+    assert.equal(el1, el2);
+  });
+
   it('should accept template element', () => {
     let name = `x-${count++}`;
     let factory = ({ title }) => ({ title });
