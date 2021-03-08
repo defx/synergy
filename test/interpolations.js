@@ -246,8 +246,7 @@ describe('attributes', () => {
     );
   });
 
-  xit('should support function invocation', () => {
-    //@todo
+  it('should support function invocation', () => {
     synergy.render(
       rootNode,
       {
@@ -265,6 +264,6 @@ describe('attributes', () => {
       `
     );
 
-    assert.equal($$('div[aria-current="page"]').length, 1);
+    assert.equal($$('a[aria-current="page"]').length, 1);
   });
 });

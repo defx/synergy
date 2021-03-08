@@ -49,15 +49,20 @@ const getParts = (value, context) =>
 
         if (negated) m = m.slice(1);
 
-        // let { event, method, args } = parseEventHandler(m, context);
+        let fn = parseEventHandler(m, context);
 
-        // console.log('call?', method, args);
-
-        return {
-          type: 'key',
-          value: resolve(m, context),
-          negated,
-        };
+        return fn
+          ? {
+              type: 'function',
+              args: fn.args,
+              method: fn.method,
+              negated,
+            }
+          : {
+              type: 'key',
+              value: resolve(m, context),
+              negated,
+            };
       }
 
       return {

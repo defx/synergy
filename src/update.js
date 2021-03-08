@@ -44,8 +44,7 @@ const updateList = (template, binding, delta) => {
 let getPreviousValue = (node, binding) => {
   switch (binding.type) {
     case ATTRIBUTE:
-      return attributeToProp(binding.name, node.getAttribute(binding.name))
-        .value;
+      return attributeToProp(binding.name, node.getAttribute(binding.name)).value;
     case TEXT:
       return node.textContent;
     default:
@@ -138,7 +137,7 @@ const updateNode = (node, binding, newValue) =>
     ? applyComplexAttribute(node, binding.name, newValue, binding.data)
     : (node.textContent = newValue);
 
-const updateBinding = (binding, node, ctx, p) => {
+const updateBinding = (binding, node, ctx, p, viewmodel) => {
   if (binding.eventName) {
     binding.ctx = copy(ctx);
     binding.path && (binding.realPath = resolve(binding.path, ctx)); // @delete
@@ -205,6 +204,11 @@ const updateBinding = (binding, node, ctx, p) => {
       } else {
         return [undefined, null].includes(v) ? a : a + v;
       }
+    } else if (type === 'function') {
+      let args = part.args.map((value) => getValue({ value }, ctx, p, binding));
+      let v = viewmodel[part.method](...args);
+
+      return a ? a + v : v;
     } else {
       return a + value;
     }
@@ -217,10 +221,7 @@ const updateBinding = (binding, node, ctx, p) => {
 
 let prev;
 
-const Updater = (BINDING_ID, updatedCallback = () => {}) => (
-  rootNode,
-  viewmodel
-) => {
+const Updater = (BINDING_ID, updatedCallback = () => {}) => (rootNode, viewmodel) => {
   let ctx = {};
   let p = copy(viewmodel);
 
@@ -230,7 +231,7 @@ const Updater = (BINDING_ID, updatedCallback = () => {}) => (
     let bindings = node.__bindings__;
 
     if (bindings) {
-      bindings.forEach((binding) => updateBinding(binding, node, ctx, p));
+      bindings.forEach((binding) => updateBinding(binding, node, ctx, p, viewmodel));
     }
   });
 
