@@ -197,23 +197,17 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
   const newValue = binding.parts.reduce((a, part) => {
     let { type, value } = part;
-    if (type === 'key') {
-      let v = getValue(part, ctx, p, binding);
 
-      if (!a) {
-        return v;
-      } else {
-        return [undefined, null].includes(v) ? a : a + v;
-      }
+    let v = value;
+
+    if (type === 'key') {
+      v = getValue(part, ctx, p, binding);
     } else if (type === 'function') {
       let args = part.args.map((value) => getValue({ value }, ctx, p, binding));
-
-      let v = callFunctionAtPath(part.method, viewmodel, args);
-
-      return a ? a + v : v;
-    } else {
-      return a + value;
+      v = callFunctionAtPath(part.method, viewmodel, args);
     }
+
+    return a ? a + v : v;
   }, '');
 
   if (newValue === oldValue) return;
