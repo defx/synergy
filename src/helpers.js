@@ -17,7 +17,7 @@ export const resolve = (path, ctx, target) => {
   let i = parts.length;
   while (i--) {
     if (parts[i].charAt(0) === '[') {
-      let p = parts[i].slice(1, -1).replaceAll(':', '.');
+      let p = parts[i].slice(1, -1).replace(/:/g, '.');
       parts[i] = getValueAtPath(resolve(p, ctx), target);
     } else if (parts[i] === '*') {
       parts[i] = ctx[parts.slice(0, i).join('.')];
@@ -31,13 +31,11 @@ export const last = (v = []) => v[v.length - 1];
 
 export const hasMustache = (v) => v.match(/({{[^{}]+}})/);
 
-export const typeOf = (v) =>
-  Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
+export const typeOf = (v) => Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
 export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
-export const getValueAtPath = (path, target) =>
-  path.split('.').reduce((o, k) => o && o[k], target);
+export const getValueAtPath = (path, target) => path.split('.').reduce((o, k) => o && o[k], target);
 
 export const setValueAtPath = (path, value, target) => {
   let parts = path.split('.');
@@ -46,8 +44,7 @@ export const setValueAtPath = (path, value, target) => {
   target[last(parts)] = value;
 };
 
-export const removeNodes = (nodes) =>
-  nodes.forEach((node) => node.parentNode.removeChild(node));
+export const removeNodes = (nodes) => nodes.forEach((node) => node.parentNode.removeChild(node));
 
 export function templateNode(v) {
   if (v.nodeName === 'TEMPLATE') return v;

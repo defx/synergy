@@ -5,7 +5,7 @@ import { last, hasMustache, walk } from './helpers.js';
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
   return parts.reduce((a, part) => {
-    let v = part.charAt(0) === '[' ? '.' + part.replaceAll('.', ':') : part;
+    let v = part.charAt(0) === '[' ? '.' + part.replace(/\./g, ':') : part;
     return a + v;
   }, '');
 };
@@ -120,9 +120,7 @@ function parseAttributeNode({ name, value }, node, context) {
   if (
     name === 'name' &&
     value &&
-    (node.nodeName === 'INPUT' ||
-      node.nodeName === 'SELECT' ||
-      node.nodeName === 'TEXTAREA')
+    (node.nodeName === 'INPUT' || node.nodeName === 'SELECT' || node.nodeName === 'TEXTAREA')
   ) {
     let path = resolve(value, context);
 
@@ -157,9 +155,7 @@ function parseTextNode(value, node, context) {
 
   node.__bindings__ = [
     {
-      childIndex: Array.from(node.parentNode.childNodes).findIndex(
-        (v) => v === node
-      ),
+      childIndex: Array.from(node.parentNode.childNodes).findIndex((v) => v === node),
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),
