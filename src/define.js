@@ -18,18 +18,20 @@ const createDataScript = (element) => {
   return script;
 };
 
-const getDataScript = (element) => element.querySelector('script[type="data"]');
+const getDataScript = (element) => {
+  let child = element.firstElementChild;
+  return child && child.matches('script[type="data"]') && child;
+};
 
 const getData = (element) => {
   let script = getDataScript(element);
   return (script && JSON.parse(script.textContent)) || {};
 };
 
-const setData = (element, k, v) => {
+const mergeData = (element, v) => {
   let data = getData(element);
-  data[k] = v;
   let script = getDataScript(element) || createDataScript(element);
-  script.textContent = JSON.stringify(data);
+  script.textContent = JSON.stringify({ ...data, ...v });
 };
 
 const wrap = (target, property, fn) => {
@@ -74,7 +76,7 @@ const define = (name, factory, template, options = {}) => {
               if (isPrimitive(v)) {
                 applyAttribute(this, property, v);
               } else {
-                setData(this, property, v);
+                mergeData(this, { [property]: v });
               }
             },
           });
@@ -98,7 +100,7 @@ const define = (name, factory, template, options = {}) => {
             if (isPrimitive(v)) {
               applyAttribute(this, k, v);
             } else {
-              setData(this, k, v);
+              mergeData(this, { [k]: v });
             }
           });
         });
@@ -110,6 +112,8 @@ const define = (name, factory, template, options = {}) => {
           { lifecycle },
           extras
         );
+
+        mergeData(this, this.viewmodel);
       }
       attributeChangedCallback(k, _, v) {
         let { name, value } = attributeToProp(k, v);
