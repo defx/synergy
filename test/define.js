@@ -89,13 +89,17 @@ describe('define', () => {
   it('should merge default slot', () => {
     let name = `x-${count++}`;
     let factory = () => ({});
-    synergy.define(name, factory, html`hello <slot></slot>!`);
+    synergy.define(
+      name,
+      factory,
+      html`<p>hello <slot></slot>!</p>
+        !`
+    );
     mount(`
           <${name}>world</${name}>
           `);
 
-    let el = document.querySelector(name);
-    assert.equal(el.innerHTML.trim(), 'hello world!');
+    assert.equal($(`${name} p`).innerHTML.trim(), 'hello world!');
   });
 
   it('should merge named slots', () => {
@@ -104,14 +108,13 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      html`<slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>`
+      html`<p><slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot></p>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);
 
-    let el = document.querySelector(name);
-    assert.equal(el.innerHTML.trim(), '<span>!</span>hello');
+    assert.equal($(`${name} p`).innerHTML.trim(), '<span>!</span>hello');
   });
 
   it('should convert between kebab and pascal casing', async () => {
