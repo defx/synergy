@@ -1,5 +1,5 @@
 export const isWhitespace = (node) =>
-  node.nodeType === node.TEXT_NODE && node.nodeValue.match(/^\s+$/);
+  node.nodeType === node.TEXT_NODE && node.nodeValue.trim() === '';
 
 export const walk = (node, callback) => {
   if (callback(node) === false) return;
