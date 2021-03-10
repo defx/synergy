@@ -1,9 +1,8 @@
 import parse from './parser.js';
 import subscribe from './subscribe.js';
-import hydrate from './hydrate.js';
 import Updater from './update.js';
 import proxy from './proxy.js';
-import { debounce, templateNode } from './helpers.js';
+import { debounce, getDataScript, templateNode } from './helpers.js';
 
 let counter = 1;
 
@@ -23,7 +22,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   update(templateFragment, viewmodel);
 
-  if (hydrate(BINDING_ID, templateFragment, mountNode)) {
+  if (getDataScript(mountNode)) {
     update(mountNode, viewmodel);
   } else {
     extras.beforeMountCallback?.(templateFragment);

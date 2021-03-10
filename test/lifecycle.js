@@ -1,55 +1,71 @@
-describe('updateCallback lifecycle event', () => {
+describe('lifecycle', () => {
   it('should fire after update', async () => {
     mount(html` <div id="container"></div> `);
 
     let stack = [];
 
-    let view = synergy.render(
-      document.getElementById('container'),
-      {
-        message: 'hi!',
+    let name = createName();
+
+    let view = {
+      message: 'hi!',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`<p>{{message}}</p>`,
       {
+        observe: ['message'],
         lifecycle: {
           updatedCallback() {
             stack.push(true);
-          }
-        }
+          },
+        },
       }
     );
 
+    mount(html`<${name}></${name}>`);
+
     assert.equal(stack.length, 0);
 
-    view.message = 'bye!';
+    $(name).message = 'bye!';
 
     await nextFrame();
 
     assert.equal(stack.length, 1);
   });
   it('should provide previous state', async () => {
-    mount(html` <div id="container"></div> `);
-
     let stack = [];
 
-    let view = synergy.render(
-      document.getElementById('container'),
-      {
-        message: 'hi!',
+    let name = createName();
+
+    let view = {
+      message: 'hi!',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`<p>{{message}}</p>`,
       {
+        observe: ['message'],
         lifecycle: {
           updatedCallback(currState, prevState) {
             stack.push(prevState.message);
-          }
-        }
+          },
+        },
       }
     );
 
+    mount(html`<${name}></${name}>`);
+
     assert.equal(stack.length, 0);
 
-    view.message = 'bye!';
+    $(name).message = 'bye!';
 
     await nextFrame();
 
@@ -58,17 +74,22 @@ describe('updateCallback lifecycle event', () => {
     assert.equal(stack[0], 'hi!');
   });
   it('should have correct thisArg', async () => {
-    mount(html` <div id="container"></div> `);
+    let name = createName();
+
+    let view = {
+      message: 'hi!',
+    };
 
     let stack = [];
 
-    let view = synergy.render(
-      document.getElementById('container'),
-      {
-        message: 'hi!'
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`<p>{{message}}</p>`,
       {
+        observe: ['message'],
         lifecycle: {
           updatedCallback(currState, prevState) {
             stack.push({
@@ -76,13 +97,15 @@ describe('updateCallback lifecycle event', () => {
               next: currState.message,
             });
           },
-        }
+        },
       }
     );
 
+    mount(html`<${name}></${name}>`);
+
     assert.equal(stack.length, 0);
 
-    view.message = 'bye!';
+    $(name).message = 'bye!';
 
     await nextFrame();
 

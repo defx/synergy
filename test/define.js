@@ -1,14 +1,12 @@
 describe('define', () => {
-  let count = 0;
-
   it('should define a custom element', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     synergy.define(name, () => {}, '');
     assert.ok(customElements.get(name));
   });
 
   it('should initialise factory with initial attributes', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ title }) => ({ title });
     synergy.define(name, factory, '<p>{{ title }}</p>');
     mount(`
@@ -19,7 +17,7 @@ describe('define', () => {
   });
 
   it('should initialise factory with element', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let el1;
     let factory = (_, element) => {
       el1 = element;
@@ -34,7 +32,7 @@ describe('define', () => {
   });
 
   it('should accept template element', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ title }) => ({ title });
     let template = document.createElement('template');
     template.innerHTML = '<p>{{ title }}</p>';
@@ -47,7 +45,7 @@ describe('define', () => {
   });
 
   it('should reflect attribute changes on to viewmodel', async () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ title }) => ({
       title,
     });
@@ -62,7 +60,7 @@ describe('define', () => {
     assert.equal(document.querySelector(`${name} p`).textContent, 'foo!');
   });
   it('should reflect viewmodel changes back on to attributes', async () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ show }) => ({
       show,
       toggle() {
@@ -87,7 +85,7 @@ describe('define', () => {
   });
 
   it('should merge default slot', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = () => ({});
     synergy.define(
       name,
@@ -103,7 +101,7 @@ describe('define', () => {
   });
 
   it('should merge named slots', () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = () => ({});
     synergy.define(
       name,
@@ -118,7 +116,7 @@ describe('define', () => {
   });
 
   it('should convert between kebab and pascal casing', async () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ fooBar }) => ({
       fooBar,
       toggle() {
@@ -141,7 +139,7 @@ describe('define', () => {
   });
 
   it('should account for aria string booleans', async () => {
-    let name = `x-${count++}`;
+    let name = createName();
     let factory = ({ ariaHidden = false }) => ({
       ariaHidden,
       toggle() {
@@ -161,7 +159,7 @@ describe('define', () => {
   });
 
   it('should forward lifecycle events', () => {
-    let name = `x-${count++}`;
+    let name = createName();
 
     let connected = false;
     let disconnected = false;
@@ -231,18 +229,22 @@ describe('define', () => {
       observe: ['arr', 'obj'],
     });
 
-    mount(html` <div id="container"></div> `);
+    let name = createName();
 
-    synergy.render(
-      document.getElementById('container'),
-      {
-        letters: 'synergy'.split(''),
-        library: {
-          org: 'synergyjs',
-          repo: 'defx/synergy',
-        },
+    synergy.define(
+      name,
+      () => {
+        return {
+          letters: 'synergy'.split(''),
+          library: {
+            org: 'synergyjs',
+            repo: 'defx/synergy',
+          },
+        };
       },
       html` <rich-props arr="{{ letters }}" obj="{{ library }}"></rich-props> `
     );
+
+    mount(html`<${name}></${name}>`);
   });
 });

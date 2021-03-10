@@ -1,3 +1,8 @@
+export const getDataScript = (element) => {
+  let child = element.firstElementChild;
+  return child && child.matches('script[type="data"]') && child;
+};
+
 export const isWhitespace = (node) =>
   node.nodeType === node.TEXT_NODE && node.nodeValue.trim() === '';
 

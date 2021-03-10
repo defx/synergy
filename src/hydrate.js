@@ -1,10 +1,6 @@
 import { walk } from './helpers.js';
 
-const transferBindings = (
-  BINDING_ID,
-  sourceNode,
-  targetNode
-) => {
+const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
   let nodes = [];
 
   walk(sourceNode, (node, path) => {

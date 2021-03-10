@@ -1,6 +1,12 @@
-import { render } from './index.js';
+import render from './render.js';
 import mergeSlots from './mergeSlots.js';
-import { templateNode, applyAttribute, attributeToProp, isPrimitive } from './helpers.js';
+import {
+  getDataScript,
+  templateNode,
+  applyAttribute,
+  attributeToProp,
+  isPrimitive,
+} from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -16,11 +22,6 @@ const createDataScript = (element) => {
   script.type = 'data';
   element.prepend(script);
   return script;
-};
-
-const getDataScript = (element) => {
-  let child = element.firstElementChild;
-  return child && child.matches('script[type="data"]') && child;
 };
 
 const getData = (element) => {
@@ -64,7 +65,13 @@ const define = (name, factory, template, options = {}) => {
         observe.forEach((name) => {
           let property = attributeToProp(name).name;
 
-          let value = this.hasAttribute(name) ? this.getAttribute(name) : this[property];
+          let value;
+
+          if (this.hasAttribute(name)) {
+            value = this.getAttribute(name);
+          } else {
+            value = this[property] || this.viewmodel[property];
+          }
 
           Object.defineProperty(this, property, {
             get() {
@@ -75,8 +82,6 @@ const define = (name, factory, template, options = {}) => {
 
               if (isPrimitive(v)) {
                 applyAttribute(this, property, v);
-              } else {
-                mergeData(this, { [property]: v });
               }
             },
           });

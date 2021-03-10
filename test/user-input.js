@@ -1,28 +1,42 @@
-describe('input[name]', () => {
+describe('user input', () => {
   let rootNode;
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
   it('should bind the value to the named property', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        message: '?',
+    let name = createName();
+
+    let view = {
+      message: '?',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`<input name="message" /> the message is: <span class="message">{{message}}</span>`
     );
+
+    mount(html`<${name}></${name}>`);
 
     assert.equal($('span.message').textContent, '?');
   });
 
   it('should bind the value to the named property (nested)', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        nested: {
-          message: '??',
-        },
+    let name = createName();
+
+    let view = {
+      nested: {
+        message: '??',
+      },
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <input name="nested.message" />
@@ -31,22 +45,30 @@ describe('input[name]', () => {
       `
     );
 
+    mount(html`<${name}></${name}>`);
+
     assert.equal($('span.message').textContent, '??');
   });
 
   it('should bind the value to the named + scoped property', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        todos: [
-          {
-            title: 'feed the cat',
-            done: true,
-          },
-          {
-            title: 'walk the dog',
-          },
-        ],
+    let name = createName();
+
+    let view = {
+      todos: [
+        {
+          title: 'feed the cat',
+          done: true,
+        },
+        {
+          title: 'walk the dog',
+        },
+      ],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <ul>
@@ -60,17 +82,25 @@ describe('input[name]', () => {
       `
     );
 
-    const li = $$('#container li');
+    mount(html`<${name}></${name}>`);
+
+    const li = $$('li');
 
     assert.equal(li[0].querySelector('input').checked, true);
     assert.equal(li[1].querySelector('input').checked, false);
   });
 
   it('should check the correct radio button', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        filter: 'active',
+    let name = createName();
+
+    let view = {
+      filter: 'active',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
@@ -82,14 +112,22 @@ describe('input[name]', () => {
       `
     );
 
-    let checked = $(`#container input[type="radio"]:checked`);
+    mount(html`<${name}></${name}>`);
+
+    let checked = $(`input[type="radio"]:checked`);
     assert.equal(checked.value, 'active');
   });
 
   it('should check the correct radio button', () => {
-    let view = synergy.render(
-      rootNode,
-      {},
+    let name = createName();
+
+    let view = {};
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -99,16 +137,24 @@ describe('input[name]', () => {
         <label for="filter.complete">complete</label>
       `
     );
+
+    mount(html`<${name}></${name}>`);
 
     let checked = $(`#container input[type="radio"]:checked`);
     assert.equal(checked, null);
   });
 
   it('should reflect the correct radio button', async () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        filter: 'active',
+    let name = createName();
+
+    let view = {
+      filter: 'active',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
@@ -120,16 +166,24 @@ describe('input[name]', () => {
       `
     );
 
-    $(`#container input[type="radio"][value="complete"]`).click();
+    mount(html`<${name}></${name}>`);
+
+    $(`input[type="radio"][value="complete"]`).click();
     await nextFrame();
     assert.equal(view.filter, 'complete');
   });
 
   it('should select the correct option', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        pets: 'hamster',
+    let name = createName();
+
+    let view = {
+      pets: 'hamster',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -145,14 +199,22 @@ describe('input[name]', () => {
       `
     );
 
-    assert.equal($('#container select option:checked').value, 'hamster');
+    mount(html`<${name}></${name}>`);
+
+    assert.equal($('select option:checked').value, 'hamster');
   });
 
   it('should select multiple', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        pets: ['dog', 'hamster'],
+    let name = createName();
+
+    let view = {
+      pets: ['dog', 'hamster'],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -168,43 +230,31 @@ describe('input[name]', () => {
       `
     );
 
+    mount(html`<${name}></${name}>`);
+
     assert.deepEqual(
-      $$('#container select option:checked').map((option) => option.value),
+      $$('select option:checked').map((option) => option.value),
       ['dog', 'hamster']
     );
   });
 
   it('should bind the named textarea', () => {
-    let view = synergy.render(
-      rootNode,
-      {
-        text: 'ok',
+    let name = createName();
+
+    let view = {
+      text: 'ok',
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
       },
       html` <textarea name="text"></textarea> `
     );
 
-    assert.equal($('#container textarea').value, 'ok');
-  });
+    mount(html`<${name}></${name}>`);
 
-  it('should resolve target bindings', async () => {
-    let clicked = false;
-
-    let view = synergy.render(
-      rootNode,
-      {
-        handleClick() {
-          clicked = true;
-        },
-      },
-      html`<button onclick="handleClick()">
-        <p></p>
-      </button>`
-    );
-
-    $('button p').click();
-
-    await nextFrame();
-
-    assert.ok(clicked);
+    assert.equal($('textarea').value, 'ok');
   });
 });
