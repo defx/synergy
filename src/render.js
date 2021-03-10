@@ -2,6 +2,7 @@ import parse from './parser.js';
 import subscribe from './subscribe.js';
 import Updater from './update.js';
 import proxy from './proxy.js';
+import hydrate from './hydrate.js';
 import { debounce, getDataScript, templateNode } from './helpers.js';
 
 let counter = 1;
@@ -22,9 +23,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   update(templateFragment, viewmodel);
 
-  console.log('hydrate?', mountNode, !!getDataScript(mountNode));
-
-  if (getDataScript(mountNode)) {
+  if (getDataScript(mountNode) && hydrate(BINDING_ID, templateFragment, mountNode)) {
     update(mountNode, viewmodel);
   } else {
     extras.beforeMountCallback?.(templateFragment);

@@ -3,7 +3,7 @@ import { walk } from './helpers.js';
 const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
   let nodes = [];
 
-  walk(sourceNode, (node, path) => {
+  walk(sourceNode, (node) => {
     if (node.nodeName === 'SLOT') return false;
     if (node !== sourceNode) nodes.push(node);
   });
@@ -12,7 +12,7 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
 
   let nextNode = nodes.shift();
 
-  walk(targetNode, (node, path) => {
+  walk(targetNode, (node) => {
     if (!nextNode) return false;
     if (node.nodeName === nextNode.nodeName) {
       node.__bindings__ = nextNode.__bindings__;
