@@ -22,6 +22,8 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   update(templateFragment, viewmodel);
 
+  console.log('hydrate?', mountNode, !!getDataScript(mountNode));
+
   if (getDataScript(mountNode)) {
     update(mountNode, viewmodel);
   } else {
