@@ -23,7 +23,8 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   update(templateFragment, viewmodel);
 
-  if (getDataScript(mountNode) && hydrate(BINDING_ID, templateFragment, mountNode)) {
+  if (getDataScript(mountNode)) {
+    hydrate(BINDING_ID, templateFragment, mountNode);
     update(mountNode, viewmodel);
   } else {
     extras.beforeMountCallback?.(templateFragment);
