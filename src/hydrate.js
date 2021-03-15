@@ -5,10 +5,10 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
 
   walk(sourceNode, (node) => {
     if (node.nodeName === 'SLOT') return false;
-    if (node !== sourceNode) nodes.push(node);
+    if (node !== sourceNode && node.__bindings__) nodes.push(node);
   });
 
-  if (nodes.length === 0) return false;
+  if (nodes.length === 0) return;
 
   let nextNode = nodes.shift();
 
@@ -21,8 +21,6 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
       nextNode = nodes.shift();
     }
   });
-
-  return !nextNode;
 };
 
 export default transferBindings;
