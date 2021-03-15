@@ -24,6 +24,16 @@ const createDataScript = (element) => {
   return script;
 };
 
+const skeleton = (o) => {
+  let r = Array.isArray(o) ? [] : {};
+  for (let k in o) {
+    if (!isPrimitive(o[k])) {
+      r[k] = skeleton(o[k]);
+    }
+  }
+  return r;
+};
+
 const getData = (element) => {
   let script = getDataScript(element);
   return (script && JSON.parse(script.textContent)) || {};
@@ -32,7 +42,7 @@ const getData = (element) => {
 const mergeData = (element, v) => {
   let data = getData(element);
   let script = getDataScript(element) || createDataScript(element);
-  script.textContent = JSON.stringify({ ...data, ...v });
+  script.textContent = JSON.stringify(skeleton({ ...data, ...v }));
 };
 
 const wrap = (target, property, fn) => {
@@ -99,14 +109,10 @@ const define = (name, factory, template, options = {}) => {
           extras.beforeMountCallback = (frag) => mergeSlots(this, frag);
         }
 
-        wrap(lifecycle, 'updatedCallback', (prev) => {
+        wrap(lifecycle, 'updatedCallback', () => {
           observedProps.forEach((k) => {
             let v = this.viewmodel[k];
-            if (isPrimitive(v)) {
-              applyAttribute(this, k, v);
-            } else {
-              mergeData(this, { [k]: v });
-            }
+            if (isPrimitive(v)) applyAttribute(this, k, v);
           });
         });
 
