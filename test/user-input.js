@@ -238,6 +238,48 @@ describe('user input', () => {
     );
   });
 
+  it('should reflect selected option', async () => {
+    let name = createName();
+
+    let view = {
+      pets: ['hamster'],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html`
+        <label for="pet-select">Choose a pet:</label>
+        <select name="pets" id="pet-select" multiple>
+          <option value="">--Please choose an option--</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="hamster">Hamster</option>
+          <option value="parrot">Parrot</option>
+          <option value="spider">Spider</option>
+          <option value="goldfish">Goldfish</option>
+        </select>
+      `,
+      { observe: ['pets'] }
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    $('#pet-select').value = 'parrot';
+
+    $('#pet-select').dispatchEvent(
+      new Event('input', {
+        bubbles: true,
+      })
+    );
+
+    await nextFrame();
+
+    assert.deepEqual($(name).pets, ['parrot']);
+  });
+
   it('should bind the named textarea', () => {
     let name = createName();
 

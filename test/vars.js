@@ -2,9 +2,14 @@ import { define } from '../src/index.js';
 
 const html = (strings, ...values) => strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
-const mount = (html) => {
+const mount = (v) => {
   let node = document.body;
-  node.innerHTML = html;
+
+  node.innerHTML = '';
+
+  if (typeof v === 'string') node.innerHTML = v;
+
+  if (v.nodeName) node.appendChild(v);
 
   return node.firstChild;
 };

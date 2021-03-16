@@ -1,74 +1,41 @@
-import hydrate from '../src/hydrate.js';
+describe('hydrate', () => {
+  it('should preserve prerendered DOM', () => {
+    let name = createName();
 
-const nodeFromString = (str) => {
-  var tpl = document.createElement('template');
-  tpl.innerHTML = str;
-  return tpl.cloneNode(true).content;
-};
+    let stack = [];
 
-xdescribe('hydrate', () => {
-  it('should return falsy if target node is empty', () => {
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let targetNode = document.createElement('div');
-    let shouldHydrate = hydrate(1, sourceNode, targetNode);
-    assert.notOk(shouldHydrate);
-  });
-
-  it('should return truthy if target node and source node have matching content', () => {
-    const bindingId = 1;
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let targetNode = nodeFromString(html`<p>hello world!</p>`);
-    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
-    assert.ok(shouldHydrate);
-  });
-
-  it('should return falsy if target node and source node do not have matching content', () => {
-    const bindingId = 1;
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let targetNode = nodeFromString(html`<b>hello world!</b>`);
-    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
-    assert.notOk(shouldHydrate);
-  });
-
-  it('should add bindings when hydrating', () => {
-    const bindingId = 1;
-    const bindings = [{ foo: 'bar' }];
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let paragraph = sourceNode.firstElementChild;
-    paragraph.bindingId = bindingId;
-    paragraph.__bindings__ = bindings;
-    let targetNode = nodeFromString(html`<p>hello world!</p>`);
-    hydrate(bindingId, sourceNode, targetNode);
-    assert.deepEqual(
-      targetNode.firstElementChild.__bindings__,
-      sourceNode.firstElementChild.__bindings__
+    synergy.define(
+      name,
+      () => {
+        return {
+          foo() {
+            stack.push('foo!');
+          },
+        };
+      },
+      html`
+        <div>
+          <a href="#" id="foo" onclick="foo()"><slot></slot></a>
+        </div>
+      `
     );
-  });
 
-  it('should ignore slotted content', () => {
-    const bindingId = 1;
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(
-      html`<p>hello world!</p>
-        <slot></slot>`
-    );
-    let targetNode = nodeFromString(
-      html`<p>hello world!</p>
-        fa la la`
-    );
-    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
-    assert.ok(shouldHydrate);
-  });
+    mount(html`<${name}>click me!</${name}>`);
 
-  it('should ignore minor text differences (could be slotted text)', () => {
-    const bindingId = 1;
-    //prepare sourceNode with bindings
-    let sourceNode = nodeFromString(html`<p>hello world!</p>`);
-    let targetNode = nodeFromString(html`<p>hello world!fa la la</p>`);
-    let shouldHydrate = hydrate(bindingId, sourceNode, targetNode);
-    assert.ok(shouldHydrate);
+    let innerHTML = $(name).innerHTML;
+
+    let newNode = document.createElement(name);
+    newNode.innerHTML = innerHTML;
+
+    mount(newNode);
+
+    let anchor1 = newNode.querySelector('#foo');
+    let anchor2 = document.querySelector('#foo');
+
+    assert.ok(anchor1.isSameNode(anchor2));
+
+    anchor2.click();
+
+    assert.deepEqual(stack, ['foo!']);
   });
 });

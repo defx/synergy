@@ -247,4 +247,32 @@ describe('define', () => {
 
     mount(html`<${name}></${name}>`);
   });
+
+  it('should reflect observed properties from viewmodel to element', async () => {
+    let name = createName();
+
+    synergy.define(
+      name,
+      () => {
+        return {
+          foo: 'bar',
+          updateFoo() {
+            this.foo = 'baz';
+          },
+        };
+      },
+      html` <p onclick="updateFoo()">{{ foo }}</p> `,
+      {
+        observe: ['foo'],
+      }
+    );
+
+    mount(`<${name}><${name}/>`);
+
+    $(`${name} p`).click();
+
+    await nextFrame();
+
+    assert.equal($(name).foo, 'baz');
+  });
 });

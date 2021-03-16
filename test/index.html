@@ -27,9 +27,12 @@
       const identityTpl = (strings, ...values) =>
         strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
-      const mount = (html) => {
+      const mount = (v) => {
         let node = document.getElementById('markup');
-        node.innerHTML = html;
+        node.innerHTML = '';
+
+        if (typeof v === 'string') node.innerHTML = v;
+        if (v.nodeName) node.appendChild(v);
         return node.firstChild;
       };
 
@@ -69,5 +72,6 @@
     <script type="module" src="./proxy.js"></script>
     <script type="module" src="./lifecycle.js"></script>
     <script type="module" src="./events.js"></script>
+    <script type="module" src="./hydrate.js"></script>
   </body>
 </html>
