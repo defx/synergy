@@ -24,27 +24,6 @@ const createDataScript = (element) => {
   return script;
 };
 
-const skeleton = (o) => {
-  let r = Array.isArray(o) ? [] : {};
-  for (let k in o) {
-    if (!isPrimitive(o[k])) {
-      r[k] = skeleton(o[k]);
-    }
-  }
-  return r;
-};
-
-const getData = (element) => {
-  let script = getDataScript(element);
-  return (script && JSON.parse(script.textContent)) || {};
-};
-
-const mergeData = (element, v) => {
-  let data = getData(element);
-  let script = getDataScript(element) || createDataScript(element);
-  script.textContent = JSON.stringify(skeleton({ ...data, ...v }));
-};
-
 const wrap = (target, property, fn) => {
   let o = target[property];
   target[property] = function () {
@@ -77,8 +56,6 @@ const define = (name, factory, template, options = {}) => {
       connectedCallback() {
         if (!this.initialised) {
           this.viewmodel = factory(initialAttributes(this), this);
-
-          Object.assign(this, getData(this));
 
           observe.forEach((name) => {
             let property = attributeToProp(name).name;
@@ -132,7 +109,7 @@ const define = (name, factory, template, options = {}) => {
             extras
           );
 
-          mergeData(this, this.viewmodel);
+          createDataScript(this);
 
           this.initialised = true;
         }
