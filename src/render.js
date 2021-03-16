@@ -3,7 +3,7 @@ import subscribe from './subscribe.js';
 import Updater from './update.js';
 import proxy from './proxy.js';
 import hydrate from './hydrate.js';
-import { debounce, getDataScript, templateNode } from './helpers.js';
+import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
@@ -23,7 +23,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   update(templateFragment, viewmodel);
 
-  if (getDataScript(mountNode)) {
+  if (mountNode.hasAttribute?.('x-o')) {
     hydrate(BINDING_ID, templateFragment, mountNode);
   } else {
     extras.beforeMountCallback?.(templateFragment);

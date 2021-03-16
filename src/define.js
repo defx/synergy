@@ -1,12 +1,6 @@
 import render from './render.js';
 import mergeSlots from './mergeSlots.js';
-import {
-  getDataScript,
-  templateNode,
-  applyAttribute,
-  attributeToProp,
-  isPrimitive,
-} from './helpers.js';
+import { templateNode, applyAttribute, attributeToProp, isPrimitive } from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -15,13 +9,6 @@ const initialAttributes = (node) => {
     o[x.name] = x.value;
   }
   return o;
-};
-
-const createDataScript = (element) => {
-  let script = document.createElement('script');
-  script.type = 'data';
-  element.prepend(script);
-  return script;
 };
 
 const wrap = (target, property, fn) => {
@@ -109,7 +96,7 @@ const define = (name, factory, template, options = {}) => {
             extras
           );
 
-          createDataScript(this);
+          this.setAttribute('x-o', '');
 
           this.initialised = true;
         }
