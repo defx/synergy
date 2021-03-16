@@ -20,8 +20,7 @@ const getEventBinding = (BINDING_ID, type, node) => {
   if (!node) return;
 
   let binding =
-    node.bindingId === BINDING_ID &&
-    node.__bindings__.find(({ eventName }) => eventName === type);
+    node.bindingId === BINDING_ID && node.__bindings__.find(({ eventName }) => eventName === type);
 
   return binding || getEventBinding(BINDING_ID, type, node.parentNode);
 };
@@ -39,9 +38,7 @@ const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
           let args = binding.args
             ? binding.args
                 .map((v) => resolve(v, binding.ctx, proxy))
-                .map((v) =>
-                  v === binding.event ? e : getValueAtPath(v, proxy)
-                )
+                .map((v) => (v === binding.event ? e : getValueAtPath(v, proxy)))
             : [];
 
           let fn = proxy[binding.method](...args);
