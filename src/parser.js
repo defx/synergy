@@ -173,8 +173,6 @@ const parseTextNode = (value, node, context) => {
 
 const parseRepeatedBlock = (node) => {
   let each = node.getAttribute('each');
-  if (!each) return;
-
   let [valueIdentifier, prop] = each.split(/\s+in\s+/);
   let key = node.getAttribute('key') || 'id';
 
