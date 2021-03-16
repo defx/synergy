@@ -67,77 +67,80 @@ const define = (name, factory, template, options = {}) => {
       }
       constructor() {
         super();
-
-        this.viewmodel = factory(initialAttributes(this), this);
-
-        Object.assign(this, getData(this));
-
-        observe.forEach((name) => {
-          let property = attributeToProp(name).name;
-
-          let value;
-
-          if (this.hasAttribute(name)) {
-            value = this.getAttribute(name);
-          } else {
-            value = this[property] || this.viewmodel[property];
-          }
-
-          Object.defineProperty(this, property, {
-            get() {
-              return this.viewmodel[property];
-            },
-            set(v) {
-              this.viewmodel[property] = v;
-
-              if (isPrimitive(v)) {
-                applyAttribute(this, property, v);
-              }
-            },
-          });
-
-          this[property] = value;
-        });
-
-        let extras = {};
-
-        if (options.shadow) {
-          this.attachShadow({
-            mode: options.shadow,
-          });
-        } else {
-          extras.beforeMountCallback = (frag) => mergeSlots(this, frag);
-        }
-
-        wrap(lifecycle, 'updatedCallback', () => {
-          observedProps.forEach((k) => {
-            let v = this.viewmodel[k];
-            if (isPrimitive(v)) applyAttribute(this, k, v);
-          });
-        });
-
-        this.viewmodel = render(
-          this.shadowRoot || this,
-          this.viewmodel,
-          template,
-          { lifecycle },
-          extras
-        );
-
-        mergeData(this, this.viewmodel);
+        this.viewmodel = {};
       }
       attributeChangedCallback(k, _, v) {
         let { name, value } = attributeToProp(k, v);
         this.viewmodel[name] = value;
       }
+
       connectedCallback() {
+        if (!this.initialised) {
+          this.viewmodel = factory(initialAttributes(this), this);
+
+          Object.assign(this, getData(this));
+
+          observe.forEach((name) => {
+            let property = attributeToProp(name).name;
+
+            let value;
+
+            if (this.hasAttribute(name)) {
+              value = this.getAttribute(name);
+            } else {
+              value = this[property] || this.viewmodel[property];
+            }
+
+            Object.defineProperty(this, property, {
+              get() {
+                return this.viewmodel[property];
+              },
+              set(v) {
+                this.viewmodel[property] = v;
+
+                if (isPrimitive(v)) {
+                  applyAttribute(this, property, v);
+                }
+              },
+            });
+
+            this[property] = value;
+          });
+
+          let extras = {};
+
+          if (options.shadow) {
+            this.attachShadow({
+              mode: options.shadow,
+            });
+          } else {
+            extras.beforeMountCallback = (frag) => mergeSlots(this, frag);
+          }
+
+          wrap(lifecycle, 'updatedCallback', () => {
+            observedProps.forEach((k) => {
+              let v = this.viewmodel[k];
+              if (isPrimitive(v)) applyAttribute(this, k, v);
+            });
+          });
+
+          this.viewmodel = render(
+            this.shadowRoot || this,
+            this.viewmodel,
+            template,
+            { lifecycle },
+            extras
+          );
+
+          mergeData(this, this.viewmodel);
+
+          this.initialised = true;
+        }
+
         lifecycle.connectedCallback?.(this.viewmodel);
       }
       disconnectedCallback() {
         lifecycle.disconnectedCallback?.(this.viewmodel);
-      }
-      adoptedCallback() {
-        lifecycle.adoptedCallback?.(this.viewmodel);
       }
     }
   );
