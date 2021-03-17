@@ -22,10 +22,10 @@ describe('hydrate', () => {
 
     mount(html`<${name}>click me!</${name}>`);
 
-    let innerHTML = $(name).innerHTML;
+    let outerHTML = $(name).outerHTML;
 
-    let newNode = document.createElement(name);
-    newNode.innerHTML = innerHTML;
+    let newNode = document.createElement('div');
+    newNode.innerHTML = outerHTML;
 
     mount(newNode);
 
