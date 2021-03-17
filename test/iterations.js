@@ -61,9 +61,9 @@ describe('iterations', () => {
       },
       html`
         <ul>
-          <template each="colour in colours">
-            <li data-index="{{ # }}">
-              <p>{{ # }}</p>
+          <template each="(colour, index) in colours">
+            <li data-index="{{ index }}">
+              <p>{{ index }}</p>
               <p>{{ colour }}</p>
             </li>
           </template>
@@ -73,7 +73,7 @@ describe('iterations', () => {
 
     mount(html`<${name}></${name}>`);
 
-    $$('#container li').forEach((li, i) => {
+    $$('li').forEach((li, i) => {
       assert.equal(li.querySelector('p').textContent, i);
       assert.equal(li.dataset.index, i);
     });

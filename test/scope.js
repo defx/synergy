@@ -71,12 +71,12 @@ describe('context', () => {
         return view;
       },
       html`
-        <template each="artist in artists">
+        <template each="(artist, i) in artists">
           <article>
             <h4>{{artist.name}}</h4>
             <ul>
-              <template each="tag in artist.tags">
-                <li>{{tag}}</li>
+              <template each="(tag, j) in artist.tags">
+                <li>{{tag}} {{i}}:{{j}}</li>
               </template>
             </ul>
           </article>
@@ -89,7 +89,7 @@ describe('context', () => {
     assert.equal($('h4').textContent, view.artists[0].name);
     assert.equal($$('article:nth-of-type(1) li').length, view.artists[0].tags.length);
     assert.equal($$('article:nth-of-type(2) li').length, view.artists[1].tags.length);
-    assert.equal($('article:nth-of-type(1) li').textContent, view.artists[0].tags[0]);
-    assert.equal($('article:nth-of-type(2) li').textContent, view.artists[1].tags[0]);
+    assert.equal($('article:nth-of-type(1) li').textContent, 'painter 0:0');
+    assert.equal($('article:nth-of-type(2) li').textContent, 'painter 1:0');
   });
 });

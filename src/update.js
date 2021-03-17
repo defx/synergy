@@ -56,7 +56,9 @@ let getPreviousValue = (node, binding) => {
 const getValue = (part, ctx, target, binding) => {
   let { value, negated } = part;
 
-  if (value === '#') return ctx[last(binding.context).prop];
+  if (value.charAt(0) === '#') {
+    return ctx[value.slice(1)];
+  }
 
   let v = getValueAtPath(resolve(value, ctx, target), target);
 

@@ -10,7 +10,20 @@ const resolveSquares = (str) => {
   }, '');
 };
 
+const convertIndex = (path, context) => {
+  for (let { index, prop } of context) {
+    if (path === index) return `#${prop}`;
+  }
+  return path;
+};
+
 export const resolve = (path, context) => {
+  path = convertIndex(path, context);
+
+  let isIndex = path.charAt(0) === '#';
+
+  if (isIndex) path = path.slice(1);
+
   path = resolveSquares(path);
 
   let i = context.length;
@@ -32,7 +45,8 @@ export const resolve = (path, context) => {
       })
       .join('.');
   }
-  return path;
+
+  return isIndex ? `#${path}` : path;
 };
 
 const getParts = (value, context) =>
@@ -171,17 +185,21 @@ const parseTextNode = (value, node, context) => {
   ];
 };
 
-const parseRepeatedBlock = (node) => {
+function parseEach(node) {
   let each = node.getAttribute('each');
-  let [valueIdentifier, prop] = each.split(/\s+in\s+/);
-  let key = node.getAttribute('key') || 'id';
+  let m = each && each.match(/(.+)\s+in\s+(.+)/);
+  if (!m) return;
+  let [_, left, right] = m;
+  let parts = left.match(/\(([^\)]+)\)/);
+  let [valueIdentifier, index] = (parts ? parts[1].split(',') : [left]).map((v) => v.trim());
 
   return {
+    prop: right.trim(),
     valueIdentifier,
-    prop,
-    key,
+    index,
+    key: node.getAttribute('key') || 'id',
   };
-};
+}
 
 export default (templateFragment, BINDING_ID) => {
   subscribers = new Set();
@@ -199,8 +217,10 @@ export default (templateFragment, BINDING_ID) => {
         }
         case node.ELEMENT_NODE: {
           if (node.nodeName === 'TEMPLATE') {
-            if (node.hasAttribute('each')) {
-              stack.push(parseRepeatedBlock(node));
+            let each = parseEach(node);
+
+            if (each) {
+              stack.push(each);
               walk(node.content, dispatch);
               let { key, prop } = last(stack);
               let path = resolve(prop, stack);
