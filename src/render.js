@@ -18,7 +18,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   let update = Updater(
     BINDING_ID,
-    (prev) => mounted && options.lifecycle?.updatedCallback?.(vm, prev)
+    (prev) => mounted && options.lifecycle?.updatedCallback?.(mountNode, vm, prev)
   );
 
   update(templateFragment, viewmodel);

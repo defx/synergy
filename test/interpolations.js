@@ -140,24 +140,19 @@ describe('attributes', () => {
   it('should preserve browser styles', async () => {
     let name = createName();
 
-    let view = {
-      foo: `
-      background-color: gold;
-      color: tomato;
-      width: 100px;
-      height: 100px;
-      `,
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({
+        foo = `
+        background-color: gold;
+        color: tomato;
+        width: 100px;
+        height: 100px;
+        `,
+      }) => {
+        return { foo };
       },
-      html` <section style="{{foo}}"></section> `,
-      {
-        observe: ['foo'],
-      }
+      html` <section style="{{foo}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -261,20 +256,15 @@ describe('attributes', () => {
   it('should support negation', async () => {
     let name = createName();
 
-    let view = { foo: true };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({ foo }) => {
+        return { foo };
       },
-      html` <p hidden="{{ !foo }}">boo!</p>`,
-      {
-        observe: ['foo'],
-      }
+      html` <p hidden="{{ !foo }}">boo!</p>`
     );
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name} foo></${name}>`);
 
     assert.notOk($('p').hidden);
 

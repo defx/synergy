@@ -82,24 +82,22 @@ describe('iterations', () => {
   it('should overwrite non-keyed list nodes', async () => {
     let name = createName();
 
-    let view = {
-      colours: [
-        {
-          name: 'red',
-        },
-        {
-          name: 'green',
-        },
-        {
-          name: 'gold',
-        },
-      ],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({
+        colours = [
+          {
+            name: 'red',
+          },
+          {
+            name: 'green',
+          },
+          {
+            name: 'gold',
+          },
+        ],
+      }) => {
+        return { colours };
       },
       html`
         <template each="colour in colours">
@@ -112,7 +110,7 @@ describe('iterations', () => {
 
     let previousNodes = $$('p');
 
-    view.colours = [
+    $(name).colours = [
       {
         name: 'red',
       },
@@ -136,36 +134,22 @@ describe('iterations', () => {
   it('should not overwrite non-keyed list nodes (default id present)', async () => {
     let name = createName();
 
-    let view = {
-      colours: [
-        {
-          name: 'red',
-          id: 1,
-        },
-        {
-          name: 'green',
-          id: 2,
-        },
-        {
-          name: 'gold',
-          id: 3,
-        },
-      ],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({
+        colours = [
+          { name: 'red', id: 1 },
+          { name: 'green', id: 2 },
+          { name: 'gold', id: 3 },
+        ],
+      }) => {
+        return { colours };
       },
       html`
         <template each="colour in colours">
           <p>{{colour.name}}</p>
         </template>
-      `,
-      {
-        observe: ['colours'],
-      }
+      `
     );
 
     mount(html`<${name}></${name}>`);
@@ -199,36 +183,31 @@ describe('iterations', () => {
   it('should not overwrite non-keyed list nodes (custom key)', async () => {
     let name = createName();
 
-    let view = {
-      colours: [
-        {
-          name: 'red',
-          foo: 1,
-        },
-        {
-          name: 'green',
-          foo: 2,
-        },
-        {
-          name: 'gold',
-          foo: 3,
-        },
-      ],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({
+        colours = [
+          {
+            name: 'red',
+            foo: 1,
+          },
+          {
+            name: 'green',
+            foo: 2,
+          },
+          {
+            name: 'gold',
+            foo: 3,
+          },
+        ],
+      }) => {
+        return { colours };
       },
       html`
         <template each="colour in colours" key="foo">
           <p>{{colour.name}}</p>
         </template>
-      `,
-      {
-        observe: ['colours'],
-      }
+      `
     );
 
     mount(html`<${name}></${name}>`);

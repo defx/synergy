@@ -241,14 +241,12 @@ describe('user input', () => {
   it('should reflect selected option', async () => {
     let name = createName();
 
-    let view = {
-      pets: ['hamster'],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({ pets = ['hamster'] }) => {
+        return {
+          pets,
+        };
       },
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -261,8 +259,7 @@ describe('user input', () => {
           <option value="spider">Spider</option>
           <option value="goldfish">Goldfish</option>
         </select>
-      `,
-      { observe: ['pets'] }
+      `
     );
 
     mount(html`<${name}></${name}>`);

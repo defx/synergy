@@ -17,7 +17,7 @@ const KEYS = {
 };
 
 export const lifecycle = {
-  updatedCallback(curr) {
+  updatedCallback(element, curr) {
     storage.set('todos', curr.todos);
   },
 };

@@ -1,6 +1,12 @@
 import render from './render.js';
 import mergeSlots from './mergeSlots.js';
-import { templateNode, applyAttribute, attributeToProp, isPrimitive } from './helpers.js';
+import {
+  templateNode,
+  applyAttribute,
+  attributeToProp,
+  isPrimitive,
+  pascalToKebab,
+} from './helpers.js';
 
 const initialAttributes = (node) => {
   const o = {};
@@ -19,17 +25,34 @@ const wrap = (target, property, fn) => {
   };
 };
 
+const getProps = (factory) => {
+  let props = new Set();
+  factory(
+    new Proxy(
+      {},
+      {
+        get(_, property) {
+          props.add(property);
+        },
+      }
+    )
+  );
+  return Array.from(props);
+};
+
 const define = (name, factory, template, options = {}) => {
-  let { observe = [], lifecycle = {} } = options;
+  let { lifecycle = {} } = options;
+
+  let observedProps = getProps(factory);
 
   template = templateNode(template);
 
-  let observedProps = observe.map((v) => attributeToProp(v).name);
+  let observedAttributes = observedProps.map(pascalToKebab);
   customElements.define(
     name,
     class extends HTMLElement {
       static get observedAttributes() {
-        return observe;
+        return observedAttributes;
       }
       constructor() {
         super();
@@ -42,9 +65,9 @@ const define = (name, factory, template, options = {}) => {
 
       connectedCallback() {
         if (!this.initialised) {
-          this.viewmodel = factory(initialAttributes(this), this);
+          this.viewmodel = factory(initialAttributes(this));
 
-          observe.forEach((name) => {
+          observedAttributes.forEach((name) => {
             let property = attributeToProp(name).name;
 
             let value;
@@ -101,10 +124,10 @@ const define = (name, factory, template, options = {}) => {
           this.initialised = true;
         }
 
-        lifecycle.connectedCallback?.(this.viewmodel);
+        lifecycle.connectedCallback?.(this, this.viewmodel);
       }
       disconnectedCallback() {
-        lifecycle.disconnectedCallback?.(this.viewmodel);
+        lifecycle.disconnectedCallback?.(this, this.viewmodel);
       }
     }
   );

@@ -6,18 +6,13 @@ describe('lifecycle', () => {
 
     let name = createName();
 
-    let view = {
-      message: 'hi!',
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({ message = 'hi!' }) => {
+        return { message };
       },
       html`<p>{{message}}</p>`,
       {
-        observe: ['message'],
         lifecycle: {
           updatedCallback() {
             stack.push(true);
@@ -41,27 +36,22 @@ describe('lifecycle', () => {
 
     let name = createName();
 
-    let view = {
-      message: 'hi!',
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
+      ({ message }) => {
+        return { message };
       },
       html`<p>{{message}}</p>`,
       {
-        observe: ['message'],
         lifecycle: {
-          updatedCallback(currState, prevState) {
+          updatedCallback(element, viewmodel, prevState) {
             stack.push(prevState.message);
           },
         },
       }
     );
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name} message="hi!"></${name}>`);
 
     assert.equal(stack.length, 0);
 
@@ -76,22 +66,17 @@ describe('lifecycle', () => {
   it('should have correct thisArg', async () => {
     let name = createName();
 
-    let view = {
-      message: 'hi!',
-    };
-
     let stack = [];
 
     synergy.define(
       name,
-      () => {
-        return view;
+      ({ message = 'hi!' }) => {
+        return { message };
       },
       html`<p>{{message}}</p>`,
       {
-        observe: ['message'],
         lifecycle: {
-          updatedCallback(currState, prevState) {
+          updatedCallback(element, currState, prevState) {
             stack.push({
               prev: prevState.message,
               next: currState.message,
