@@ -29,7 +29,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
     extras.beforeMountCallback?.(templateFragment);
 
     for (let child of mountNode.children) {
-      if (child.nodeName !== 'SCRIPT') child.remove();
+      child.remove();
     }
 
     mountNode.appendChild(templateFragment);
