@@ -257,4 +257,27 @@ describe('define', () => {
 
     assert.equal($(name).foo, 'baz');
   });
+
+  it.only('should support async initialisation', async () => {
+    let name = createName();
+
+    synergy.define(
+      name,
+      () =>
+        Promise.resolve().then(() => {
+          return {
+            foo: 'bar',
+          };
+        }),
+      html` <p>{{ foo }}</p> `
+    );
+
+    mount(`<${name}><${name}/>`);
+
+    assert.ok($(name));
+    assert.equal($(name).textContent.trim(), '');
+
+    await nextFrame();
+    assert.equal($(name).textContent.trim(), 'bar');
+  });
 });

@@ -63,9 +63,11 @@ const define = (name, factory, template, options = {}) => {
         this.viewmodel[name] = value;
       }
 
-      connectedCallback() {
+      async connectedCallback() {
         if (!this.initialised) {
-          this.viewmodel = factory(initialAttributes(this));
+          let x = factory(initialAttributes(this));
+
+          this.viewmodel = x instanceof Promise ? await x : x;
 
           observedAttributes.forEach((name) => {
             let property = attributeToProp(name).name;
