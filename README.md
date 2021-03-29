@@ -65,11 +65,8 @@ You can find the Synergy documentation
 <script type="module">
   import { define } from 'https://unpkg.com/synergy';
 
-  define('hello-world', ({ name }) => ({ name }));
+  define('hello-world', ({ name }) => ({ name }), '<p>Hello {{ name }}</p>');
 </script>
-<template id="hello-world">
-  <p>Hello {{ name }}</p>
-</template>
 ```
 
 ### Step 2. Use the custom element
