@@ -18,50 +18,39 @@ declare namespace synergy {
     template: HTMLTemplateElement | string,
     options: {
       /**
-       * An array of attribute or property names that you would like your element to react to changes for.
-       */
-      observe?: Array<string>;
-      /**
        * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
        */
       shadow?: 'open' | 'closed';
-      /**
-       * An object containing one or more lifecycle callbacks.
-       */
-      lifecycle?: LifecycleCallbacks;
     }
   ): void;
 
   type Model = {
-    [x: string]: any;
+    /**
+     * Invoked each time the custom element is appended into a
+     * document-connected element
+     */
+    connectedCallback?(current: Model): void;
+    /**
+     * Invoked each time the view is updated. This method is not called after the initial render. previous is an object representing the model state prior to the last update
+     */
+    updatedCallback?(current: Model, previous: Model): void;
+    /**
+     * Invoked each time the custom element is disconnected from the DOM
+     */
+    disconnectedCallback?(current: Model): void;
+    [s: string]: any;
   };
 
   type ModelFactory = {
     (
       /**
-       * An object containing the initial attribute key/value pairs from the element.
+       * An object containing the initial attribute/property key/value pairs from the element.
        */
-      initialAttributes: { [x: string]: string | boolean }
+      props: { [s: string]: any },
+      /**
+       * The element node
+       */
+      element: HTMLElement
     ): Model;
   };
-
-  interface LifecycleCallbacks {
-    /**
-     * Invoked each time the custom element is appended into a
-     * document-connected element
-     */
-    connectedCallback?: (f: (currentState: Model) => void) => void;
-    /**
-     * Invoked each time the view is updated. This method is not called after the initial render. previousState is an (non-reactive) object representing the model state prior to the last update
-     */
-    updatedCallback?: (f: (currentState: Model, previousState: Model) => void) => void;
-    /**
-     * Invoked each time the custom element is disconnected from the DOM
-     */
-    disconnectedCallback?: (f: (currentState: Model) => void) => void;
-    /**
-     * Invoked each time the custom element is moved into a new document
-     */
-    adoptedCallback?: (f: (currentState: Model) => void) => void;
-  }
 }

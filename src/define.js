@@ -99,10 +99,10 @@ const define = (name, factory, template, options = {}) => {
           this.initialised = true;
         }
 
-        this.$.connectedCallback?.();
+        this.$.connectedCallback?.(this.$);
       }
       disconnectedCallback() {
-        this.$?.disconnectedCallback?.();
+        this.$?.disconnectedCallback?.(this.$);
       }
     }
   );
