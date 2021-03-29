@@ -1,12 +1,10 @@
-import { TodoApp, markup, storage, lifecycle } from '../examples/todo-app/index.js';
+import { TodoApp, markup, storage } from '../examples/todo-app/index.js';
 
 describe('Todo List', () => {
   beforeEach(() => {
     let name = createName();
 
-    synergy.define(name, TodoApp, markup, {
-      lifecycle,
-    });
+    synergy.define(name, TodoApp, markup);
     mount(`<${name}></${name}>`);
   });
 

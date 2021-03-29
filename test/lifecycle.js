@@ -9,16 +9,14 @@ describe('lifecycle', () => {
     synergy.define(
       name,
       ({ message = 'hi!' }) => {
-        return { message };
-      },
-      html`<p>{{message}}</p>`,
-      {
-        lifecycle: {
+        return {
+          message,
           updatedCallback() {
             stack.push(true);
           },
-        },
-      }
+        };
+      },
+      html`<p>{{message}}</p>`
     );
 
     mount(html`<${name}></${name}>`);
@@ -39,16 +37,14 @@ describe('lifecycle', () => {
     synergy.define(
       name,
       ({ message }) => {
-        return { message };
-      },
-      html`<p>{{message}}</p>`,
-      {
-        lifecycle: {
-          updatedCallback(element, viewmodel, prevState) {
+        return {
+          message,
+          updatedCallback(prevState) {
             stack.push(prevState.message);
           },
-        },
-      }
+        };
+      },
+      html`<p>{{message}}</p>`
     );
 
     mount(html`<${name} message="hi!"></${name}>`);
@@ -71,19 +67,17 @@ describe('lifecycle', () => {
     synergy.define(
       name,
       ({ message = 'hi!' }) => {
-        return { message };
-      },
-      html`<p>{{message}}</p>`,
-      {
-        lifecycle: {
-          updatedCallback(element, currState, prevState) {
+        return {
+          message,
+          updatedCallback(prevState) {
             stack.push({
               prev: prevState.message,
-              next: currState.message,
+              next: this.message,
             });
           },
-        },
-      }
+        };
+      },
+      html`<p>{{message}}</p>`
     );
 
     mount(html`<${name}></${name}>`);

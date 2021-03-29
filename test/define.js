@@ -149,18 +149,16 @@ describe('define', () => {
     let connected = false;
     let disconnected = false;
     let factory = () => {
-      return {};
-    };
-    synergy.define(name, factory, '', {
-      lifecycle: {
+      return {
         connectedCallback() {
           connected = true;
         },
         disconnectedCallback() {
           disconnected = true;
         },
-      },
-    });
+      };
+    };
+    synergy.define(name, factory, '');
     mount(`
     <${name}></${name}>
     `);
@@ -258,7 +256,7 @@ describe('define', () => {
     assert.equal($(name).foo, 'baz');
   });
 
-  it.only('should support async initialisation', async () => {
+  it('should support async initialisation', async () => {
     let name = createName();
 
     synergy.define(
