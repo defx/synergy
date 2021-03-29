@@ -16,12 +16,6 @@ const KEYS = {
   ESCAPE: 27,
 };
 
-export const lifecycle = {
-  updatedCallback(element, curr) {
-    storage.set('todos', curr.todos);
-  },
-};
-
 export const TodoApp = () => {
   return {
     filters: Object.keys(filters),
@@ -99,6 +93,9 @@ export const TodoApp = () => {
         case KEYS.RETURN:
           this.saveEdit(item);
       }
+    },
+    updatedCallback() {
+      storage.set('todos', this.todos);
     },
   };
 };
