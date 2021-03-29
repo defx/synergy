@@ -158,7 +158,7 @@ describe('define', () => {
         },
       };
     };
-    synergy.define(name, factory, '');
+    synergy.define(name, factory, '<template></template>');
     mount(`
     <${name}></${name}>
     `);

@@ -21,12 +21,9 @@ export const TodoApp = () => {
     filters: Object.keys(filters),
     todos: [],
     activeFilter: 'all',
-    addTodo(e) {
-      if (!(e.key && e.key === 'Enter')) return;
-
+    addTodo() {
       let title = this.newTodo && this.newTodo.trim();
 
-      if (!title) return;
       this.todos.push({ title, id: Date.now() });
       this.newTodo = null;
     },
@@ -126,7 +123,7 @@ export const markup = html`
       autocomplete="off"
       placeholder="What needs to be done?"
       name="newTodo"
-      onkeydown="e => addTodo(e)"
+      onkeydown="addTodo()"
     />
   </header>
   <main hidden="{{ !todos.length }}">
