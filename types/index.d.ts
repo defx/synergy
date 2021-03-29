@@ -32,27 +32,6 @@ declare namespace synergy {
     }
   ): void;
 
-  function render(
-    /**
-     * An existing DOM element node to which the rendered HTML should be appended
-     */
-    mountNode: Node,
-    /**
-     * A plain JavaScript object that contains the data for your view
-     */
-    model: Model,
-    /**
-     * The template represents the HTML markup for your view
-     */
-    template: HTMLTemplateElement | string,
-    options: {
-      /**
-       * An object containing one or more lifecycle callbacks.
-       */
-      lifecycle?: LifecycleCallbacks;
-    }
-  ): Model;
-
   type Model = {
     [x: string]: any;
   };
@@ -62,11 +41,7 @@ declare namespace synergy {
       /**
        * An object containing the initial attribute key/value pairs from the element.
        */
-      initialAttributes: { [x: string]: string | boolean },
-      /**
-       * The element node
-       */
-      element: HTMLElement
+      initialAttributes: { [x: string]: string | boolean }
     ): Model;
   };
 
@@ -79,9 +54,7 @@ declare namespace synergy {
     /**
      * Invoked each time the view is updated. This method is not called after the initial render. previousState is an (non-reactive) object representing the model state prior to the last update
      */
-    updatedCallback?: (
-      f: (currentState: Model, previousState: Model) => void
-    ) => void;
+    updatedCallback?: (f: (currentState: Model, previousState: Model) => void) => void;
     /**
      * Invoked each time the custom element is disconnected from the DOM
      */
