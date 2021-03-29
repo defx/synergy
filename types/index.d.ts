@@ -51,6 +51,6 @@ declare namespace synergy {
        * The element node
        */
       element: HTMLElement
-    ): Model;
+    ): Model | Promise<Model>;
   };
 }
