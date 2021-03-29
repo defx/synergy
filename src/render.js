@@ -7,7 +7,7 @@ import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
-const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
+const render = (mountNode, viewmodel, template, extras = {}) => {
   const BINDING_ID = counter++;
 
   template = templateNode(template).cloneNode(true).content;
@@ -16,10 +16,7 @@ const render = (mountNode, viewmodel, template, options = {}, extras = {}) => {
 
   let vm, mounted;
 
-  let update = Updater(
-    BINDING_ID,
-    (prev) => mounted && options.lifecycle?.updatedCallback?.(mountNode, vm, prev)
-  );
+  let update = Updater(BINDING_ID, (prev) => mounted && viewmodel.updatedCallback(prev));
 
   update(templateFragment, viewmodel);
 
