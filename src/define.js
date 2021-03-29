@@ -1,73 +1,52 @@
 import render from './render.js';
 import mergeSlots from './mergeSlots.js';
-import {
-  templateNode,
-  applyAttribute,
-  attributeToProp,
-  isPrimitive,
-  pascalToKebab,
-} from './helpers.js';
-
-const initialAttributes = (node) => {
-  const o = {};
-  for (let { name, value } of node.attributes) {
-    let x = attributeToProp(name, value);
-    o[x.name] = x.value;
-  }
-  return o;
-};
+import { applyAttribute, attributeToProp, isPrimitive, pascalToKebab } from './helpers.js';
 
 const wrap = (target, property, fn) => {
   let o = target[property];
   target[property] = function () {
     fn(...arguments);
-    o?.(...arguments);
+    o?.apply(target, arguments);
   };
 };
 
-const getProps = (factory) => {
-  let props = new Set();
-  factory(
-    new Proxy(
-      {},
-      {
-        get(_, property) {
-          props.add(property);
-        },
-      }
-    )
-  );
-  return Array.from(props);
-};
-
 const define = (name, factory, template, options = {}) => {
-  let { lifecycle = {} } = options;
-
-  let observedProps = getProps(factory);
-
-  template = templateNode(template);
-
-  let observedAttributes = observedProps.map(pascalToKebab);
   customElements.define(
     name,
     class extends HTMLElement {
-      static get observedAttributes() {
-        return observedAttributes;
-      }
-      constructor() {
-        super();
-        this.viewmodel = {};
-      }
-      attributeChangedCallback(k, _, v) {
-        let { name, value } = attributeToProp(k, v);
-        this.viewmodel[name] = value;
-      }
-
       async connectedCallback() {
         if (!this.initialised) {
-          let x = factory(initialAttributes(this));
+          let observedProps = new Set();
+          let self = this;
 
-          this.viewmodel = x instanceof Promise ? await x : x;
+          let x = factory(
+            new Proxy(
+              {},
+              {
+                get(_, prop) {
+                  let attr = pascalToKebab(prop);
+                  observedProps.add(prop);
+                  return (self.hasAttribute(attr) && self.getAttribute(attr)) || self[prop];
+                },
+              }
+            ),
+            this
+          );
+
+          this.$ = x instanceof Promise ? await x : x;
+
+          observedProps = Array.from(observedProps);
+
+          let observedAttributes = observedProps.map(pascalToKebab);
+
+          let sa = this.setAttribute;
+          this.setAttribute = (k, v) => {
+            if (observedAttributes.includes(k)) {
+              let { name, value } = attributeToProp(k, v);
+              this.$[name] = value;
+            }
+            sa.apply(this, [k, v]);
+          };
 
           observedAttributes.forEach((name) => {
             let property = attributeToProp(name).name;
@@ -77,15 +56,15 @@ const define = (name, factory, template, options = {}) => {
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name);
             } else {
-              value = this[property] || this.viewmodel[property];
+              value = this[property] || this.$[property];
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return this.viewmodel[property];
+                return this.$[property];
               },
               set(v) {
-                this.viewmodel[property] = v;
+                this.$[property] = v;
 
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v);
@@ -106,30 +85,24 @@ const define = (name, factory, template, options = {}) => {
             extras.beforeMountCallback = (frag) => mergeSlots(this, frag);
           }
 
-          wrap(lifecycle, 'updatedCallback', () => {
+          wrap(this.$, 'updatedCallback', () => {
             observedProps.forEach((k) => {
-              let v = this.viewmodel[k];
+              let v = this.$[k];
               if (isPrimitive(v)) applyAttribute(this, k, v);
             });
           });
 
-          this.viewmodel = render(
-            this.shadowRoot || this,
-            this.viewmodel,
-            template,
-            { lifecycle },
-            extras
-          );
+          this.$ = render(this.shadowRoot || this, this.$, template, extras);
 
           this.setAttribute('x-o', '');
 
           this.initialised = true;
         }
 
-        lifecycle.connectedCallback?.(this, this.viewmodel);
+        this.$.connectedCallback?.();
       }
       disconnectedCallback() {
-        lifecycle.disconnectedCallback?.(this, this.viewmodel);
+        this.$?.disconnectedCallback?.();
       }
     }
   );
