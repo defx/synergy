@@ -1,7 +1,7 @@
 {
   "name": "synergy",
   "version": "3.0.2",
-  "description": "Simple and declarative data binding for the DOM",
+  "description": "The tiny runtime library for building web user interfaces",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
   "unpkg": "dist/synergy.min.js",
