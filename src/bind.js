@@ -203,7 +203,7 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const bind = (templateFragment, BINDING_ID) => {
+export const bind = (element, BINDING_ID) => {
   subscribers = new Set();
 
   let parse = () => {
@@ -262,12 +262,9 @@ export const bind = (templateFragment, BINDING_ID) => {
       }
     }
 
-    walk(templateFragment, dispatch);
+    walk(element, dispatch);
 
-    return {
-      templateFragment,
-      subscribers: Array.from(subscribers),
-    };
+    return Array.from(subscribers);
   };
 
   return parse();

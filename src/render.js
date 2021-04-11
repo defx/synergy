@@ -1,4 +1,4 @@
-import { bind } from './parser.js';
+import { bind } from './bind.js';
 import { subscribe } from './subscribe.js';
 import { updater } from './update.js';
 import { wrapProxy } from './proxy.js';
@@ -7,9 +7,6 @@ import { debounce, templateNode } from './helpers.js';
 let counter = 1;
 
 export const render = (mountNode, viewmodel, template, extras = {}) => {
-  /*
-  @todo: make it not flakey
-  */
   const BINDING_ID = mountNode.bindingId || counter++;
   mountNode.bindingId = BINDING_ID;
 
@@ -20,19 +17,17 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
   if (!mountNode.$initData) {
     template = templateNode(template).cloneNode(true).content;
 
-    let x = bind(template, BINDING_ID);
+    mountNode.$subscribe = bind(template, BINDING_ID);
 
-    mountNode.subscribers = x.subscribers;
+    update(template, viewmodel);
 
-    update(x.templateFragment, viewmodel);
-
-    extras.beforeMountCallback?.(x.templateFragment);
+    extras.beforeMountCallback?.(template);
 
     for (let child of mountNode.children) {
       child.remove();
     }
 
-    mountNode.appendChild(x.templateFragment);
+    mountNode.appendChild(template);
   }
 
   vm = wrapProxy(
@@ -40,7 +35,7 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
     debounce(() => update(mountNode, viewmodel))
   );
 
-  subscribe(mountNode, mountNode.subscribers, vm, BINDING_ID);
+  subscribe(mountNode, mountNode.$subscribe, vm, BINDING_ID);
 
   mounted = true;
 
