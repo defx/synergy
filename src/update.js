@@ -225,12 +225,12 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
 let prev;
 
-export const updater = (BINDING_ID, updatedCallback = () => {}) => (rootNode, viewmodel) => {
+export const updater = (mountNode, updatedCallback = () => {}) => (rootNode, viewmodel) => {
   let ctx = {};
   let p = copy(viewmodel);
 
   walk(rootNode, (node) => {
-    if (node.bindingId !== BINDING_ID) return;
+    if (node.bindingId !== mountNode) return;
 
     let bindings = node.__bindings__;
 

@@ -4,20 +4,15 @@ import { updater } from './update.js';
 import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
 
-let counter = 1;
-
 export const render = (mountNode, viewmodel, template, extras = {}) => {
-  const BINDING_ID = mountNode.bindingId || counter++;
-  mountNode.bindingId = BINDING_ID;
-
   let vm, mounted;
 
-  let update = updater(BINDING_ID, (prev) => mounted && viewmodel.updatedCallback(prev));
+  let update = updater(mountNode, (prev) => mounted && viewmodel.updatedCallback(prev));
 
   if (!mountNode.$initData) {
     template = templateNode(template).cloneNode(true).content;
 
-    mountNode.$subscribe = bind(template, BINDING_ID);
+    mountNode.$subscribe = bind(template, mountNode);
 
     update(template, viewmodel);
 
@@ -35,7 +30,7 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
     debounce(() => update(mountNode, viewmodel))
   );
 
-  subscribe(mountNode, mountNode.$subscribe, vm, BINDING_ID);
+  subscribe(mountNode, mountNode.$subscribe, vm);
 
   mounted = true;
 

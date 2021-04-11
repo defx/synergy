@@ -16,21 +16,21 @@ const inputValue = (node) => {
   }
 };
 
-const getEventBinding = (BINDING_ID, type, node) => {
+const getEventBinding = (rootNode, type, node) => {
   if (!node) return;
 
   let binding =
-    node.bindingId === BINDING_ID && node.__bindings__?.find(({ eventName }) => eventName === type);
+    node.bindingId === rootNode && node.__bindings__?.find(({ eventName }) => eventName === type);
 
-  return binding || getEventBinding(BINDING_ID, type, node.parentNode);
+  return binding || getEventBinding(rootNode, type, node.parentNode);
 };
 
-export const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
+export const subscribe = (rootNode, subscribers, proxy) => {
   subscribers.forEach((type) => {
     rootNode.addEventListener(
       type,
       (e) => {
-        let binding = getEventBinding(BINDING_ID, type, e.target);
+        let binding = getEventBinding(rootNode, type, e.target);
 
         if (!binding) return;
 

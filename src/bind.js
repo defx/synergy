@@ -203,14 +203,14 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const bind = (element, BINDING_ID) => {
+export const bind = (element, mountNode) => {
   subscribers = new Set();
 
   let parse = () => {
     let stack = [];
 
     function dispatch(node) {
-      node.bindingId = BINDING_ID;
+      node.bindingId = mountNode;
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
