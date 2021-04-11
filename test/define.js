@@ -82,7 +82,7 @@ describe('define', () => {
           <${name}>world</${name}>
           `);
 
-    assert.equal($(`${name} p`).innerHTML.trim(), 'hello world!');
+    assert.equal($(`${name} p`).innerText.trim(), 'hello world!');
   });
 
   it('should merge named slots', () => {
@@ -276,6 +276,6 @@ describe('define', () => {
     assert.equal($(name).textContent.trim(), '');
 
     await nextFrame();
-    assert.equal($(name).textContent.trim(), 'bar');
+    assert.equal($(name).innerText.trim(), 'bar');
   });
 });

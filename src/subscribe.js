@@ -20,12 +20,12 @@ const getEventBinding = (BINDING_ID, type, node) => {
   if (!node) return;
 
   let binding =
-    node.bindingId === BINDING_ID && node.__bindings__.find(({ eventName }) => eventName === type);
+    node.bindingId === BINDING_ID && node.__bindings__?.find(({ eventName }) => eventName === type);
 
   return binding || getEventBinding(BINDING_ID, type, node.parentNode);
 };
 
-const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
+export const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
   subscribers.forEach((type) => {
     rootNode.addEventListener(
       type,
@@ -42,6 +42,7 @@ const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
             : [];
 
           let fn = proxy[binding.method](...args);
+
           if (fn) {
             requestAnimationFrame(fn);
           }
@@ -55,5 +56,3 @@ const subscribe = (rootNode, subscribers, proxy, BINDING_ID) => {
     );
   });
 };
-
-export default subscribe;

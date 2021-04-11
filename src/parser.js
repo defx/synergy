@@ -201,7 +201,9 @@ function parseEach(node) {
   };
 }
 
-export default (templateFragment, BINDING_ID) => {
+let listCount = 0;
+
+export const bind = (templateFragment, BINDING_ID) => {
   subscribers = new Set();
 
   let parse = () => {
@@ -230,14 +232,12 @@ export default (templateFragment, BINDING_ID) => {
                 path,
               };
 
-              let nodes = Array.from(node.content.children);
+              node.listId = listCount;
 
               node.__bindings__ = [
                 {
                   ...binding,
                   type: LIST,
-                  nodes,
-                  listItems: [],
                 },
               ];
 
@@ -246,11 +246,13 @@ export default (templateFragment, BINDING_ID) => {
                 type: LIST_ITEM,
               };
 
-              nodes.forEach((child) => {
+              node.content.children.forEach((child) => {
+                child.listId = listCount;
                 child.__bindings__.unshift(listNodeBinding);
               });
 
               stack.pop();
+              listCount++;
             }
           } else {
             node.__bindings__ = [];

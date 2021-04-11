@@ -6,7 +6,6 @@ import {
   typeOf,
   copy,
   removeNodes,
-  last,
   pascalToKebab,
   applyAttribute,
   attributeToProp,
@@ -14,23 +13,32 @@ import {
   kebabToPascal,
   resolve,
 } from './helpers.js';
-import cloneNode from './cloneNode.js';
-import compareKeyedLists from './compareKeyedLists.js';
+import { cloneNode } from './cloneNode.js';
+import { compareKeyedLists } from './compareKeyedLists.js';
 
-const updateList = (template, binding, delta) => {
-  let listItems = binding.listItems;
+const getListItems = (template) => {
+  let node = template.nextSibling;
+
+  let nodes = [];
+
+  while (node && node.listId === template.listId) {
+    nodes[node.__index__] = nodes[node.__index__] || [];
+    nodes[node.__index__].push(node);
+    node = node.nextSibling;
+  }
+
+  return nodes;
+};
+
+const updateList = (template, delta) => {
+  let itemNodes = Array.from(template.content.children);
+  let listItems = getListItems(template);
   let fragment = document.createDocumentFragment();
+
   listItems.forEach(removeNodes);
 
-  binding.listItems = delta.map((i, newIndex) => {
-    let nodes =
-      i === -1
-        ? binding.nodes.map((node) => {
-            let x = cloneNode(node);
-
-            return x;
-          })
-        : listItems[i];
+  delta.forEach((i, newIndex) => {
+    let nodes = i === -1 ? itemNodes.map(cloneNode) : listItems[i];
 
     nodes.forEach((el) => {
       el.__index__ = newIndex;
@@ -53,7 +61,7 @@ let getPreviousValue = (node, binding) => {
   }
 };
 
-const getValue = (part, ctx, target, binding) => {
+const getValue = (part, ctx, target) => {
   let { value, negated } = part;
 
   if (value.charAt(0) === '#') {
@@ -153,13 +161,13 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
   if (binding.path) {
     const { path } = binding;
-    const newValue = getValue({ value: path }, ctx, p, binding);
+    const newValue = getValue({ value: path }, ctx, p);
 
     binding.data = newValue;
 
     if (binding.type === LIST) {
       const delta = compareKeyedLists(binding.uid, oldValue, newValue);
-      return delta && updateList(node, binding, delta);
+      return delta && updateList(node, delta);
     }
 
     if (oldValue === newValue) return;
@@ -203,9 +211,9 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     let v = value;
 
     if (type === 'key') {
-      v = getValue(part, ctx, p, binding);
+      v = getValue(part, ctx, p);
     } else if (type === 'function') {
-      let args = part.args.map((value) => getValue({ value }, ctx, p, binding));
+      let args = part.args.map((value) => getValue({ value }, ctx, p));
       v = callFunctionAtPath(part.method, viewmodel, args);
     }
 
@@ -219,7 +227,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
 let prev;
 
-const Updater = (BINDING_ID, updatedCallback = () => {}) => (rootNode, viewmodel) => {
+export const updater = (BINDING_ID, updatedCallback = () => {}) => (rootNode, viewmodel) => {
   let ctx = {};
   let p = copy(viewmodel);
 
@@ -237,5 +245,3 @@ const Updater = (BINDING_ID, updatedCallback = () => {}) => (rootNode, viewmodel
 
   prev = p;
 };
-
-export default Updater;

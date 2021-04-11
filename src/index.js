@@ -1,1 +1,1 @@
-export { default as define } from './define.js';
+export { define } from './define.js';

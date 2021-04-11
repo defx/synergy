@@ -2,12 +2,18 @@ import { walk } from './helpers.js';
 
 const flatten = (node) => {
   const res = [];
-  walk(node, (x) => res.push(x));
+  walk(node, (x) => {
+    res.push(x);
+    if (x.nodeName === 'TEMPLATE') {
+      res.push(...flatten(x.content));
+    }
+  });
   return res;
 };
 
-const cloneNodeWithBindings = (node) => {
+export const cloneNode = (node) => {
   let newNode = node.cloneNode(true);
+
   let fa = flatten(node);
   let fb = flatten(newNode);
 
@@ -19,7 +25,7 @@ const cloneNodeWithBindings = (node) => {
     }
   }
 
+  newNode.listId = node.listId;
+
   return newNode;
 };
-
-export default cloneNodeWithBindings;

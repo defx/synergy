@@ -1,47 +1,48 @@
-import parse from './parser.js';
-import subscribe from './subscribe.js';
-import Updater from './update.js';
-import proxy from './proxy.js';
-import hydrate from './hydrate.js';
+import { bind } from './parser.js';
+import { subscribe } from './subscribe.js';
+import { updater } from './update.js';
+import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
 
 let counter = 1;
 
-const render = (mountNode, viewmodel, template, extras = {}) => {
-  const BINDING_ID = counter++;
-
-  template = templateNode(template).cloneNode(true).content;
-
-  let { subscribers, templateFragment } = parse(template, BINDING_ID);
+export const render = (mountNode, viewmodel, template, extras = {}) => {
+  /*
+  @todo: make it not flakey
+  */
+  const BINDING_ID = mountNode.bindingId || counter++;
+  mountNode.bindingId = BINDING_ID;
 
   let vm, mounted;
 
-  let update = Updater(BINDING_ID, (prev) => mounted && viewmodel.updatedCallback(prev));
+  let update = updater(BINDING_ID, (prev) => mounted && viewmodel.updatedCallback(prev));
 
-  update(templateFragment, viewmodel);
+  if (!extras.hydrate) {
+    template = templateNode(template).cloneNode(true).content;
 
-  if (mountNode.hasAttribute?.('x-o')) {
-    hydrate(BINDING_ID, templateFragment, mountNode);
-  } else {
-    extras.beforeMountCallback?.(templateFragment);
+    let x = bind(template, BINDING_ID);
+
+    mountNode.subscribers = x.subscribers;
+
+    update(x.templateFragment, viewmodel);
+
+    extras.beforeMountCallback?.(x.templateFragment);
 
     for (let child of mountNode.children) {
       child.remove();
     }
 
-    mountNode.appendChild(templateFragment);
+    mountNode.appendChild(x.templateFragment);
   }
 
-  vm = proxy(
+  vm = wrapProxy(
     viewmodel,
     debounce(() => update(mountNode, viewmodel))
   );
 
-  subscribe(mountNode, subscribers, vm, BINDING_ID);
+  subscribe(mountNode, mountNode.subscribers, vm, BINDING_ID);
 
   mounted = true;
 
   return vm;
 };
-
-export default render;

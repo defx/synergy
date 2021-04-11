@@ -1,5 +1,5 @@
-import render from './render.js';
-import mergeSlots from './mergeSlots.js';
+import { render } from './render.js';
+import { mergeSlots } from './mergeSlots.js';
 import { applyAttribute, attributeToProp, isPrimitive, pascalToKebab } from './helpers.js';
 
 const wrap = (target, property, fn) => {
@@ -10,7 +10,7 @@ const wrap = (target, property, fn) => {
   };
 };
 
-const define = (name, factory, template, options = {}) => {
+export const define = (name, factory, template, options = {}) => {
   customElements.define(
     name,
     class extends HTMLElement {
@@ -18,6 +18,9 @@ const define = (name, factory, template, options = {}) => {
         if (!this.initialised) {
           let observedProps = new Set();
           let self = this;
+          let hydrate = this.$initData;
+
+          if (hydrate) Object.assign(this, this.$initData);
 
           let x = factory(
             new Proxy(
@@ -48,7 +51,7 @@ const define = (name, factory, template, options = {}) => {
             sa.apply(this, [k, v]);
           };
 
-          observedAttributes.forEach((name) => {
+          let d = observedAttributes.reduce((o, name) => {
             let property = attributeToProp(name).name;
 
             let value;
@@ -73,9 +76,14 @@ const define = (name, factory, template, options = {}) => {
             });
 
             this[property] = value;
-          });
 
-          let extras = {};
+            o[property] = value;
+            return o;
+          }, {});
+
+          let extras = {
+            hydrate,
+          };
 
           if (options.shadow) {
             this.attachShadow({
@@ -94,9 +102,8 @@ const define = (name, factory, template, options = {}) => {
 
           this.$ = render(this.shadowRoot || this, this.$, template, extras);
 
-          this.setAttribute('x-o', '');
-
           this.initialised = true;
+          this.$initData = d;
         }
 
         this.$.connectedCallback?.(this.$);
@@ -107,5 +114,3 @@ const define = (name, factory, template, options = {}) => {
     }
   );
 };
-
-export default define;

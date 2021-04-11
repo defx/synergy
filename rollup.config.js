@@ -16,4 +16,12 @@ export default [
       format: 'es',
     },
   },
+  {
+    input: 'src/index.js',
+    output: {
+      dir: 'cjs',
+      format: 'cjs',
+      preserveModules: true,
+    },
+  },
 ];

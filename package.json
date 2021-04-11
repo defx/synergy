@@ -9,7 +9,8 @@
   "types": "types/index.d.ts",
   "files": [
     "src",
-    "dist"
+    "dist",
+    "cjs"
   ],
   "directories": {
     "test": "test"

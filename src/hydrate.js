@@ -1,6 +1,6 @@
 import { walk } from './helpers.js';
 
-const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
+export const hydrate = (BINDING_ID, sourceNode, targetNode) => {
   let nodes = [];
 
   walk(sourceNode, (node) => {
@@ -20,5 +20,3 @@ const transferBindings = (BINDING_ID, sourceNode, targetNode) => {
     }
   });
 };
-
-export default transferBindings;
