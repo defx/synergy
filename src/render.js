@@ -17,7 +17,7 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
 
   let update = updater(BINDING_ID, (prev) => mounted && viewmodel.updatedCallback(prev));
 
-  if (!extras.hydrate) {
+  if (!mountNode.$initData) {
     template = templateNode(template).cloneNode(true).content;
 
     let x = bind(template, BINDING_ID);

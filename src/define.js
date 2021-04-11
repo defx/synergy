@@ -18,9 +18,8 @@ export const define = (name, factory, template, options = {}) => {
         if (!this.initialised) {
           let observedProps = new Set();
           let self = this;
-          let hydrate = this.$initData;
 
-          if (hydrate) Object.assign(this, this.$initData);
+          if (this.$initData) Object.assign(this, this.$initData);
 
           let x = factory(
             new Proxy(
@@ -81,9 +80,7 @@ export const define = (name, factory, template, options = {}) => {
             return o;
           }, {});
 
-          let extras = {
-            hydrate,
-          };
+          let extras = {};
 
           if (options.shadow) {
             this.attachShadow({
