@@ -44,8 +44,6 @@ const updateList = (template, delta) => {
       el.__index__ = newIndex;
       fragment.appendChild(el);
     });
-
-    return nodes;
   });
   template.after(fragment);
 };
