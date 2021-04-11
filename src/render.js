@@ -7,14 +7,14 @@ import { debounce, templateNode } from './helpers.js';
 export const render = (mountNode, viewmodel, template, extras = {}) => {
   let vm, mounted;
 
-  let update = updater(mountNode, (prev) => mounted && viewmodel.updatedCallback(prev));
+  let update = updater(mountNode, viewmodel, (prev) => mounted && viewmodel.updatedCallback(prev));
 
   if (!mountNode.$initData) {
     template = templateNode(template).cloneNode(true).content;
 
     mountNode.$subscribe = bind(template, mountNode);
 
-    update(template, viewmodel);
+    update(template);
 
     extras.beforeMountCallback?.(template);
 
@@ -27,7 +27,7 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
 
   vm = wrapProxy(
     viewmodel,
-    debounce(() => update(mountNode, viewmodel))
+    debounce(() => update(mountNode))
   );
 
   subscribe(mountNode, mountNode.$subscribe, vm);

@@ -225,7 +225,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
 let prev;
 
-export const updater = (mountNode, updatedCallback = () => {}) => (rootNode, viewmodel) => {
+export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (rootNode) => {
   let ctx = {};
   let p = copy(viewmodel);
 
