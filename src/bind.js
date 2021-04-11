@@ -2,6 +2,16 @@ import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 
 import { last, hasMustache, walk } from './helpers.js';
 
+let c = 0;
+
+const add = (node, bindings) => {
+  if (!node.__bindings__) {
+    node.__bindings__ = [];
+    node.__bindings__.index = c++;
+  }
+  node.__bindings__.unshift(...bindings);
+};
+
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
   return parts.reduce((a, part) => {
@@ -128,13 +138,15 @@ const parseAttributeNode = ({ name, value }, node, context) => {
 
     let { event, method, args } = parseEventHandler(value, context);
 
-    node.__bindings__.push({
-      type: 'call',
-      eventName: eventName,
-      event,
-      method,
-      args,
-    });
+    add(node, [
+      {
+        type: 'call',
+        eventName: eventName,
+        event,
+        method,
+        args,
+      },
+    ]);
 
     return;
   }
@@ -153,36 +165,41 @@ const parseAttributeNode = ({ name, value }, node, context) => {
       path,
     };
 
-    node.__bindings__.push(binding, {
-      type: 'set',
-      eventName: 'input',
-      path,
-    });
+    add(node, [
+      binding,
+      {
+        type: 'set',
+        eventName: 'input',
+        path,
+      },
+    ]);
   }
 
   if (hasMustache(value)) {
     node.removeAttribute(name);
 
-    node.__bindings__.push({
-      name,
-      parts: getParts(value, context),
-      type: ATTRIBUTE,
-      context: context.slice(),
-    });
+    add(node, [
+      {
+        name,
+        parts: getParts(value, context),
+        type: ATTRIBUTE,
+        context: context.slice(),
+      },
+    ]);
   }
 };
 
 const parseTextNode = (value, node, context) => {
   if (!hasMustache(value)) return;
 
-  node.__bindings__ = [
+  add(node, [
     {
       childIndex: Array.from(node.parentNode.childNodes).findIndex((v) => v === node),
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),
     },
-  ];
+  ]);
 };
 
 function parseEach(node) {
@@ -205,6 +222,7 @@ let listCount = 0;
 
 export const bind = (element, mountNode) => {
   subscribers = new Set();
+  c = 0;
 
   let parse = () => {
     let stack = [];
@@ -234,12 +252,12 @@ export const bind = (element, mountNode) => {
 
               node.listId = listCount;
 
-              node.__bindings__ = [
+              add(node, [
                 {
                   ...binding,
                   type: LIST,
                 },
-              ];
+              ]);
 
               let listNodeBinding = {
                 ...binding,
@@ -248,14 +266,13 @@ export const bind = (element, mountNode) => {
 
               node.content.children.forEach((child) => {
                 child.listId = listCount;
-                child.__bindings__.unshift(listNodeBinding);
+                add(child, [listNodeBinding]);
               });
 
               stack.pop();
               listCount++;
             }
           } else {
-            node.__bindings__ = [];
             parseElementNode(node, stack);
           }
         }
