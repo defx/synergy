@@ -20,7 +20,8 @@ const getEventBinding = (rootNode, type, node) => {
   if (!node) return;
 
   let binding =
-    node.bindingId === rootNode && node.__bindings__?.find(({ eventName }) => eventName === type);
+    node.$meta?.rootNode === rootNode &&
+    node.$meta.bindings.find(({ eventName }) => eventName === type);
 
   return binding || getEventBinding(rootNode, type, node.parentNode);
 };

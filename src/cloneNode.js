@@ -19,13 +19,9 @@ export const cloneNode = (node) => {
 
   let i = fa.length;
   while (i--) {
-    fb[i].bindingId = fa[i].bindingId;
-    if (fa[i].__bindings__) {
-      fb[i].__bindings__ = copy(fa[i].__bindings__);
-    }
+    fb[i].$meta = copy(fa[i].$meta);
+    fb[i].$meta.rootNode = fa[i].$meta.rootNode;
   }
-
-  newNode.listId = node.listId;
 
   return newNode;
 };

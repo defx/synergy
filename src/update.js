@@ -21,7 +21,7 @@ const getListItems = (template) => {
 
   let nodes = [];
 
-  while (node && node.listId === template.listId) {
+  while (node && node.$meta?.listId === template.$meta.listId) {
     nodes[node.__index__] = nodes[node.__index__] || [];
     nodes[node.__index__].push(node);
     node = node.nextSibling;
@@ -48,16 +48,10 @@ const updateList = (template, delta) => {
   template.after(fragment);
 };
 
-let getPreviousValue = (node, binding) => {
-  switch (binding.type) {
-    case ATTRIBUTE:
-      return attributeToProp(binding.name, node.getAttribute(binding.name)).value;
-    case TEXT:
-      return node.textContent;
-    default:
-      return binding.data;
-  }
-};
+let getPreviousValue = (node, binding) =>
+  binding.type === ATTRIBUTE
+    ? attributeToProp(binding.name, node.getAttribute(binding.name)).value
+    : node.textContent;
 
 const getValue = (part, ctx, target) => {
   let { value, negated } = part;
@@ -147,8 +141,8 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     const newValue = getValue({ value: path }, ctx, p);
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(binding.uid, node.__bindings__.data, newValue);
-      node.__bindings__.data = newValue;
+      const delta = compareKeyedLists(binding.uid, node.$meta.data, newValue);
+      node.$meta.data = newValue;
       return delta && updateList(node, delta);
     }
 
@@ -214,9 +208,9 @@ export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (ro
   let p = copy(viewmodel);
 
   walk(rootNode, (node) => {
-    if (node.bindingId !== mountNode) return;
+    if (node.$meta?.rootNode !== mountNode) return;
 
-    let bindings = node.__bindings__;
+    let bindings = node.$meta.bindings;
 
     if (bindings) {
       bindings.forEach((binding) => updateBinding(binding, node, ctx, p, viewmodel));

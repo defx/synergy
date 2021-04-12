@@ -5,11 +5,7 @@ import { last, hasMustache, walk } from './helpers.js';
 let c = 0;
 
 const add = (node, bindings) => {
-  if (!node.__bindings__) {
-    node.__bindings__ = [];
-    node.__bindings__.index = c++;
-  }
-  node.__bindings__.unshift(...bindings);
+  node.$meta.bindings.unshift(...bindings);
 };
 
 const resolveSquares = (str) => {
@@ -228,7 +224,11 @@ export const bind = (element, mountNode) => {
     let stack = [];
 
     function dispatch(node) {
-      node.bindingId = mountNode;
+      node.$meta = {
+        rootNode: mountNode,
+        index: c++,
+        bindings: [],
+      };
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
@@ -250,7 +250,7 @@ export const bind = (element, mountNode) => {
                 path,
               };
 
-              node.listId = listCount;
+              node.$meta.listId = listCount;
 
               add(node, [
                 {
@@ -265,7 +265,7 @@ export const bind = (element, mountNode) => {
               };
 
               for (let child of node.content.children) {
-                child.listId = listCount;
+                child.$meta.listId = listCount;
                 add(child, [listNodeBinding]);
               }
 
