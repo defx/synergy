@@ -91,34 +91,19 @@ const joinStyles = (value) =>
     .map(([k, v]) => `${k}: ${v};`)
     .join(' ');
 
-const mergeStyles = (previous, current, next) => {
-  let o = {};
-  //remove previous values, preserving anything else
-  for (let k in current) {
-    if (!previous[k]) o[k] = current[k];
-  }
-  //merge everything from next
-  for (let k in next) {
-    o[k] = next[k];
-  }
-
-  return convertStyles(o);
-};
-
 const convertStyles = (o) =>
   Object.keys(o).reduce((a, k) => {
     a[pascalToKebab(k)] = o[k];
     return a;
   }, {});
 
-const applyComplexAttribute = (node, name, value, previous) => {
+const applyComplexAttribute = (node, name, value) => {
   if (name === 'style') {
     value = joinStyles(
-      mergeStyles(
-        parseStyles(previous),
-        parseStyles(node.getAttribute('style')),
-        parseStyles(value)
-      )
+      convertStyles({
+        ...parseStyles(node.getAttribute('style')),
+        ...parseStyles(value),
+      })
     );
   } else if (name === 'class') {
     switch (typeOf(value)) {
@@ -143,7 +128,7 @@ const applyComplexAttribute = (node, name, value, previous) => {
 
 const updateNode = (node, binding, newValue) =>
   binding.type === ATTRIBUTE
-    ? applyComplexAttribute(node, binding.name, newValue, binding.data)
+    ? applyComplexAttribute(node, binding.name, newValue)
     : (node.textContent = newValue);
 
 const updateBinding = (binding, node, ctx, p, viewmodel) => {
