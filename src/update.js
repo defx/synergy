@@ -146,10 +146,9 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     const { path } = binding;
     const newValue = getValue({ value: path }, ctx, p);
 
-    binding.data = newValue;
-
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(binding.uid, oldValue, newValue);
+      const delta = compareKeyedLists(binding.uid, node.__bindings__.data, newValue);
+      node.__bindings__.data = newValue;
       return delta && updateList(node, delta);
     }
 
