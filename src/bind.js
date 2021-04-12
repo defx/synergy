@@ -264,10 +264,10 @@ export const bind = (element, mountNode) => {
                 type: LIST_ITEM,
               };
 
-              node.content.children.forEach((child) => {
+              for (let child of node.content.children) {
                 child.listId = listCount;
                 add(child, [listNodeBinding]);
-              });
+              }
 
               stack.pop();
               listCount++;
