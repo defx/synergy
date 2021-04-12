@@ -1,4 +1,4 @@
-import { walk } from './helpers.js';
+import { copy, walk } from './helpers.js';
 
 const flatten = (node) => {
   const res = [];
@@ -21,7 +21,7 @@ export const cloneNode = (node) => {
   while (i--) {
     fb[i].bindingId = fa[i].bindingId;
     if (fa[i].__bindings__) {
-      fb[i].__bindings__ = fa[i].__bindings__.map((v) => ({ ...v }));
+      fb[i].__bindings__ = copy(fa[i].__bindings__);
     }
   }
 
