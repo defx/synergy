@@ -36,3 +36,20 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
 
   return vm;
 };
+
+/* 
+
+node {
+  $initData,
+  $subscribe,
+  $meta: {
+    rootNode,
+    index,
+    bindings,
+    listId?,
+    blockData?,
+    blockIndex?
+  }
+}
+
+*/

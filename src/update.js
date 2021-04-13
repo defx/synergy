@@ -22,8 +22,8 @@ const getListItems = (template) => {
   let nodes = [];
 
   while (node && node.$meta?.listId === template.$meta.listId) {
-    nodes[node.$meta.i] = nodes[node.$meta.i] || [];
-    nodes[node.$meta.i].push(node);
+    nodes[node.$meta.blockIndex] = nodes[node.$meta.blockIndex] || [];
+    nodes[node.$meta.blockIndex].push(node);
     node = node.nextSibling;
   }
 
@@ -41,7 +41,7 @@ const updateList = (template, delta) => {
     let nodes = i === -1 ? itemNodes.map(cloneNode) : listItems[i];
 
     nodes.forEach((el) => {
-      el.$meta.i = newIndex;
+      el.$meta.blockIndex = newIndex;
       fragment.appendChild(el);
     });
   });
@@ -132,7 +132,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     return;
   }
 
-  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.$meta.i);
+  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.$meta.blockIndex);
 
   let oldValue = getPreviousValue(node, binding);
 
@@ -141,9 +141,8 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     const newValue = getValue({ value: path }, ctx, p);
 
     if (binding.type === LIST) {
-      // let k = binding.uid;
-      const delta = compareKeyedLists(binding.uid, node.$meta.data, newValue);
-      node.$meta.data = newValue; //.map((v) => (isPrimitive(v) ? null : k in v ? { [k]: v[k] } : {}));
+      const delta = compareKeyedLists(binding.uid, node.$meta.blockData, newValue);
+      node.$meta.blockData = newValue;
       return delta && updateList(node, delta);
     }
 
