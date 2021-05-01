@@ -1,7 +1,7 @@
 {
   "name": "synergy",
-  "version": "4.0.0",
-  "description": "The tiny runtime library for building web user interfaces",
+  "version": "5.0.0",
+  "description": "A JavaScript library for building Web Components",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
   "unpkg": "dist/synergy.min.js",
