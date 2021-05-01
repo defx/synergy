@@ -2,8 +2,7 @@
 
 ## [![npm](https://img.shields.io/npm/v/synergy.svg)](http://npm.im/synergy) [![Build Status](https://travis-ci.com/defx/synergy.svg?branch=master)](https://travis-ci.com/defx/synergy) [![Coverage Status](https://coveralls.io/repos/github/defx/synergy/badge.svg?branch=master)](https://coveralls.io/github/defx/synergy?branch=master) [![gzip size](https://img.badgesize.io/https://unpkg.com/synergy/dist/synergy.min.js?compression=gzip&label=gzip)]()
 
-Synergy is a tiny runtime library for building web user
-interfaces
+Synergy is a JavaScript library for building Web Components
 
 ## Features
 
@@ -15,10 +14,8 @@ interfaces
 - No special tooling required (e.g., compilers, plugins)
 - Minimal learning curve (almost entirely standard HTML, JS,
   and CSS!)
-- Seamless pre-rendering & hydration for great performance
-  and SEO
 
-[Learn how to use Synergy in your own project](https://synergyjs.org/getting-started.html).
+[Learn how to use Synergy in your own project](https://synergyjs.org/learn/introduction).
 
 ## Browser Support
 
@@ -28,34 +25,24 @@ that supports JavaScript Proxy.
 
 ## Installation
 
-Synergy doesn't require any special toolchain, compiler,
-plugins etc. Its a tiny (~4k) package that gives you
-everything you need to start building directly in the
-browser.
-
-The quickest way to get started is to import the Synergy
-package directly from a CDN.
-
-### Unpkg CDN
-
-```html
-<script type="module">
-  import { define } from 'https://unpkg.com/synergy';
-</script>
-```
-
-You can also install directly into your project using NPM.
-
-### NPM
+Synergy is available from npm:
 
 ```bash
 $ npm i synergy
 ```
 
+You can also import Synergy directly in the browser via CDN:
+
+```html
+<script type="module">
+  import { define } from "https://unpkg.com/synergy";
+</script>
+```
+
 ## Documentation
 
 You can find the Synergy documentation
-[on the website](https://synergyjs.org/documentation).
+[on the website](https://synergyjs.org/).
 
 ## Example
 
@@ -63,9 +50,9 @@ You can find the Synergy documentation
 
 ```html
 <script type="module">
-  import { define } from 'https://unpkg.com/synergy';
+  import { define } from "https://unpkg.com/synergy";
 
-  define('hello-world', ({ name }) => ({ name }), '<p>Hello {{ name }}</p>');
+  define("hello-world", ({ name }) => ({ name }), "<p>Hello {{ name }}</p>");
 </script>
 ```
 
