@@ -34,9 +34,7 @@ describe('define', () => {
     let factory = ({ title }) => ({
       title,
     });
-    synergy.define(name, factory, '<p>{{ title }}</p>', {
-      observe: ['title'],
-    });
+    synergy.define(name, factory, '<p>{{ title }}</p>');
     mount(`
       <${name} title="ok!"></${name}>
       `);
@@ -55,10 +53,7 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle()">toggle</button>',
-      {
-        observe: ['show'],
-      }
+      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle()">toggle</button>'
     );
     mount(`
       <${name}></${name}>
@@ -91,7 +86,9 @@ describe('define', () => {
     synergy.define(
       name,
       factory,
-      html`<p><slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot></p>`
+      html`<p>
+        <slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>
+      </p>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
@@ -108,9 +105,7 @@ describe('define', () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
-      observe: ['foo-bar'],
-    });
+    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`);
     mount(`
     <${name} foo-bar></${name}>
     `);
@@ -131,9 +126,7 @@ describe('define', () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
-      observe: ['aria-hidden'],
-    });
+    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`);
     mount(`
     <${name} aria-hidden="false"></${name}>
     `);
@@ -208,9 +201,7 @@ describe('define', () => {
       </template>
     `;
 
-    synergy.define('rich-props', factory, template, {
-      observe: ['arr', 'obj'],
-    });
+    synergy.define('rich-props', factory, template);
 
     let name = createName();
 

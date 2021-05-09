@@ -31,7 +31,8 @@ export const last = (v = []) => v[v.length - 1];
 
 export const hasMustache = (v) => v.match(/({{[^{}]+}})/);
 
-export const typeOf = (v) => Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
+export const typeOf = (v) =>
+  Object.prototype.toString.call(v).match(/\s(.+[^\]])/)[1];
 
 export const copy = (v) => v && JSON.parse(JSON.stringify(v));
 
@@ -56,7 +57,8 @@ export const getValueAtPath = (path, target) => {
   return a[b];
 };
 
-export const removeNodes = (nodes) => nodes.forEach((node) => node.parentNode.removeChild(node));
+export const removeNodes = (nodes) =>
+  nodes.forEach((node) => node.parentNode.removeChild(node));
 
 export const templateNode = (v) => {
   if (v.nodeName === 'TEMPLATE') return v;
@@ -118,3 +120,6 @@ export const applyAttribute = (node, name, value) => {
 };
 
 export const isPrimitive = (v) => v === null || typeof v !== 'object';
+
+export const getBinding = (node, t) =>
+  node.$meta?.bindings?.find(({ type }) => type === t);

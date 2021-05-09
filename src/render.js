@@ -1,18 +1,34 @@
-import { bind } from './bind.js';
 import { subscribe } from './subscribe.js';
 import { updater } from './update.js';
 import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
+import { map, apply } from './bindings.js';
+
+let cache = new Map();
+let masterNode;
 
 export const render = (mountNode, viewmodel, template, extras = {}) => {
   let vm, mounted;
 
-  let update = updater(mountNode, viewmodel, (prev) => mounted && viewmodel.updatedCallback(prev));
+  let update = updater(
+    mountNode,
+    viewmodel,
+    (prev) => mounted && viewmodel.updatedCallback(prev)
+  );
+
+  if (!cache.has(template)) {
+    masterNode = templateNode(template).cloneNode(true);
+    cache.set(template, map(masterNode.content));
+  }
+
+  let x = cache.get(template);
 
   if (!mountNode.$initData) {
-    template = templateNode(template).cloneNode(true).content;
+    template = masterNode.cloneNode(true).content;
 
-    mountNode.$subscribe = bind(template, mountNode);
+    mountNode.$subscribe = x.events;
+
+    apply(x, template, mountNode);
 
     update(template);
 
@@ -36,20 +52,3 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
 
   return vm;
 };
-
-/* 
-
-node {
-  $initData,
-  $subscribe,
-  $meta: {
-    rootNode,
-    index,
-    bindings,
-    listId?,
-    blockData?,
-    blockIndex?
-  }
-}
-
-*/

@@ -3,9 +3,17 @@ import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 import { last, hasMustache, walk } from './helpers.js';
 
 let c = 0;
+let bindings = [];
+let bmap = {};
 
-const add = (node, bindings) => {
-  node.$meta.bindings.unshift(...bindings);
+const add = (node, b) => {
+  let i = node.$index;
+  let o = bindings.length;
+  bmap[i] = bmap[i] || [];
+  b.forEach((v, n) => {
+    bindings.push(v);
+    bmap[i].push(o + n);
+  });
 };
 
 const resolveSquares = (str) => {
@@ -150,7 +158,9 @@ const parseAttributeNode = ({ name, value }, node, context) => {
   if (
     name === 'name' &&
     value &&
-    (node.nodeName === 'INPUT' || node.nodeName === 'SELECT' || node.nodeName === 'TEXTAREA')
+    (node.nodeName === 'INPUT' ||
+      node.nodeName === 'SELECT' ||
+      node.nodeName === 'TEXTAREA')
   ) {
     let path = resolve(value, context);
 
@@ -190,7 +200,9 @@ const parseTextNode = (value, node, context) => {
 
   add(node, [
     {
-      childIndex: Array.from(node.parentNode.childNodes).findIndex((v) => v === node),
+      childIndex: Array.from(node.parentNode.childNodes).findIndex(
+        (v) => v === node
+      ),
       parts: getParts(value, context),
       type: TEXT,
       context: context.slice(),
@@ -204,7 +216,10 @@ function parseEach(node) {
   if (!m) return;
   let [_, left, right] = m;
   let parts = left.match(/\(([^\)]+)\)/);
-  let [valueIdentifier, index] = (parts ? parts[1].split(',') : [left]).map((v) => v.trim());
+  let [valueIdentifier, index] = (parts
+    ? parts[1].split(',')
+    : [left]
+  ).map((v) => v.trim());
 
   return {
     prop: right.trim(),
@@ -216,19 +231,17 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const bind = (element, mountNode) => {
+export const map = (element) => {
   subscribers = new Set();
   c = 0;
+  bindings = [];
+  bmap = {};
 
   let parse = () => {
     let stack = [];
 
     function dispatch(node) {
-      node.$meta = {
-        rootNode: mountNode,
-        index: c++,
-        bindings: [],
-      };
+      node.$index = c++;
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
@@ -248,9 +261,8 @@ export const bind = (element, mountNode) => {
               let binding = {
                 uid: key,
                 path,
+                listId: listCount,
               };
-
-              node.$meta.listId = listCount;
 
               add(node, [
                 {
@@ -265,7 +277,6 @@ export const bind = (element, mountNode) => {
               };
 
               for (let child of node.content.children) {
-                child.$meta.listId = listCount;
                 add(child, [listNodeBinding]);
               }
 
@@ -281,8 +292,33 @@ export const bind = (element, mountNode) => {
 
     walk(element, dispatch);
 
-    return Array.from(subscribers);
+    return {
+      bindings,
+      map: bmap,
+      events: Array.from(subscribers),
+    };
   };
 
   return parse();
+};
+
+export const apply = ({ bindings, map }, element, rootNode) => {
+  let i = -1;
+
+  const dispatch = (node) => {
+    i++;
+
+    if (i in map) {
+      node.$meta = {
+        bindings: map[i].map((n) => bindings[n]).reverse(),
+        rootNode,
+      };
+    }
+
+    if (node.nodeName === 'TEMPLATE' && node.hasAttribute('each')) {
+      walk(node.content, dispatch);
+    }
+  };
+
+  walk(element, dispatch);
 };

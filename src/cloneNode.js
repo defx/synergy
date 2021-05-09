@@ -19,8 +19,10 @@ export const cloneNode = (node) => {
 
   let i = fa.length;
   while (i--) {
-    fb[i].$meta = copy(fa[i].$meta);
-    fb[i].$meta.rootNode = fa[i].$meta.rootNode;
+    if (fa[i].$meta) {
+      fb[i].$meta = copy(fa[i].$meta);
+      fb[i].$meta.rootNode = fa[i].$meta.rootNode;
+    }
   }
 
   return newNode;

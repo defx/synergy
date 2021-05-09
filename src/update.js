@@ -12,18 +12,20 @@ import {
   isPrimitive,
   kebabToPascal,
   resolve,
+  getBinding,
 } from './helpers.js';
 import { cloneNode } from './cloneNode.js';
 import { compareKeyedLists } from './compareKeyedLists.js';
 
 const getListItems = (template) => {
   let node = template.nextSibling;
-
   let nodes = [];
+  let listId = getBinding(template, LIST).listId;
 
-  while (node && node.$meta?.listId === template.$meta.listId) {
-    nodes[node.$meta.blockIndex] = nodes[node.$meta.blockIndex] || [];
-    nodes[node.$meta.blockIndex].push(node);
+  while (node && getBinding(node, LIST_ITEM)?.listId === listId) {
+    let blockIndex = getBinding(node, LIST_ITEM).blockIndex;
+    nodes[blockIndex] = nodes[blockIndex] || [];
+    nodes[blockIndex].push(node);
     node = node.nextSibling;
   }
 
@@ -41,7 +43,7 @@ const updateList = (template, delta) => {
     let nodes = i === -1 ? itemNodes.map(cloneNode) : listItems[i];
 
     nodes.forEach((el) => {
-      el.$meta.blockIndex = newIndex;
+      getBinding(el, LIST_ITEM).blockIndex = newIndex;
       fragment.appendChild(el);
     });
   });
@@ -132,7 +134,8 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     return;
   }
 
-  if (binding.type === LIST_ITEM) return (ctx[binding.path] = node.$meta.blockIndex);
+  if (binding.type === LIST_ITEM)
+    return (ctx[binding.path] = binding.blockIndex);
 
   let oldValue = getPreviousValue(node, binding);
 
@@ -141,7 +144,11 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     const newValue = getValue({ value: path }, ctx, p);
 
     if (binding.type === LIST) {
-      const delta = compareKeyedLists(binding.uid, node.$meta.blockData, newValue);
+      const delta = compareKeyedLists(
+        binding.uid,
+        node.$meta.blockData,
+        newValue
+      );
       node.$meta.blockData = newValue;
       return delta && updateList(node, delta);
     }
@@ -203,7 +210,9 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
 let prev;
 
-export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (rootNode) => {
+export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (
+  rootNode
+) => {
   let ctx = {};
   let p = copy(viewmodel);
 
@@ -213,7 +222,9 @@ export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (ro
     let bindings = node.$meta.bindings;
 
     if (bindings) {
-      bindings.forEach((binding) => updateBinding(binding, node, ctx, p, viewmodel));
+      bindings.forEach((binding) =>
+        updateBinding(binding, node, ctx, p, viewmodel)
+      );
     }
   });
 
