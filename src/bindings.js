@@ -220,8 +220,6 @@ export const map = (element, callback) => {
     let stack = [];
 
     function dispatch(node) {
-      node.$index = c++;
-
       switch (node.nodeType) {
         case node.TEXT_NODE: {
           parseTextNode(node.nodeValue, node, stack, callback);
