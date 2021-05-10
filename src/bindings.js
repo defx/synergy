@@ -5,16 +5,17 @@ import { last, hasMustache, walk } from './helpers.js';
 let c = 0;
 let bindings = [];
 let bmap = {};
+let add;
 
-const add = (node, b) => {
-  let i = node.$index;
-  let o = bindings.length;
-  bmap[i] = bmap[i] || [];
-  b.forEach((v, n) => {
-    bindings.push(v);
-    bmap[i].push(o + n);
-  });
-};
+// const add = (node, b) => {
+//   let i = node.$index;
+//   let o = bindings.length;
+//   bmap[i] = bmap[i] || [];
+//   b.forEach((v, n) => {
+//     bindings.push(v);
+//     bmap[i].push(o + n);
+//   });
+// };
 
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
@@ -231,11 +232,12 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const map = (element) => {
+export const map = (element, callback) => {
   subscribers = new Set();
   c = 0;
   bindings = [];
   bmap = {};
+  add = callback;
 
   let parse = () => {
     let stack = [];

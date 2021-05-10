@@ -2,7 +2,7 @@ import { subscribe } from './subscribe.js';
 import { updater } from './update.js';
 import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
-import { map, apply } from './bindings.js';
+import { map } from './bindings.js';
 
 export const render = (mountNode, viewmodel, template, extras = {}) => {
   let vm, mounted;
@@ -15,12 +15,19 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
 
   template = templateNode(template).cloneNode(true).content;
 
-  let x = map(template);
+  let x = map(template, (node, bindings) => {
+    if (!node.$meta) {
+      node.$meta = {
+        rootNode: mountNode,
+        bindings: bindings.reverse(),
+      };
+    } else {
+      node.$meta.bindings.unshift(...bindings.reverse());
+    }
+  });
 
   if (!mountNode.$initData) {
     mountNode.$subscribe = x.events;
-
-    apply(x, template, mountNode);
 
     update(template);
 
