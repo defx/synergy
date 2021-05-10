@@ -16,14 +16,8 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
   template = templateNode(template).cloneNode(true).content;
 
   let x = map(template, (node, bindings) => {
-    if (!node.$meta) {
-      node.$meta = {
-        rootNode: mountNode,
-        bindings: bindings.reverse(),
-      };
-    } else {
-      node.$meta.bindings.unshift(...bindings.reverse());
-    }
+    node.$meta = node.$meta || { rootNode: mountNode, bindings: [] };
+    node.$meta.bindings.unshift(...bindings);
   });
 
   if (!mountNode.$initData) {

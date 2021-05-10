@@ -3,19 +3,7 @@ import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 import { last, hasMustache, walk } from './helpers.js';
 
 let c = 0;
-let bindings = [];
-let bmap = {};
 let add;
-
-// const add = (node, b) => {
-//   let i = node.$index;
-//   let o = bindings.length;
-//   bmap[i] = bmap[i] || [];
-//   b.forEach((v, n) => {
-//     bindings.push(v);
-//     bmap[i].push(o + n);
-//   });
-// };
 
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
@@ -235,8 +223,6 @@ let listCount = 0;
 export const map = (element, callback) => {
   subscribers = new Set();
   c = 0;
-  bindings = [];
-  bmap = {};
   add = callback;
 
   let parse = () => {
@@ -295,8 +281,6 @@ export const map = (element, callback) => {
     walk(element, dispatch);
 
     return {
-      bindings,
-      map: bmap,
       events: Array.from(subscribers),
     };
   };
