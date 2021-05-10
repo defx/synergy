@@ -4,9 +4,6 @@ import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
 import { map, apply } from './bindings.js';
 
-let cache = new Map();
-let masterNode;
-
 export const render = (mountNode, viewmodel, template, extras = {}) => {
   let vm, mounted;
 
@@ -16,16 +13,11 @@ export const render = (mountNode, viewmodel, template, extras = {}) => {
     (prev) => mounted && viewmodel.updatedCallback(prev)
   );
 
-  if (!cache.has(template)) {
-    masterNode = templateNode(template).cloneNode(true);
-    cache.set(template, map(masterNode.content));
-  }
+  template = templateNode(template).cloneNode(true).content;
 
-  let x = cache.get(template);
+  let x = map(template);
 
   if (!mountNode.$initData) {
-    template = masterNode.cloneNode(true).content;
-
     mountNode.$subscribe = x.events;
 
     apply(x, template, mountNode);
