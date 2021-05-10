@@ -22,13 +22,8 @@ export const render = (rootNode, viewmodel, template, extras = {}) => {
 
   if (!rootNode.$initData) {
     update(template);
-
     extras.beforeMountCallback?.(template);
-
-    for (let child of rootNode.children) {
-      child.remove();
-    }
-
+    rootNode.textContent = '';
     rootNode.appendChild(template);
   }
 
