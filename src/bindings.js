@@ -3,7 +3,6 @@ import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 import { last, hasMustache, walk } from './helpers.js';
 
 let c = 0;
-let add;
 
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
@@ -89,13 +88,12 @@ const getParts = (value, context) =>
 
 let subscribers;
 
-function parseElementNode(node, context) {
+function parseElementNode(node, context, callback) {
   let attrs = node.attributes;
   let i = attrs.length;
   while (i--) {
-    parseAttributeNode(attrs[i], node, context);
+    parseAttributeNode(attrs[i], node, context, callback);
   }
-  return context;
 }
 
 const parseEventHandler = (value, context) => {
@@ -122,7 +120,7 @@ const parseEventHandler = (value, context) => {
   };
 };
 
-const parseAttributeNode = ({ name, value }, node, context) => {
+const parseAttributeNode = ({ name, value }, node, context, callback) => {
   if (name.startsWith('on')) {
     node.removeAttribute(name);
     let eventName = name.split('on')[1];
@@ -131,7 +129,7 @@ const parseAttributeNode = ({ name, value }, node, context) => {
 
     let { event, method, args } = parseEventHandler(value, context);
 
-    add(node, [
+    callback(node, [
       {
         type: 'call',
         eventName: eventName,
@@ -140,8 +138,6 @@ const parseAttributeNode = ({ name, value }, node, context) => {
         args,
       },
     ]);
-
-    return;
   }
 
   if (
@@ -160,7 +156,7 @@ const parseAttributeNode = ({ name, value }, node, context) => {
       path,
     };
 
-    add(node, [
+    callback(node, [
       binding,
       {
         type: 'set',
@@ -173,7 +169,7 @@ const parseAttributeNode = ({ name, value }, node, context) => {
   if (hasMustache(value)) {
     node.removeAttribute(name);
 
-    add(node, [
+    callback(node, [
       {
         name,
         parts: getParts(value, context),
@@ -184,19 +180,15 @@ const parseAttributeNode = ({ name, value }, node, context) => {
   }
 };
 
-const parseTextNode = (value, node, context) => {
-  if (!hasMustache(value)) return;
-
-  add(node, [
-    {
-      childIndex: Array.from(node.parentNode.childNodes).findIndex(
-        (v) => v === node
-      ),
-      parts: getParts(value, context),
-      type: TEXT,
-      context: context.slice(),
-    },
-  ]);
+const parseTextNode = (value, node, context, callback) => {
+  if (hasMustache(value))
+    callback(node, [
+      {
+        parts: getParts(value, context),
+        type: TEXT,
+        context: context.slice(),
+      },
+    ]);
 };
 
 function parseEach(node) {
@@ -223,7 +215,6 @@ let listCount = 0;
 export const map = (element, callback) => {
   subscribers = new Set();
   c = 0;
-  add = callback;
 
   let parse = () => {
     let stack = [];
@@ -233,7 +224,7 @@ export const map = (element, callback) => {
 
       switch (node.nodeType) {
         case node.TEXT_NODE: {
-          parseTextNode(node.nodeValue, node, stack);
+          parseTextNode(node.nodeValue, node, stack, callback);
           break;
         }
         case node.ELEMENT_NODE: {
@@ -252,7 +243,7 @@ export const map = (element, callback) => {
                 listId: listCount,
               };
 
-              add(node, [
+              callback(node, [
                 {
                   ...binding,
                   type: LIST,
@@ -265,14 +256,14 @@ export const map = (element, callback) => {
               };
 
               for (let child of node.content.children) {
-                add(child, [listNodeBinding]);
+                callback(child, [listNodeBinding]);
               }
 
               stack.pop();
               listCount++;
             }
           } else {
-            parseElementNode(node, stack);
+            parseElementNode(node, stack, callback);
           }
         }
       }

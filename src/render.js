@@ -4,42 +4,40 @@ import { wrapProxy } from './proxy.js';
 import { debounce, templateNode } from './helpers.js';
 import { map } from './bindings.js';
 
-export const render = (mountNode, viewmodel, template, extras = {}) => {
+export const render = (rootNode, viewmodel, template, extras = {}) => {
   let vm, mounted;
 
   let update = updater(
-    mountNode,
+    rootNode,
     viewmodel,
     (prev) => mounted && viewmodel.updatedCallback(prev)
   );
 
-  template = templateNode(template).cloneNode(true).content;
+  template = templateNode(template).content;
 
   let x = map(template, (node, bindings) => {
-    node.$meta = node.$meta || { rootNode: mountNode, bindings: [] };
+    node.$meta = node.$meta || { rootNode, bindings: [] };
     node.$meta.bindings.unshift(...bindings);
   });
 
-  if (!mountNode.$initData) {
-    mountNode.$subscribe = x.events;
-
+  if (!rootNode.$initData) {
     update(template);
 
     extras.beforeMountCallback?.(template);
 
-    for (let child of mountNode.children) {
+    for (let child of rootNode.children) {
       child.remove();
     }
 
-    mountNode.appendChild(template);
+    rootNode.appendChild(template);
   }
 
   vm = wrapProxy(
     viewmodel,
-    debounce(() => update(mountNode))
+    debounce(() => update(rootNode))
   );
 
-  subscribe(mountNode, mountNode.$subscribe, vm);
+  subscribe(rootNode, x.events, vm);
 
   mounted = true;
 
