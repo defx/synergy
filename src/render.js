@@ -37,7 +37,7 @@ export const render = (rootNode, viewmodel, template, extras = {}) => {
     debounce(() => update(rootNode))
   );
 
-  subscribe(rootNode, x.events, vm);
+  subscribe(rootNode, x, vm);
 
   mounted = true;
 

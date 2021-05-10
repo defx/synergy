@@ -231,6 +231,7 @@ export const map = (element, callback) => {
 
             if (each) {
               stack.push(each);
+
               walk(node.content, dispatch);
               let { key, prop } = last(stack);
               let path = resolve(prop, stack);
@@ -269,9 +270,7 @@ export const map = (element, callback) => {
 
     walk(element, dispatch);
 
-    return {
-      events: Array.from(subscribers),
-    };
+    return Array.from(subscribers);
   };
 
   return parse();
