@@ -129,7 +129,7 @@ const parseAttributeNode = ({ name, value }, node, context, callback) => {
 
     let { event, method, args } = parseEventHandler(value, context);
 
-    callback(node, [
+    callback([
       {
         type: 'call',
         eventName: eventName,
@@ -156,7 +156,7 @@ const parseAttributeNode = ({ name, value }, node, context, callback) => {
       path,
     };
 
-    callback(node, [
+    callback([
       binding,
       {
         type: 'set',
@@ -169,7 +169,7 @@ const parseAttributeNode = ({ name, value }, node, context, callback) => {
   if (hasMustache(value)) {
     node.removeAttribute(name);
 
-    callback(node, [
+    callback([
       {
         name,
         parts: getParts(value, context),
@@ -182,7 +182,7 @@ const parseAttributeNode = ({ name, value }, node, context, callback) => {
 
 const parseTextNode = (value, node, context, callback) => {
   if (hasMustache(value))
-    callback(node, [
+    callback([
       {
         parts: getParts(value, context),
         type: TEXT,
@@ -211,14 +211,31 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const parse = (element, callback) => {
+export const map = (template, callback) => {
+  let bindings = [];
+  let map = {};
+  let events = parse(template, (node, path, bs = []) => {
+    bs.push(...(callback?.(node, path) || []));
+    if (bs.length) {
+      let s = bindings.length;
+      bindings.push(...bs);
+      map[path] = bs.map((_, i) => s + i);
+    }
+  });
+  return { bindings, map, events };
+};
+
+export const parse = (element, cb) => {
   subscribers = new Set();
   c = 0;
 
   let stack = [];
 
   function dispatch(node, path) {
-    console.log(node, path);
+    let bindings = [];
+
+    let callback = (v) => bindings.push(...v);
+
     switch (node.nodeType) {
       case node.TEXT_NODE: {
         parseTextNode(node.nodeValue, node, stack, callback);
@@ -231,35 +248,34 @@ export const parse = (element, callback) => {
           if (each) {
             stack.push(each);
 
-            walk(node.content, dispatch);
             let { key, prop } = last(stack);
-
             let path = resolve(prop, stack);
+            let listId = listCount;
 
-            callback(node, [
-              {
-                type: LIST,
-                uid: key,
-                path,
-                listId: listCount,
-              },
-            ]);
-
-            let listNodeBinding = {
+            let binding = {
+              uid: key,
               path,
-              type: LIST_ITEM,
-              listId: listCount,
+              listId,
             };
 
-            /*
-            
-            this is why we see some node more than once in the callback...
-            
-            */
-
-            for (let child of node.content.children) {
-              callback(child, [listNodeBinding]);
-            }
+            callback([
+              {
+                ...binding,
+                type: LIST,
+                map: map(node.content, (_, xpath) => {
+                  if (xpath.length === 2) {
+                    // its a direct child of the template
+                    return [
+                      {
+                        type: LIST_ITEM,
+                        path,
+                        listId,
+                      },
+                    ];
+                  }
+                }),
+              },
+            ]);
 
             stack.pop();
             listCount++;
@@ -269,6 +285,8 @@ export const parse = (element, callback) => {
         }
       }
     }
+
+    cb(node, path, bindings);
   }
 
   walk(element, dispatch);

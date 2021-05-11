@@ -32,7 +32,17 @@ const getListItems = (template) => {
   return nodes;
 };
 
-const updateList = (template, delta) => {
+/*
+
+@todo: 
+  - store the bindings map on the LIST node
+  - replace cloneNode with applyBindings
+
+*/
+
+const updateList = (template, delta, binding) => {
+  console.log('UPDATELIST', binding);
+
   let itemNodes = Array.from(template.content.children);
   let listItems = getListItems(template);
   let fragment = document.createDocumentFragment();
@@ -150,7 +160,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
         newValue
       );
       node.$meta.blockData = newValue;
-      return delta && updateList(node, delta);
+      return delta && updateList(node, delta, binding);
     }
 
     if (oldValue === newValue) return;
@@ -210,25 +220,25 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
 
 let prev;
 
-export const updater = (mountNode, viewmodel, updatedCallback = () => {}) => (
-  rootNode
-) => {
-  let ctx = {};
-  let p = copy(viewmodel);
+export const updater =
+  (mountNode, viewmodel, updatedCallback = () => {}) =>
+  (rootNode) => {
+    let ctx = {};
+    let p = copy(viewmodel);
 
-  walk(rootNode, (node) => {
-    if (node.$meta?.rootNode !== mountNode) return;
+    walk(rootNode, (node) => {
+      if (node.$meta?.rootNode !== mountNode) return;
 
-    let bindings = node.$meta.bindings;
+      let bindings = node.$meta.bindings;
 
-    if (bindings) {
-      bindings.forEach((binding) =>
-        updateBinding(binding, node, ctx, p, viewmodel)
-      );
-    }
-  });
+      if (bindings) {
+        bindings.forEach((binding) =>
+          updateBinding(binding, node, ctx, p, viewmodel)
+        );
+      }
+    });
 
-  if (prev) updatedCallback(prev);
+    if (prev) updatedCallback(prev);
 
-  prev = p;
-};
+    prev = p;
+  };

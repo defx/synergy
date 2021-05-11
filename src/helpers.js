@@ -12,6 +12,19 @@ export const walk = (node, callback) => {
   }
 };
 
+export const xwalk = (node, callback, path = [0]) => {
+  let i = 0;
+
+  if (callback(node, path) === false) return;
+
+  node = node.firstChild;
+
+  while (node) {
+    if (!isWhitespace(node)) xwalk(node, callback, path.concat(i++));
+    node = node.nextSibling;
+  }
+};
+
 export const resolve = (path, ctx, target) => {
   let parts = path.split('.');
   let i = parts.length;
