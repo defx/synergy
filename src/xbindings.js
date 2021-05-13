@@ -2,8 +2,6 @@ import { ATTRIBUTE, INPUT, TEXT, LIST, LIST_ITEM } from './constants.js';
 
 import { last, hasMustache, xwalk as walk } from './helpers.js';
 
-let c = 0;
-
 const resolveSquares = (str) => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v);
   return parts.reduce((a, part) => {
@@ -211,25 +209,38 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const map = (template, callback) => {
+export const map = (template, callback, stack) => {
   let bindings = [];
   let map = {};
-  let events = parse(template, (node, path, bs = []) => {
-    bs.push(...(callback?.(node, path) || []));
-    if (bs.length) {
-      let s = bindings.length;
-      bindings.push(...bs);
-      map[path] = bs.map((_, i) => s + i);
-    }
-  });
+  let events = parse(
+    template,
+    (node, path, bs = []) => {
+      bs.push(...(callback?.(node, path) || []));
+      if (bs.length) {
+        let s = bindings.length;
+        bindings.push(...bs);
+        map[path] = bs.map((_, i) => s + i);
+      }
+    },
+    stack
+  );
   return { bindings, map, events };
 };
 
-export const parse = (element, cb) => {
-  subscribers = new Set();
-  c = 0;
+export const apply = ({ bindings, map }, element, rootNode) => {
+  const dispatch = (node, path) => {
+    if (path in map) {
+      node.$meta = {
+        bindings: map[path].map((n) => ({ ...bindings[n] })).reverse(),
+        rootNode,
+      };
+    }
+  };
+  walk(element, dispatch);
+};
 
-  let stack = [];
+export const parse = (element, cb, stack = []) => {
+  subscribers = new Set();
 
   function dispatch(node, path) {
     let bindings = [];
@@ -245,24 +256,27 @@ export const parse = (element, cb) => {
         if (node.nodeName === 'TEMPLATE') {
           let each = parseEach(node);
 
-          if (each) {
-            stack.push(each);
+          if (!each) break;
 
-            let { key, prop } = last(stack);
-            let path = resolve(prop, stack);
-            let listId = listCount;
+          stack.push(each);
 
-            let binding = {
-              uid: key,
-              path,
-              listId,
-            };
+          let { key, prop } = last(stack);
+          let path = resolve(prop, stack);
+          let listId = listCount++;
 
-            callback([
-              {
-                ...binding,
-                type: LIST,
-                map: map(node.content, (_, xpath) => {
+          let binding = {
+            uid: key,
+            path,
+            listId,
+          };
+
+          callback([
+            {
+              ...binding,
+              type: LIST,
+              map: map(
+                node.content,
+                (_, xpath) => {
                   if (xpath.length === 2) {
                     // its a direct child of the template
                     return [
@@ -273,13 +287,14 @@ export const parse = (element, cb) => {
                       },
                     ];
                   }
-                }),
-              },
-            ]);
+                },
+                stack
+              ),
+            },
+          ]);
 
-            stack.pop();
-            listCount++;
-          }
+          stack.pop();
+          // listCount++;
         } else {
           parseElementNode(node, stack, callback);
         }
@@ -292,25 +307,4 @@ export const parse = (element, cb) => {
   walk(element, dispatch);
 
   return Array.from(subscribers);
-};
-
-export const apply = ({ bindings, map }, element, rootNode) => {
-  let i = -1;
-
-  const dispatch = (node) => {
-    i++;
-
-    if (i in map) {
-      node.$meta = {
-        bindings: map[i].map((n) => bindings[n]).reverse(),
-        rootNode,
-      };
-    }
-
-    if (node.nodeName === 'TEMPLATE' && node.hasAttribute('each')) {
-      walk(node.content, dispatch);
-    }
-  };
-
-  walk(element, dispatch);
 };

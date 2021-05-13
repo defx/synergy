@@ -13,9 +13,11 @@ import {
   kebabToPascal,
   resolve,
   getBinding,
+  isWhitespace,
 } from './helpers.js';
 import { cloneNode } from './cloneNode.js';
 import { compareKeyedLists } from './compareKeyedLists.js';
+import { apply } from './xbindings.js';
 
 const getListItems = (template) => {
   let node = template.nextSibling;
@@ -35,23 +37,30 @@ const getListItems = (template) => {
 /*
 
 @todo: 
-  - store the bindings map on the LIST node
-  - replace cloneNode with applyBindings
+  - replace nodes array with fragments
 
 */
 
-const updateList = (template, delta, binding) => {
-  console.log('UPDATELIST', binding);
+const clone = (template, binding) => {
+  let fragment = template.content.cloneNode(true);
+  apply(binding.map, fragment, template.$meta.rootNode);
+  let nodes = [];
+  for (let node of fragment.childNodes) {
+    if (!isWhitespace(node)) {
+      nodes.push(node);
+    }
+  }
+  return nodes;
+};
 
-  let itemNodes = Array.from(template.content.children);
+const updateList = (template, delta, binding) => {
   let listItems = getListItems(template);
   let fragment = document.createDocumentFragment();
 
   listItems.forEach(removeNodes);
 
   delta.forEach((i, newIndex) => {
-    let nodes = i === -1 ? itemNodes.map(cloneNode) : listItems[i];
-
+    let nodes = i === -1 ? clone(template, binding) : listItems[i];
     nodes.forEach((el) => {
       getBinding(el, LIST_ITEM).blockIndex = newIndex;
       fragment.appendChild(el);
@@ -144,8 +153,9 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
     return;
   }
 
-  if (binding.type === LIST_ITEM)
+  if (binding.type === LIST_ITEM) {
     return (ctx[binding.path] = binding.blockIndex);
+  }
 
   let oldValue = getPreviousValue(node, binding);
 
