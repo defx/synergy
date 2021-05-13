@@ -106,8 +106,6 @@ describe('events', () => {
 
     mount(html`<${name}></${name}>`);
 
-    console.log('?', $('article:nth-of-type(2) li'));
-
     $('article:nth-of-type(2) li').click(); //salvador dali painter
 
     await nextFrame();

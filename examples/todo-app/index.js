@@ -23,7 +23,6 @@ export const TodoApp = () => {
     todos: [],
     activeFilter: 'all',
     addTodo() {
-      console.log('ADD TODO!!!');
       let title = this.newTodo && this.newTodo.trim();
 
       this.todos.push({ title, id: Date.now() });

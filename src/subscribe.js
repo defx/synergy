@@ -33,8 +33,6 @@ export const subscribe = (rootNode, subscribers, proxy) => {
       (e) => {
         let binding = getEventBinding(rootNode, type, e.target);
 
-        console.log({ target: e.target, $meta: e.target.$meta, type, binding });
-
         if (!binding) return;
 
         if (binding.type === 'call') {
@@ -54,7 +52,6 @@ export const subscribe = (rootNode, subscribers, proxy) => {
         }
 
         if (binding.type === 'set') {
-          console.log(binding.realPath, inputValue(e.target), proxy);
           setValueAtPath(binding.realPath, inputValue(e.target), proxy);
         }
       },

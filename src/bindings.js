@@ -218,7 +218,6 @@ export const parse = (element, callback) => {
   let stack = [];
 
   function dispatch(node, path) {
-    console.log(node, path);
     switch (node.nodeType) {
       case node.TEXT_NODE: {
         parseTextNode(node.nodeValue, node, stack, callback);
