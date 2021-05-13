@@ -33,13 +33,17 @@ export const subscribe = (rootNode, subscribers, proxy) => {
       (e) => {
         let binding = getEventBinding(rootNode, type, e.target);
 
+        console.log({ target: e.target, $meta: e.target.$meta, type, binding });
+
         if (!binding) return;
 
         if (binding.type === 'call') {
           let args = binding.args
             ? binding.args
                 .map((v) => resolve(v, binding.ctx, proxy))
-                .map((v) => (v === binding.event ? e : getValueAtPath(v, proxy)))
+                .map((v) =>
+                  v === binding.event ? e : getValueAtPath(v, proxy)
+                )
             : [];
 
           let fn = proxy[binding.method](...args);
@@ -50,6 +54,7 @@ export const subscribe = (rootNode, subscribers, proxy) => {
         }
 
         if (binding.type === 'set') {
+          console.log(binding.realPath, inputValue(e.target), proxy);
           setValueAtPath(binding.realPath, inputValue(e.target), proxy);
         }
       },

@@ -17,7 +17,13 @@ describe('events', () => {
           artists: [
             {
               name: 'pablo picasso',
-              tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+              tags: [
+                'painter',
+                'sculptor',
+                'printmaker',
+                'ceramicist',
+                'theatre designer',
+              ],
             },
             {
               name: 'salvador dali',
@@ -61,7 +67,13 @@ describe('events', () => {
       artists: [
         {
           name: 'pablo picasso',
-          tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+          tags: [
+            'painter',
+            'sculptor',
+            'printmaker',
+            'ceramicist',
+            'theatre designer',
+          ],
         },
         {
           name: 'salvador dali',
@@ -94,6 +106,8 @@ describe('events', () => {
 
     mount(html`<${name}></${name}>`);
 
+    console.log('?', $('article:nth-of-type(2) li'));
+
     $('article:nth-of-type(2) li').click(); //salvador dali painter
 
     await nextFrame();
@@ -112,7 +126,13 @@ describe('events', () => {
       artists: [
         {
           name: 'pablo picasso',
-          tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+          tags: [
+            'painter',
+            'sculptor',
+            'printmaker',
+            'ceramicist',
+            'theatre designer',
+          ],
         },
         {
           name: 'salvador dali',

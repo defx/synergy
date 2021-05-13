@@ -209,7 +209,7 @@ function parseEach(node) {
 
 let listCount = 0;
 
-export const map = (template, callback, stack) => {
+export const map = (template, callback, stack, subscribers) => {
   let bindings = [];
   let map = {};
   let events = parse(
@@ -222,8 +222,12 @@ export const map = (template, callback, stack) => {
         map[path] = bs.map((_, i) => s + i);
       }
     },
-    stack
+    stack,
+    subscribers
   );
+  // oh, hahaha, this doesnt work because each parse resets subscribers...
+  // events.forEach((e) => subscribers.add(e));
+  //
   return { bindings, map, events };
 };
 
@@ -231,6 +235,15 @@ export const apply = ({ bindings, map }, element, rootNode) => {
   const dispatch = (node, path) => {
     if (path in map) {
       node.$meta = {
+        /* 
+        
+        reasons reverse is currently neccesary:
+
+        1: ensure ctx gets updated in the correct order
+
+          - this could be avoided by resolving individual paths up the tree instead of relying on ctx object
+        
+        */
         bindings: map[path].map((n) => ({ ...bindings[n] })).reverse(),
         rootNode,
       };
@@ -239,8 +252,16 @@ export const apply = ({ bindings, map }, element, rootNode) => {
   walk(element, dispatch);
 };
 
-export const parse = (element, cb, stack = []) => {
-  subscribers = new Set();
+/*
+
+so the problem here is that your missing the events for nested templates..
+
+but you can't just merge them into subscribers, because now your 
+
+*/
+
+export const parse = (element, cb, stack = [], x = new Set()) => {
+  subscribers = x;
 
   function dispatch(node, path) {
     let bindings = [];
@@ -288,7 +309,8 @@ export const parse = (element, cb, stack = []) => {
                     ];
                   }
                 },
-                stack
+                stack,
+                subscribers
               ),
             },
           ]);

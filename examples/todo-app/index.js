@@ -3,7 +3,8 @@ export const storage = {
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
 
-const html = (strings, ...values) => strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
+const html = (strings, ...values) =>
+  strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
 
 const filters = {
   all: (todos) => todos,
@@ -22,6 +23,7 @@ export const TodoApp = () => {
     todos: [],
     activeFilter: 'all',
     addTodo() {
+      console.log('ADD TODO!!!');
       let title = this.newTodo && this.newTodo.trim();
 
       this.todos.push({ title, id: Date.now() });
@@ -131,7 +133,12 @@ export const markup = html`
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
       <template each="todo in filteredTodos">
-        <li class="todo" is-done="{{todo.completed}}" editing="{{todo.editing}}" key="id">
+        <li
+          class="todo"
+          is-done="{{todo.completed}}"
+          editing="{{todo.editing}}"
+          key="id"
+        >
           <input class="toggle" type="checkbox" name="todo.completed" />
           <label ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
           <input
@@ -155,7 +162,11 @@ export const markup = html`
         </li>
       </template>
     </ul>
-    <button id="clearCompleted" hidden="{{ !numCompleted }}" onclick="removeCompleted()">
+    <button
+      id="clearCompleted"
+      hidden="{{ !numCompleted }}"
+      onclick="removeCompleted()"
+    >
       clear completed ({{ numCompleted }})
     </button>
   </footer>

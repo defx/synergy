@@ -154,6 +154,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
   }
 
   if (binding.type === LIST_ITEM) {
+    console.log(node, binding.path, binding.blockIndex);
     return (ctx[binding.path] = binding.blockIndex);
   }
 
@@ -169,6 +170,7 @@ const updateBinding = (binding, node, ctx, p, viewmodel) => {
         node.$meta.blockData,
         newValue
       );
+      // console.log(node, delta, binding, newValue);
       node.$meta.blockData = newValue;
       return delta && updateList(node, delta, binding);
     }
