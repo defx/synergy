@@ -15,7 +15,7 @@ import {
   getBinding,
   isWhitespace,
 } from './helpers.js';
-import { cloneNode } from './cloneNode.js';
+
 import { compareKeyedLists } from './compareKeyedLists.js';
 import { apply } from './xbindings.js';
 
