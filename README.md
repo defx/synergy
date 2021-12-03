@@ -50,7 +50,7 @@ You can find the Synergy documentation
 
 ```html
 <script type="module">
-  import { define } from "https://unpkg.com/synergy";
+  import { define } from "https://unpkg.com/synergy@6.0.0";
 
   define("hello-world", ({ name }) => ({ name }), "<p>Hello {{ name }}</p>");
 </script>
