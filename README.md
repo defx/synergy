@@ -35,7 +35,7 @@ You can also import Synergy directly in the browser via CDN:
 
 ```html
 <script type="module">
-  import { define } from "https://unpkg.com/synergy";
+  import { define } from "https://unpkg.com/synergy@6.0.0";
 </script>
 ```
 
