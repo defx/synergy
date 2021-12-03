@@ -131,35 +131,32 @@ export const markup = html`
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
-      <template each="todo in filteredTodos">
-        <li
-          class="todo"
-          is-done="{{todo.completed}}"
-          editing="{{todo.editing}}"
-          key="id"
-        >
-          <input class="toggle" type="checkbox" name="todo.completed" />
-          <label ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
-          <input
-            class="edit"
-            name="titleEdit"
-            onblur="saveEdit(todo)"
-            onkeydown="e => dispatchKeyDown(e, todo)"
-          />
-          <button class="delete" onclick="deleteTodo()">[delete]</button>
-        </li>
-      </template>
+      <li
+        class="todo"
+        is-done="{{todo.completed}}"
+        editing="{{todo.editing}}"
+        key="id"
+        each="todo in filteredTodos"
+      >
+        <input class="toggle" type="checkbox" name="todo.completed" />
+        <label ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
+        <input
+          class="edit"
+          name="titleEdit"
+          onblur="saveEdit(todo)"
+          onkeydown="e => dispatchKeyDown(e, todo)"
+        />
+        <button class="delete" onclick="deleteTodo()">[delete]</button>
+      </li>
     </ul>
   </main>
   <footer hidden="{{ !todos.length }}">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
-      <template each="filter in filters">
-        <li>
-          <input type="radio" name="activeFilter" value="{{filter}}" />
-          <label>{{ filter }}</label>
-        </li>
-      </template>
+      <li each="filter in filters">
+        <input type="radio" name="activeFilter" value="{{filter}}" />
+        <label>{{ filter }}</label>
+      </li>
     </ul>
     <button
       id="clearCompleted"
