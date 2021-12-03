@@ -1,25 +1,20 @@
-import { render } from './render.js';
-import { mergeSlots } from './mergeSlots.js';
-import { applyAttribute, attributeToProp, isPrimitive, pascalToKebab } from './helpers.js';
+import { render } from "./render.js";
+import { mergeSlots } from "./mergeSlots.js";
+import {
+  applyAttribute,
+  attributeToProp,
+  isPrimitive,
+  pascalToKebab,
+} from "./helpers.js";
 
-const wrap = (target, property, fn) => {
-  let o = target[property];
-  target[property] = function () {
-    fn(...arguments);
-    o?.apply(target, arguments);
-  };
-};
-
-export const define = (name, factory, template, options = {}) => {
+export const define = (name, factory, template, options = {}) =>
   customElements.define(
     name,
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
           let observedProps = new Set();
-          let self = this;
-
-          if (this.$initData) Object.assign(this, this.$initData);
+          let element = this;
 
           let x = factory(
             new Proxy(
@@ -28,14 +23,18 @@ export const define = (name, factory, template, options = {}) => {
                 get(_, prop) {
                   let attr = pascalToKebab(prop);
                   observedProps.add(prop);
-                  return (self.hasAttribute(attr) && self.getAttribute(attr)) || self[prop];
+                  return (
+                    (element.hasAttribute(attr) &&
+                      element.getAttribute(attr)) ||
+                    element[prop]
+                  );
                 },
               }
             ),
             this
           );
 
-          this.$ = x instanceof Promise ? await x : x;
+          this.$viewmodel = x instanceof Promise ? await x : x;
 
           observedProps = Array.from(observedProps);
 
@@ -45,12 +44,12 @@ export const define = (name, factory, template, options = {}) => {
           this.setAttribute = (k, v) => {
             if (observedAttributes.includes(k)) {
               let { name, value } = attributeToProp(k, v);
-              this.$[name] = value;
+              this.$viewmodel[name] = value;
             }
             sa.apply(this, [k, v]);
           };
 
-          let d = observedAttributes.reduce((o, name) => {
+          observedAttributes.forEach((name) => {
             let property = attributeToProp(name).name;
 
             let value;
@@ -58,16 +57,15 @@ export const define = (name, factory, template, options = {}) => {
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name);
             } else {
-              value = this[property] || this.$[property];
+              value = this[property] || this.$viewmodel[property];
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return this.$[property];
+                return this.$viewmodel[property];
               },
               set(v) {
-                this.$[property] = v;
-
+                this.$viewmodel[property] = v;
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v);
                 }
@@ -75,39 +73,36 @@ export const define = (name, factory, template, options = {}) => {
             });
 
             this[property] = value;
+          });
 
-            o[property] = value;
-            return o;
-          }, {});
-
-          let extras = {};
+          let beforeMountCallback;
 
           if (options.shadow) {
             this.attachShadow({
               mode: options.shadow,
             });
           } else {
-            extras.beforeMountCallback = (frag) => mergeSlots(this, frag);
+            beforeMountCallback = (frag) => mergeSlots(this, frag);
           }
 
-          wrap(this.$, 'updatedCallback', () => {
-            observedProps.forEach((k) => {
-              let v = this.$[k];
-              if (isPrimitive(v)) applyAttribute(this, k, v);
-            });
-          });
-
-          this.$ = render(this.shadowRoot || this, this.$, template, extras);
-
+          this.$viewmodel = render(
+            this.shadowRoot || this,
+            this.$viewmodel,
+            template,
+            () => {
+              observedProps.forEach((k) => {
+                let v = this.$viewmodel[k];
+                if (isPrimitive(v)) applyAttribute(this, k, v);
+              });
+            },
+            beforeMountCallback
+          );
           this.initialised = true;
-          this.$initData = d;
         }
-
-        this.$.connectedCallback?.(this.$);
+        this.$viewmodel.connectedCallback?.(this.$viewmodel);
       }
       disconnectedCallback() {
-        this.$?.disconnectedCallback?.(this.$);
+        this.$viewmodel?.disconnectedCallback?.(this.$viewmodel);
       }
     }
   );
-};

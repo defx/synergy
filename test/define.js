@@ -1,50 +1,50 @@
-describe('define', () => {
-  it('should define a custom element', () => {
+describe("define", () => {
+  it("should define a custom element", () => {
     let name = createName();
-    synergy.define(name, () => {}, '');
+    synergy.define(name, () => {}, "");
     assert.ok(customElements.get(name));
   });
 
-  it('should initialise factory with initial attributes', () => {
+  it("should initialise factory with initial attributes", () => {
     let name = createName();
     let factory = ({ title }) => ({ title });
-    synergy.define(name, factory, '<p>{{ title }}</p>');
+    synergy.define(name, factory, "<p>{{ title }}</p>");
     mount(`
       <${name} title="ok!"></${name}>
       `);
     let el = document.querySelector(name);
-    assert.equal(el.querySelector('p').textContent, 'ok!');
+    assert.equal(el.querySelector("p").textContent, "ok!");
   });
 
-  it('should accept template element', () => {
+  it("should accept template element", () => {
     let name = createName();
     let factory = ({ title }) => ({ title });
-    let template = document.createElement('template');
-    template.innerHTML = '<p>{{ title }}</p>';
+    let template = document.createElement("template");
+    template.innerHTML = "<p>{{ title }}</p>";
     synergy.define(name, factory, template);
     mount(`
       <${name} title="ok!"></${name}>
       `);
     let el = document.querySelector(name);
-    assert.equal(el.querySelector('p').textContent, 'ok!');
+    assert.equal(el.querySelector("p").textContent, "ok!");
   });
 
-  it('should reflect attribute changes on to viewmodel', async () => {
+  it("should reflect attribute changes on to viewmodel", async () => {
     let name = createName();
     let factory = ({ title }) => ({
       title,
     });
-    synergy.define(name, factory, '<p>{{ title }}</p>', {
-      observe: ['title'],
+    synergy.define(name, factory, "<p>{{ title }}</p>", {
+      observe: ["title"],
     });
     mount(`
       <${name} title="ok!"></${name}>
       `);
-    document.querySelector(name).setAttribute('title', 'foo!');
+    document.querySelector(name).setAttribute("title", "foo!");
     await nextFrame();
-    assert.equal(document.querySelector(`${name} p`).textContent, 'foo!');
+    assert.equal(document.querySelector(`${name} p`).textContent, "foo!");
   });
-  it('should reflect viewmodel changes back on to attributes', async () => {
+  it("should reflect viewmodel changes back on to attributes", async () => {
     let name = createName();
     let factory = ({ show }) => ({
       show,
@@ -57,7 +57,7 @@ describe('define', () => {
       factory,
       '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle()">toggle</button>',
       {
-        observe: ['show'],
+        observe: ["show"],
       }
     );
     mount(`
@@ -66,10 +66,10 @@ describe('define', () => {
     document.querySelector(`${name} button`).click();
     await nextFrame();
     let el = document.querySelector(name);
-    assert.ok(el.hasAttribute('show'));
+    assert.ok(el.hasAttribute("show"));
   });
 
-  it('should merge default slot', () => {
+  it("should merge default slot", () => {
     let name = createName();
     let factory = () => ({});
     synergy.define(
@@ -82,25 +82,27 @@ describe('define', () => {
           <${name}>world</${name}>
           `);
 
-    assert.equal($(`${name} p`).innerText.trim(), 'hello world!');
+    assert.equal($(`${name} p`).innerText.trim(), "hello world!");
   });
 
-  it('should merge named slots', () => {
+  it("should merge named slots", () => {
     let name = createName();
     let factory = () => ({});
     synergy.define(
       name,
       factory,
-      html`<p><slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot></p>`
+      html`<p>
+        <slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>
+      </p>`
     );
     mount(`
           <${name}><span slot="foo">!</span></${name}>
           `);
 
-    assert.equal($(`${name} p`).innerHTML.trim(), '<span>!</span>hello');
+    assert.equal($(`${name} p`).innerHTML.trim(), "<span>!</span>hello");
   });
 
-  it('should convert between kebab and pascal casing', async () => {
+  it("should convert between kebab and pascal casing", async () => {
     let name = createName();
     let factory = ({ fooBar }) => ({
       fooBar,
@@ -108,22 +110,27 @@ describe('define', () => {
         this.fooBar = !this.fooBar;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
-      observe: ['foo-bar'],
-    });
+    synergy.define(
+      name,
+      factory,
+      html`<button onclick="toggle()">ok</button>`,
+      {
+        observe: ["foo-bar"],
+      }
+    );
     mount(`
     <${name} foo-bar></${name}>
     `);
 
-    assert.equal($(name).getAttribute('foo-bar'), '');
+    assert.equal($(name).getAttribute("foo-bar"), "");
 
-    $('button').click();
+    $("button").click();
     await nextFrame();
 
-    assert.equal($(`${name}`).hasAttribute('foo-bar'), false);
+    assert.equal($(`${name}`).hasAttribute("foo-bar"), false);
   });
 
-  it('should account for aria string booleans', async () => {
+  it("should account for aria string booleans", async () => {
     let name = createName();
     let factory = ({ ariaHidden = false }) => ({
       ariaHidden,
@@ -131,19 +138,24 @@ describe('define', () => {
         this.ariaHidden = !this.ariaHidden;
       },
     });
-    synergy.define(name, factory, html`<button onclick="toggle()">ok</button>`, {
-      observe: ['aria-hidden'],
-    });
+    synergy.define(
+      name,
+      factory,
+      html`<button onclick="toggle()">ok</button>`,
+      {
+        observe: ["aria-hidden"],
+      }
+    );
     mount(`
     <${name} aria-hidden="false"></${name}>
     `);
 
-    $('button').click();
+    $("button").click();
     await nextFrame();
-    assert.equal($(`${name}`).getAttribute('aria-hidden'), 'true');
+    assert.equal($(`${name}`).getAttribute("aria-hidden"), "true");
   });
 
-  it('should forward lifecycle events', () => {
+  it("should forward lifecycle events", () => {
     let name = createName();
 
     let connected = false;
@@ -158,7 +170,7 @@ describe('define', () => {
         },
       };
     };
-    synergy.define(name, factory, '<template></template>');
+    synergy.define(name, factory, "<template></template>");
     mount(`
     <${name}></${name}>
     `);
@@ -168,7 +180,7 @@ describe('define', () => {
     assert.ok(disconnected);
   });
 
-  it('should optionally support shadow root', () => {
+  it("should optionally support shadow root", () => {
     let factory = () => ({});
 
     let template = html`
@@ -182,19 +194,18 @@ describe('define', () => {
       <slot></slot>
     `;
 
-    synergy.define('x-shadow', factory, template, {
-      shadow: 'open',
+    synergy.define("x-shadow", factory, template, {
+      shadow: "open",
     });
 
     mount(html`<x-shadow>hello shadow</x-shadow>`);
 
-    let node = document.querySelector('x-shadow');
+    let node = document.querySelector("x-shadow");
 
     assert.ok(node.shadowRoot);
-    assert.equal(node.shadowRoot.innerHTML, template);
   });
 
-  it('should accept rich data as properties', () => {
+  it("should accept rich data as properties", () => {
     let factory = ({ arr = [], obj = {} }) => ({
       arr,
       obj,
@@ -208,8 +219,8 @@ describe('define', () => {
       </template>
     `;
 
-    synergy.define('rich-props', factory, template, {
-      observe: ['arr', 'obj'],
+    synergy.define("rich-props", factory, template, {
+      observe: ["arr", "obj"],
     });
 
     let name = createName();
@@ -218,10 +229,10 @@ describe('define', () => {
       name,
       () => {
         return {
-          letters: 'synergy'.split(''),
+          letters: "synergy".split(""),
           library: {
-            org: 'synergyjs',
-            repo: 'defx/synergy',
+            org: "synergyjs",
+            repo: "defx/synergy",
           },
         };
       },
@@ -231,7 +242,7 @@ describe('define', () => {
     mount(html`<${name}></${name}>`);
   });
 
-  it('should reflect observed properties from viewmodel to element', async () => {
+  it("should reflect observed properties from viewmodel to element", async () => {
     let name = createName();
 
     synergy.define(
@@ -240,23 +251,23 @@ describe('define', () => {
         return {
           foo,
           updateFoo() {
-            this.foo = 'baz';
+            this.foo = "baz";
           },
         };
       },
       html` <p onclick="updateFoo()" foo="bar">{{ foo }}</p> `
     );
 
-    mount(`<${name}><${name}/>`);
+    mount(`<${name}></${name}>`);
 
     $(`${name} p`).click();
 
     await nextFrame();
 
-    assert.equal($(name).foo, 'baz');
+    assert.equal($(name).foo, "baz");
   });
 
-  it('should support async initialisation', async () => {
+  it("should support async initialisation", async () => {
     let name = createName();
 
     synergy.define(
@@ -264,18 +275,18 @@ describe('define', () => {
       () =>
         Promise.resolve().then(() => {
           return {
-            foo: 'bar',
+            foo: "bar",
           };
         }),
       html` <p>{{ foo }}</p> `
     );
 
-    mount(`<${name}><${name}/>`);
+    mount(`<${name}></${name}>`);
 
     assert.ok($(name));
-    assert.equal($(name).textContent.trim(), '');
+    assert.equal($(name).textContent.trim(), "");
 
     await nextFrame();
-    assert.equal($(name).innerText.trim(), 'bar');
+    assert.equal($(name).innerText.trim(), "bar");
   });
 });

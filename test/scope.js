@@ -1,25 +1,25 @@
-describe('context', () => {
+describe("scope", () => {
   let rootNode;
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
-  it('should observe context', () => {
+  it("should observe context", () => {
     let name = createName();
 
     let view = {
-      todo: 'feed the dog',
-      message: 'Hej!',
+      todo: "feed the dog",
+      message: "Hej!",
       todos: [
         {
-          title: 'walk the cat',
-          subtitle: 'ok',
-          colour: 'tomato',
+          title: "walk the cat",
+          subtitle: "ok",
+          colour: "tomato",
         },
         {
-          title: 'shampoo the dog',
-          subtitle: 'thanks',
-          colour: 'gold',
+          title: "shampoo the dog",
+          subtitle: "thanks",
+          colour: "gold",
         },
       ],
     };
@@ -43,24 +43,30 @@ describe('context', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('h1[first]').textContent.trim(), 'feed the dog');
-    assert.equal($('li p').textContent.trim(), 'walk the cat');
-    assert.equal($('li p:last-child').textContent.trim(), 'Hej!');
-    assert.equal($('h1[second]').textContent.trim(), 'feed the dog');
+    assert.equal($("h1[first]").textContent.trim(), "feed the dog");
+    assert.equal($("li p").textContent.trim(), "walk the cat");
+    assert.equal($("li p:last-child").textContent.trim(), "Hej!");
+    assert.equal($("h1[second]").textContent.trim(), "feed the dog");
   });
 
-  it('should support nested scopes', async () => {
+  it("should support nested scopes", async () => {
     let name = createName();
 
     let view = {
       artists: [
         {
-          name: 'pablo picasso',
-          tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+          name: "pablo picasso",
+          tags: [
+            "painter",
+            "sculptor",
+            "printmaker",
+            "ceramicist",
+            "theatre designer",
+          ],
         },
         {
-          name: 'salvador dali',
-          tags: ['painter', 'sculptor', 'photographer', 'writer'],
+          name: "salvador dali",
+          tags: ["painter", "sculptor", "photographer", "writer"],
         },
       ],
     };
@@ -86,10 +92,16 @@ describe('context', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('h4').textContent, view.artists[0].name);
-    assert.equal($$('article:nth-of-type(1) li').length, view.artists[0].tags.length);
-    assert.equal($$('article:nth-of-type(2) li').length, view.artists[1].tags.length);
-    assert.equal($('article:nth-of-type(1) li').textContent, 'painter 0:0');
-    assert.equal($('article:nth-of-type(2) li').textContent, 'painter 1:0');
+    assert.equal($("h4").textContent, view.artists[0].name);
+    assert.equal(
+      $$("article:nth-of-type(1) li").length,
+      view.artists[0].tags.length
+    );
+    assert.equal(
+      $$("article:nth-of-type(2) li").length,
+      view.artists[1].tags.length
+    );
+    assert.equal($("article:nth-of-type(1) li").textContent, "painter 0:0");
+    assert.equal($("article:nth-of-type(2) li").textContent, "painter 1:0");
   });
 });

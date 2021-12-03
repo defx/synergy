@@ -3,7 +3,8 @@ export const storage = {
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
 };
 
-const html = (strings, ...values) => strings.reduce((a, v, i) => a + v + (values[i] || ''), '');
+const html = (strings, ...values) =>
+  strings.reduce((a, v, i) => a + v + (values[i] || ""), "");
 
 const filters = {
   all: (todos) => todos,
@@ -20,7 +21,7 @@ export const TodoApp = () => {
   return {
     filters: Object.keys(filters),
     todos: [],
-    activeFilter: 'all',
+    activeFilter: "all",
     addTodo() {
       let title = this.newTodo && this.newTodo.trim();
 
@@ -39,7 +40,7 @@ export const TodoApp = () => {
         };
       });
       return () => {
-        e.target.parentNode.querySelector('.edit').focus();
+        e.target.parentNode.querySelector(".edit").focus();
       };
     },
     saveEdit(item) {
@@ -79,20 +80,20 @@ export const TodoApp = () => {
     },
     get itemsLeft() {
       const n = this.todos.filter(({ completed }) => !completed).length;
-      return `${n} item${n === 1 ? '' : 's'} left`;
+      return `${n} item${n === 1 ? "" : "s"} left`;
     },
     dispatchKeyDown(e, item) {
       switch (e.keyCode) {
         case KEYS.ESCAPE:
           item.editing = false;
-          this.titleEdit = '';
+          this.titleEdit = "";
           break;
         case KEYS.RETURN:
           this.saveEdit(item);
       }
     },
     updatedCallback() {
-      storage.set('todos', this.todos);
+      storage.set("todos", this.todos);
     },
   };
 };
@@ -131,7 +132,12 @@ export const markup = html`
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
       <template each="todo in filteredTodos">
-        <li class="todo" is-done="{{todo.completed}}" editing="{{todo.editing}}" key="id">
+        <li
+          class="todo"
+          is-done="{{todo.completed}}"
+          editing="{{todo.editing}}"
+          key="id"
+        >
           <input class="toggle" type="checkbox" name="todo.completed" />
           <label ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
           <input
@@ -155,7 +161,11 @@ export const markup = html`
         </li>
       </template>
     </ul>
-    <button id="clearCompleted" hidden="{{ !numCompleted }}" onclick="removeCompleted()">
+    <button
+      id="clearCompleted"
+      hidden="{{ !numCompleted }}"
+      onclick="removeCompleted()"
+    >
       clear completed ({{ numCompleted }})
     </button>
   </footer>

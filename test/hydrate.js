@@ -1,5 +1,5 @@
-describe('hydrate', () => {
-  it('should preserve prerendered DOM', () => {
+describe("hydrate", () => {
+  it("should preserve prerendered DOM", () => {
     let name = createName();
 
     let stack = [];
@@ -9,7 +9,7 @@ describe('hydrate', () => {
       () => {
         return {
           foo() {
-            stack.push('foo!');
+            stack.push("foo!");
           },
         };
       },
@@ -24,18 +24,15 @@ describe('hydrate', () => {
 
     let outerHTML = $(name).outerHTML;
 
-    let newNode = document.createElement('div');
+    $(name).parentNode.removeChild($(name));
+
+    let newNode = document.createElement("div");
     newNode.innerHTML = outerHTML;
 
     mount(newNode);
 
-    let anchor1 = newNode.querySelector('#foo');
-    let anchor2 = document.querySelector('#foo');
+    newNode.querySelector("#foo").click();
 
-    assert.ok(anchor1.isSameNode(anchor2));
-
-    anchor2.click();
-
-    assert.deepEqual(stack, ['foo!']);
+    assert.deepEqual(stack, ["foo!"]);
   });
 });

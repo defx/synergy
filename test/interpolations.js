@@ -1,10 +1,10 @@
-describe('attributes', () => {
+describe("interpolation", () => {
   let view, rootNode;
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
-  it('should always cast primitive values to strings, unless null or undefined', () => {
+  it("should always cast primitive values to strings, unless null or undefined", () => {
     let name = createName();
 
     let view = {
@@ -12,8 +12,8 @@ describe('attributes', () => {
       undefined: undefined,
       null: null,
       number: 0,
-      string: 'string',
-      foo: 'bar',
+      string: "string",
+      foo: "bar",
     };
 
     synergy.define(
@@ -34,19 +34,19 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('#boolean').textContent, 'false');
-    assert.equal($('#undefined').textContent, '');
-    assert.equal($('#null').textContent, '');
-    assert.equal($('#number').textContent, '0');
-    assert.equal($('#string').textContent, 'string');
+    assert.equal($("#boolean").textContent, "false");
+    assert.equal($("#undefined").textContent, "");
+    assert.equal($("#null").textContent, "");
+    assert.equal($("#number").textContent, "0");
+    assert.equal($("#string").textContent, "string");
   });
 
-  it('should support multiple bindings', () => {
+  it("should support multiple bindings", () => {
     let name = createName();
 
     let view = {
-      c1: 'red',
-      c2: 'green',
+      c1: "red",
+      c2: "green",
     };
 
     synergy.define(
@@ -59,14 +59,14 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('p').textContent, 'red + green');
+    assert.equal($("p").textContent, "red + green");
   });
 
-  it('should apply all the values', () => {
+  it("should apply all the values", () => {
     let name = createName();
 
     let view = {
-      classes: ['one', 'two', 'three'],
+      classes: ["one", "two", "three"],
     };
 
     synergy.define(
@@ -79,10 +79,10 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('section').className, 'one two three');
+    assert.equal($("section").className, "one two three");
   });
 
-  it('should apply all the keys with truthy values', () => {
+  it("should apply all the keys with truthy values", () => {
     let name = createName();
 
     let view = {
@@ -91,8 +91,8 @@ describe('attributes', () => {
         two: false,
         three: {},
         four: null,
-        five: '',
-        six: 'ok',
+        five: "",
+        six: "ok",
       },
     };
 
@@ -106,10 +106,10 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('section').className, 'one three six');
+    assert.equal($("section").className, "one three six");
   });
 
-  it('should apply styles', () => {
+  it("should apply styles", () => {
     let name = createName();
 
     let view = {
@@ -132,12 +132,12 @@ describe('attributes', () => {
     mount(html`<${name}></${name}>`);
 
     assert.equal(
-      $('section').getAttribute('style'),
-      'background-color: gold; color: tomato; width: 100px; height: 100px;'
+      $("section").getAttribute("style"),
+      "background-color: gold; color: tomato; width: 100px; height: 100px;"
     );
   });
 
-  it('should preserve browser styles', async () => {
+  it("should preserve browser styles", async () => {
     let name = createName();
 
     synergy.define(
@@ -157,9 +157,11 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    $('section').style.opacity = '0.5';
+    $("section").style.opacity = "0.5";
 
-    assert.ok($('section').getAttribute('style').includes('background-color: gold;'));
+    assert.ok(
+      $("section").getAttribute("style").includes("background-color: gold;")
+    );
 
     $(name).foo = `
       background-color: tomato;
@@ -170,20 +172,22 @@ describe('attributes', () => {
 
     await nextFrame();
 
-    assert.ok($('section').getAttribute('style').includes('background-color: tomato;'));
+    assert.ok(
+      $("section").getAttribute("style").includes("background-color: tomato;")
+    );
 
-    assert.ok($('section').getAttribute('style').includes('opacity: 0.5;'));
+    assert.ok($("section").getAttribute("style").includes("opacity: 0.5;"));
   });
 
-  it('should apply styles (Object / kebab)', () => {
+  it("should apply styles (Object / kebab)", () => {
     let name = createName();
 
     let view = {
       foo: {
-        'background-color': 'gold',
-        color: 'tomato',
-        width: '100px',
-        height: '100px',
+        "background-color": "gold",
+        color: "tomato",
+        width: "100px",
+        height: "100px",
       },
     };
 
@@ -198,20 +202,20 @@ describe('attributes', () => {
     mount(html`<${name}></${name}>`);
 
     assert.equal(
-      $('section').getAttribute('style'),
-      'background-color: gold; color: tomato; width: 100px; height: 100px;'
+      $("section").getAttribute("style"),
+      "background-color: gold; color: tomato; width: 100px; height: 100px;"
     );
   });
 
-  it('should apply styles (Object / pascal)', () => {
+  it("should apply styles (Object / pascal)", () => {
     let name = createName();
 
     let view = {
       foo: {
-        backgroundColor: 'gold',
-        color: 'tomato',
-        width: '100px',
-        height: '100px',
+        backgroundColor: "gold",
+        color: "tomato",
+        width: "100px",
+        height: "100px",
       },
     };
 
@@ -226,17 +230,17 @@ describe('attributes', () => {
     mount(html`<${name}></${name}>`);
 
     assert.equal(
-      $('section').getAttribute('style'),
-      'background-color: gold; color: tomato; width: 100px; height: 100px;'
+      $("section").getAttribute("style"),
+      "background-color: gold; color: tomato; width: 100px; height: 100px;"
     );
   });
 
-  it('should allow whitespace formatting', () => {
+  it("should allow whitespace formatting", () => {
     let name = createName();
 
     let view = {
-      c1: 'red',
-      c2: 'green',
+      c1: "red",
+      c2: "green",
     };
 
     synergy.define(
@@ -249,11 +253,11 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('p').getAttribute('name'), 'red');
-    assert.equal($('p').textContent, 'green');
+    assert.equal($("p").getAttribute("name"), "red");
+    assert.equal($("p").textContent, "green");
   });
 
-  it('should support negation', async () => {
+  it("should support negation", async () => {
     let name = createName();
 
     synergy.define(
@@ -266,20 +270,20 @@ describe('attributes', () => {
 
     mount(html`<${name} foo></${name}>`);
 
-    assert.notOk($('p').hidden);
+    assert.notOk($("p").hidden);
 
     $(name).foo = false;
 
     await nextFrame();
 
-    assert.ok($('p').hidden);
+    assert.ok($("p").hidden);
   });
 
-  it('should support square brackets', () => {
+  it("should support square brackets", () => {
     let name = createName();
 
     let view = {
-      columns: ['one', 'two', 'three'],
+      columns: ["one", "two", "three"],
       rows: [
         {
           one: 1,
@@ -311,8 +315,8 @@ describe('attributes', () => {
           </template>
           <template each="row in rows">
             <tr>
-              <template each="column in columns">
-                <td>{{ row[column] }}</td>
+              <template each="col in columns">
+                <td>{{ row[col] }}</td>
               </template>
             </tr>
           </template>
@@ -322,28 +326,26 @@ describe('attributes', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($$('th').length, 3);
-    assert.equal($$('tr').length, 3);
+    assert.equal($$("th").length, 3);
+    assert.equal($$("tr").length, 3);
     assert.deepEqual(
-      $$('tr').map((v) => v.textContent.trim()),
-      ['123', '321', '132']
+      $$("td").map((v) => v.textContent.trim()),
+      ["1", "2", "3", "3", "2", "1", "1", "3", "2"]
     );
   });
 
-  it('should support function invocation', () => {
+  it("should support function invocation", () => {
     let name = createName();
-
-    let view = {
-      items: [1, 2, 3],
-      isSecond(item) {
-        return item === this.items[1] ? 'page' : null;
-      },
-    };
 
     synergy.define(
       name,
       () => {
-        return view;
+        return {
+          items: [1, 2, 3],
+          isSecond(item) {
+            return item === this.items[1] ? "page" : null;
+          },
+        };
       },
       html`
         <ul>
@@ -359,14 +361,14 @@ describe('attributes', () => {
     assert.equal($$('a[aria-current="page"]').length, 1);
   });
 
-  it('should support nested function invocation', () => {
+  it("should support nested function invocation", () => {
     let name = createName();
 
     let view = {
       foo: {
         items: [1, 2, 3],
         isSecond(item) {
-          return item === this.items[1] ? 'page' : null;
+          return item === this.items[1] ? "page" : null;
         },
       },
     };

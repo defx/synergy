@@ -7,7 +7,7 @@ const childNodes = (node) => {
 };
 
 export const mergeSlots = (targetNode, sourceNode) => {
-  let namedSlots = sourceNode.querySelectorAll('slot[name]');
+  let namedSlots = sourceNode.querySelectorAll("slot[name]");
 
   namedSlots.forEach((slot) => {
     let name = slot.attributes.name.value;
@@ -16,11 +16,11 @@ export const mergeSlots = (targetNode, sourceNode) => {
       slot.parentNode.replaceChild(childNodes(slot), slot);
       return;
     }
-    node.removeAttribute('slot');
+    node.removeAttribute("slot");
     slot.parentNode.replaceChild(node, slot);
   });
 
-  let defaultSlot = sourceNode.querySelector('slot:not([name])');
+  let defaultSlot = sourceNode.querySelector("slot:not([name])");
 
   if (defaultSlot) {
     defaultSlot.parentNode.replaceChild(

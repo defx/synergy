@@ -1,14 +1,14 @@
-describe('user input', () => {
+describe("user input", () => {
   let rootNode;
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
-  it('should bind the value to the named property', () => {
+  it("should bind the value to the named property", () => {
     let name = createName();
 
     let view = {
-      message: '?',
+      message: "?",
     };
 
     synergy.define(
@@ -16,20 +16,21 @@ describe('user input', () => {
       () => {
         return view;
       },
-      html`<input name="message" /> the message is: <span class="message">{{message}}</span>`
+      html`<input name="message" /> the message is:
+        <span class="message">{{message}}</span>`
     );
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('span.message').textContent, '?');
+    assert.equal($("span.message").textContent, "?");
   });
 
-  it('should bind the value to the named property (nested)', () => {
+  it("should bind the value to the named property (nested)", () => {
     let name = createName();
 
     let view = {
       nested: {
-        message: '??',
+        message: "??",
       },
     };
 
@@ -47,20 +48,20 @@ describe('user input', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('span.message').textContent, '??');
+    assert.equal($("span.message").textContent, "??");
   });
 
-  it('should bind the value to the named + scoped property', () => {
+  it("should bind the value to the named + scoped property", () => {
     let name = createName();
 
     let view = {
       todos: [
         {
-          title: 'feed the cat',
+          title: "feed the cat",
           done: true,
         },
         {
-          title: 'walk the dog',
+          title: "walk the dog",
         },
       ],
     };
@@ -84,30 +85,33 @@ describe('user input', () => {
 
     mount(html`<${name}></${name}>`);
 
-    const li = $$('li');
+    const li = $$("li");
 
-    assert.equal(li[0].querySelector('input').checked, true);
-    assert.equal(li[1].querySelector('input').checked, false);
+    assert.equal(li[0].querySelector("input").checked, true);
+    assert.equal(li[1].querySelector("input").checked, false);
   });
 
-  it('should check the correct radio button', () => {
+  it("should check the correct radio button", () => {
     let name = createName();
-
-    let view = {
-      filter: 'active',
-    };
 
     synergy.define(
       name,
       () => {
-        return view;
+        return {
+          filter: "active",
+        };
       },
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input type="radio" name="filter" value="complete" id="filter.complete" />
+        <input
+          type="radio"
+          name="filter"
+          value="complete"
+          id="filter.complete"
+        />
         <label for="filter.complete">complete</label>
       `
     );
@@ -115,10 +119,10 @@ describe('user input', () => {
     mount(html`<${name}></${name}>`);
 
     let checked = $(`input[type="radio"]:checked`);
-    assert.equal(checked.value, 'active');
+    assert.equal(checked.value, "active");
   });
 
-  it('should check the correct radio button', () => {
+  it("should check the correct radio button", () => {
     let name = createName();
 
     let view = {};
@@ -133,7 +137,12 @@ describe('user input', () => {
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input type="radio" name="filter" value="complete" id="filter.complete" />
+        <input
+          type="radio"
+          name="filter"
+          value="complete"
+          id="filter.complete"
+        />
         <label for="filter.complete">complete</label>
       `
     );
@@ -144,11 +153,11 @@ describe('user input', () => {
     assert.equal(checked, null);
   });
 
-  it('should reflect the correct radio button', async () => {
+  it("should reflect the correct radio button", async () => {
     let name = createName();
 
     let view = {
-      filter: 'active',
+      filter: "active",
     };
 
     synergy.define(
@@ -161,7 +170,12 @@ describe('user input', () => {
         <label for="filter.all">all</label>
         <input type="radio" name="filter" value="active" id="filter.active" />
         <label for="filter.active">active</label>
-        <input type="radio" name="filter" value="complete" id="filter.complete" />
+        <input
+          type="radio"
+          name="filter"
+          value="complete"
+          id="filter.complete"
+        />
         <label for="filter.complete">complete</label>
       `
     );
@@ -170,14 +184,14 @@ describe('user input', () => {
 
     $(`input[type="radio"][value="complete"]`).click();
     await nextFrame();
-    assert.equal(view.filter, 'complete');
+    assert.equal(view.filter, "complete");
   });
 
-  it('should select the correct option', () => {
+  it("should select the correct option", () => {
     let name = createName();
 
     let view = {
-      pets: 'hamster',
+      pets: "hamster",
     };
 
     synergy.define(
@@ -201,14 +215,14 @@ describe('user input', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('select option:checked').value, 'hamster');
+    assert.equal($("select option:checked").value, "hamster");
   });
 
-  it('should select multiple', () => {
+  it("should select multiple", () => {
     let name = createName();
 
     let view = {
-      pets: ['dog', 'hamster'],
+      pets: ["dog", "hamster"],
     };
 
     synergy.define(
@@ -233,17 +247,17 @@ describe('user input', () => {
     mount(html`<${name}></${name}>`);
 
     assert.deepEqual(
-      $$('select option:checked').map((option) => option.value),
-      ['dog', 'hamster']
+      $$("select option:checked").map((option) => option.value),
+      ["dog", "hamster"]
     );
   });
 
-  it('should reflect selected option', async () => {
+  it("should reflect selected option", async () => {
     let name = createName();
 
     synergy.define(
       name,
-      ({ pets = ['hamster'] }) => {
+      ({ pets = ["hamster"] }) => {
         return {
           pets,
         };
@@ -264,24 +278,24 @@ describe('user input', () => {
 
     mount(html`<${name}></${name}>`);
 
-    $('#pet-select').value = 'parrot';
+    $("#pet-select").value = "parrot";
 
-    $('#pet-select').dispatchEvent(
-      new Event('input', {
+    $("#pet-select").dispatchEvent(
+      new Event("input", {
         bubbles: true,
       })
     );
 
     await nextFrame();
 
-    assert.deepEqual($(name).pets, ['parrot']);
+    assert.deepEqual($(name).pets, "parrot");
   });
 
-  it('should bind the named textarea', () => {
+  it("should bind the named textarea", () => {
     let name = createName();
 
     let view = {
-      text: 'ok',
+      text: "ok",
     };
 
     synergy.define(
@@ -294,6 +308,6 @@ describe('user input', () => {
 
     mount(html`<${name}></${name}>`);
 
-    assert.equal($('textarea').value, 'ok');
+    assert.equal($("textarea").value, "ok");
   });
 });

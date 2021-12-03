@@ -1,9 +1,9 @@
-import { typeOf } from './helpers.js';
+import { typeOf } from "./helpers.js";
 
-export const wrapProxy = (root, callbackAny) => {
+export const proxy = (root, callback) => {
   let proxyCache = new WeakMap();
 
-  function proxy(target, handler) {
+  function createProxy(target, handler) {
     let proxy = proxyCache.get(target);
     if (proxy === undefined) {
       proxy = new Proxy(target, handler);
@@ -14,8 +14,8 @@ export const wrapProxy = (root, callbackAny) => {
 
   const handler = {
     get(target, property) {
-      if (['Object', 'Array'].includes(typeOf(target[property]))) {
-        return proxy(target[property], handler);
+      if (["Object", "Array"].includes(typeOf(target[property]))) {
+        return createProxy(target[property], handler);
       } else {
         return Reflect.get(...arguments);
       }
@@ -23,11 +23,11 @@ export const wrapProxy = (root, callbackAny) => {
     set(target, property, value) {
       if (value === target[property]) return true;
 
-      callbackAny();
+      callback();
       return Reflect.set(...arguments);
     },
     deleteProperty() {
-      callbackAny();
+      callback();
       return Reflect.deleteProperty(...arguments);
     },
   };
