@@ -24,7 +24,6 @@ export const TodoApp = () => {
     activeFilter: "all",
     addTodo() {
       let title = this.newTodo && this.newTodo.trim();
-
       this.todos.push({ title, id: Date.now() });
       this.newTodo = null;
     },
@@ -47,6 +46,7 @@ export const TodoApp = () => {
       if (!item.editing) return;
 
       item.editing = false;
+
       let title = String(this.titleEdit);
 
       if (!title.trim()) {

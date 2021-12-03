@@ -67,12 +67,13 @@ export const render = (
       node.addEventListener("input", () => {
         let value =
           node.getAttribute("type") === "checkbox" ? node.checked : node.value;
-        if (!isNaN(value)) value = +value;
+
+        if (value.trim?.().length && !isNaN(value)) value = +value;
         setValueAtPath(path, value, model);
       });
       return {
         handler: () => {
-          let a = node.value;
+          // let a = node.value;
           let b = getValueAtPath(path, model);
           updateFormControl(node, b);
         },

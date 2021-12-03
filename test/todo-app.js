@@ -257,6 +257,7 @@ describe("Todo List", () => {
 
     it("should remove the item if an empty text string was entered", async () => {
       await addTodo("walk the dog");
+
       app.todoLabels[0].dispatchEvent(
         new Event("dblclick", {
           bubbles: true,

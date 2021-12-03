@@ -39,6 +39,7 @@ const nextNonWhitespaceSibling = (node) => {
 
 const getBlockFragments = (template, numBlocks) => {
   let blockSize = getBlockSize(template);
+
   let r = [];
   if (numBlocks) {
     while (numBlocks--) {
@@ -72,7 +73,8 @@ export const getBlocks = (template, numBlocks) => {
 };
 
 export const updateList = (template, delta, arr, createListItem) => {
-  let blocks = getBlockFragments(template, delta.filter((n) => n >= 0).length);
+  let n = template.getAttribute("length") || 0;
+  let blocks = getBlockFragments(template, n);
   let t = template;
 
   delta.forEach((i, newIndex) => {
@@ -81,4 +83,6 @@ export const updateList = (template, delta, arr, createListItem) => {
     t.after(frag);
     t = x;
   });
+
+  template.setAttribute("length", delta.length);
 };
