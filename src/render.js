@@ -8,6 +8,7 @@ import {
   last,
   setValueAtPath,
   walk,
+  typeOf,
 } from "./helpers.js";
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js";
 import { proxy } from "./proxy.js";
@@ -113,16 +114,29 @@ export const render = (
         let wrapper = new Proxy(model, {
           get(_, property) {
             if (property === identifier) {
-              return getValueAtPath(path, model)?.find((v, n) => {
-                if (key) return v[key] === k;
-                return n === i;
-              });
+              let x = getValueAtPath(path, model);
+
+              for (let n in x) {
+                let v = x[n];
+                if (key) {
+                  if (v[key] === k) return v;
+                } else {
+                  if (+n === i) return v;
+                }
+              }
             }
+
             if (property === index) {
-              return getValueAtPath(path, model)?.findIndex((v, n) => {
-                if (key) return v[key] === k;
-                return n === i;
-              });
+              let x = getValueAtPath(path, model);
+
+              for (let n in x) {
+                let v = x[n];
+                if (key) {
+                  if (v[key] === k) return n;
+                } else {
+                  if (+n === i) return n;
+                }
+              }
             }
             return Reflect.get(...arguments);
           },
@@ -150,10 +164,11 @@ export const render = (
       let pickupNode;
 
       if (hydrate) {
-        let arr = getValueAtPath(path, model);
-        let blocks = getBlocks(node, arr.length);
+        let x = getValueAtPath(path, model);
+        let length = typeOf(x) === "Object" ? Object.keys(x).length : x.length;
+        let blocks = getBlocks(node, length);
         blocks.forEach((block, i) => {
-          let datum = arr[i];
+          let datum = x[i];
           let k = datum[key];
           initialiseBlock(block[0], i, k, last(block).nextSibling);
         });
@@ -163,6 +178,12 @@ export const render = (
       return {
         handler: () => {
           let newValue = getValueAtPath(path, model);
+          /* 
+          
+          ??
+          
+          */
+          if (typeOf(newValue) === "Object") newValue = Object.values(newValue);
           const delta = compareKeyedLists(key, oldValue, newValue);
 
           if (delta) {

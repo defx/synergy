@@ -323,4 +323,36 @@ describe("iterations", () => {
       assert.equal(li.querySelector("p").textContent, todos[i].title);
     });
   });
+
+  it("works with Objects too", () => {
+    let name = createName();
+
+    let view = {
+      foo: {
+        0: 25,
+        1: 38,
+        2: 19,
+        3: 10,
+        4: 8,
+      },
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html` <p each="(v, k) in foo">{{ k }} : {{ v }}</p> `
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    let nodes = $$("p");
+
+    assert.equal(nodes.length, Object.keys(view.foo).length);
+
+    Object.entries(view.foo).forEach(([k, v], i) => {
+      assert.equal(nodes[i].textContent, `${k} : ${v}`);
+    });
+  });
 });
