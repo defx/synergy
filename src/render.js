@@ -121,7 +121,7 @@ export const render = (
                 if (key) {
                   if (v[key] === k) return v;
                 } else {
-                  if (+n === i) return v;
+                  if (n == i) return v;
                 }
               }
             }
@@ -134,7 +134,7 @@ export const render = (
                 if (key) {
                   if (v[key] === k) return n;
                 } else {
-                  if (+n === i) return n;
+                  if (n == i) return n;
                 }
               }
             }
