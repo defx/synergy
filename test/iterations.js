@@ -61,7 +61,7 @@ describe("iterations", () => {
       },
       html`
         <ul>
-          <template each="(colour, index) in colours">
+          <template each="(index, colour) in colours">
             <li data-index="{{ index }}">
               <p>{{ index }}</p>
               <p>{{ colour }}</p>
@@ -334,17 +334,16 @@ describe("iterations", () => {
         2: 19,
         3: 10,
         4: 8,
+        foo: "bar",
       },
     };
-
-    view.foo.foo = "bar";
 
     synergy.define(
       name,
       () => {
         return view;
       },
-      html` <p each="(v, k) in foo">{{ k }} : {{ v }}</p> `
+      html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
     );
 
     mount(html`<${name}></${name}>`);

@@ -77,11 +77,11 @@ describe("scope", () => {
         return view;
       },
       html`
-        <template each="(artist, i) in artists">
+        <template each="(i, artist) in artists">
           <article>
             <h4>{{artist.name}}</h4>
             <ul>
-              <template each="(tag, j) in artist.tags">
+              <template each="(j, tag) in artist.tags">
                 <li>{{tag}} {{i}}:{{j}}</li>
               </template>
             </ul>

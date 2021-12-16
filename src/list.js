@@ -6,14 +6,12 @@ export function parseEach(node) {
   if (!m) return;
   let [_, left, right] = m;
   let parts = left.match(/\(([^\)]+)\)/);
-  let [identifier, index] = (parts ? parts[1].split(",") : [left]).map((v) =>
-    v.trim()
-  );
+  let [a, b] = (parts ? parts[1].split(",") : [left]).map((v) => v.trim());
 
   return {
     path: right.trim(),
-    identifier,
-    index,
+    identifier: b ? b : a,
+    index: b ? a : b,
     key: node.getAttribute("key"),
   };
 }
