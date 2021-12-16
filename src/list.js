@@ -18,13 +18,6 @@ export function parseEach(node) {
   };
 }
 
-export const compareKeyedLists = (key, a = [], b = []) => {
-  let delta = b.map((item, i) =>
-    !key ? (i in a ? i : -1) : a.findIndex((v) => v[key] === item[key])
-  );
-  if (a.length !== b.length || !delta.every((a, b) => a === b)) return delta;
-};
-
 const getBlockSize = (template) => {
   let i = 0;
   walk(template.content.firstChild, () => i++, false);
@@ -72,13 +65,23 @@ export const getBlocks = (template, numBlocks) => {
   return r;
 };
 
-export const updateList = (template, delta, arr, createListItem) => {
+export const compareKeyedLists = (key, a = [], b = []) => {
+  let delta = b.map(([k, item]) =>
+    !key ? (k in a ? k : -1) : a.findIndex(([_, v]) => v[key] === item[key])
+  );
+  if (a.length !== b.length || !delta.every((a, b) => a === b)) return delta;
+};
+
+export const updateList = (template, delta, entries, createListItem) => {
   let n = template.getAttribute("length") || 0;
   let blocks = getBlockFragments(template, n);
   let t = template;
 
   delta.forEach((i, newIndex) => {
-    let frag = i === -1 ? createListItem(arr[newIndex], newIndex) : blocks[i];
+    let frag =
+      i === -1
+        ? createListItem(entries[newIndex][1], entries[newIndex][0])
+        : blocks[i];
     let x = frag.lastChild;
     t.after(frag);
     t = x;

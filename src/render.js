@@ -118,6 +118,7 @@ export const render = (
 
               for (let n in x) {
                 let v = x[n];
+
                 if (key) {
                   if (v[key] === k) return v;
                 } else {
@@ -177,19 +178,11 @@ export const render = (
 
       return {
         handler: () => {
-          let newValue = getValueAtPath(path, model);
-          /* 
-          
-          ??
-          
-          */
-          if (typeOf(newValue) === "Object") newValue = Object.values(newValue);
+          const newValue = Object.entries(getValueAtPath(path, model) || []);
           const delta = compareKeyedLists(key, oldValue, newValue);
-
           if (delta) {
             updateList(node, delta, newValue, createListItem);
           }
-
           oldValue = newValue.slice(0);
         },
         pickupNode,

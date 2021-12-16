@@ -337,6 +337,8 @@ describe("iterations", () => {
       },
     };
 
+    view.foo.foo = "bar";
+
     synergy.define(
       name,
       () => {
