@@ -124,44 +124,44 @@ export const markup = html`
       autocomplete="off"
       placeholder="What needs to be done?"
       name="newTodo"
-      onkeydown="addTodo()"
+      :onkeydown="addTodo()"
     />
   </header>
-  <main hidden="{{ !todos.length }}">
+  <main :hidden="{{ !todos.length }}">
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" name="allDone" />
     <ul>
       <li
         class="todo"
-        is-done="{{todo.completed}}"
-        editing="{{todo.editing}}"
+        :is-done="{{todo.completed}}"
+        :editing="{{todo.editing}}"
         key="id"
         each="todo in filteredTodos"
       >
         <input class="toggle" type="checkbox" name="todo.completed" />
-        <label ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
+        <label :ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
         <input
           class="edit"
           name="titleEdit"
-          onblur="saveEdit(todo)"
-          onkeydown="e => dispatchKeyDown(e, todo)"
+          :onblur="saveEdit(todo)"
+          :onkeydown="e => dispatchKeyDown(e, todo)"
         />
-        <button class="delete" onclick="deleteTodo()">[delete]</button>
+        <button class="delete" :onclick="deleteTodo()">[delete]</button>
       </li>
     </ul>
   </main>
-  <footer hidden="{{ !todos.length }}">
+  <footer :hidden="{{ !todos.length }}">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
       <li each="filter in filters">
-        <input type="radio" name="activeFilter" value="{{filter}}" />
+        <input type="radio" name="activeFilter" :value="{{filter}}" />
         <label>{{ filter }}</label>
       </li>
     </ul>
     <button
       id="clearCompleted"
-      hidden="{{ !numCompleted }}"
-      onclick="removeCompleted()"
+      :hidden="{{ !numCompleted }}"
+      :onclick="removeCompleted()"
     >
       clear completed ({{ numCompleted }})
     </button>

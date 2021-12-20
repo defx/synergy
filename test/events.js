@@ -1,11 +1,11 @@
-describe('events', () => {
+describe("events", () => {
   let rootNode;
 
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`);
   });
 
-  it('should support invocation of named function with parentheses but without arguments', async () => {
+  it("should support invocation of named function with parentheses but without arguments", async () => {
     let args;
 
     let name = createName();
@@ -16,12 +16,18 @@ describe('events', () => {
         return {
           artists: [
             {
-              name: 'pablo picasso',
-              tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+              name: "pablo picasso",
+              tags: [
+                "painter",
+                "sculptor",
+                "printmaker",
+                "ceramicist",
+                "theatre designer",
+              ],
             },
             {
-              name: 'salvador dali',
-              tags: ['painter', 'sculptor', 'photographer', 'writer'],
+              name: "salvador dali",
+              tags: ["painter", "sculptor", "photographer", "writer"],
             },
           ],
           foo(...argz) {
@@ -30,29 +36,25 @@ describe('events', () => {
         };
       },
       html`
-        <template each="artist in artists">
-          <article>
-            <h4>{{artist.name}}</h4>
-            <ul>
-              <template each="tag in artist.tags">
-                <li onclick="foo()">{{tag}}</li>
-              </template>
-            </ul>
-          </article>
-        </template>
+        <article each="artist in artists">
+          <h4>{{artist.name}}</h4>
+          <ul>
+            <li each="tag in artist.tags" :onclick="foo()">{{tag}}</li>
+          </ul>
+        </article>
       `
     );
 
     mount(html`<${name}></${name}>`);
 
-    $('article:nth-of-type(2) li').click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click(); //salvador dali painter
 
     await nextFrame();
 
     assert.deepEqual(args.length, 0);
   });
 
-  it('should support scoped arguments', async () => {
+  it("should support scoped arguments", async () => {
     let args;
 
     let name = createName();
@@ -60,12 +62,18 @@ describe('events', () => {
     let view = {
       artists: [
         {
-          name: 'pablo picasso',
-          tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+          name: "pablo picasso",
+          tags: [
+            "painter",
+            "sculptor",
+            "printmaker",
+            "ceramicist",
+            "theatre designer",
+          ],
         },
         {
-          name: 'salvador dali',
-          tags: ['painter', 'sculptor', 'photographer', 'writer'],
+          name: "salvador dali",
+          tags: ["painter", "sculptor", "photographer", "writer"],
         },
       ],
       foo(...argz) {
@@ -79,22 +87,20 @@ describe('events', () => {
         return view;
       },
       html`
-        <template each="artist in artists">
-          <article>
-            <h4>{{artist.name}}</h4>
-            <ul>
-              <template each="tag in artist.tags">
-                <li onclick="foo(tag,artist)">{{tag}}</li>
-              </template>
-            </ul>
-          </article>
-        </template>
+        <article each="artist in artists">
+          <h4>{{artist.name}}</h4>
+          <ul>
+            <li each="tag in artist.tags" :onclick="foo(tag,artist)">
+              {{tag}}
+            </li>
+          </ul>
+        </article>
       `
     );
 
     mount(html`<${name}></${name}>`);
 
-    $('article:nth-of-type(2) li').click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click(); //salvador dali painter
 
     await nextFrame();
 
@@ -102,21 +108,27 @@ describe('events', () => {
     assert.deepEqual(args[1], view.artists[1]);
   });
 
-  it('should support fat arrow syntax for passing named event object', async () => {
+  it("should support fat arrow syntax for passing named event object", async () => {
     let args;
 
     let name = createName();
 
     let view = {
-      fish: 'plankton',
+      fish: "plankton",
       artists: [
         {
-          name: 'pablo picasso',
-          tags: ['painter', 'sculptor', 'printmaker', 'ceramicist', 'theatre designer'],
+          name: "pablo picasso",
+          tags: [
+            "painter",
+            "sculptor",
+            "printmaker",
+            "ceramicist",
+            "theatre designer",
+          ],
         },
         {
-          name: 'salvador dali',
-          tags: ['painter', 'sculptor', 'photographer', 'writer'],
+          name: "salvador dali",
+          tags: ["painter", "sculptor", "photographer", "writer"],
         },
       ],
       foo(...argz) {
@@ -130,22 +142,23 @@ describe('events', () => {
         return view;
       },
       html`
-        <template each="artist in artists">
-          <article>
-            <h4>{{artist.name}}</h4>
-            <ul>
-              <template each="tag in artist.tags">
-                <li onclick="bar => foo(bar, tag, artist, fish)">{{tag}}</li>
-              </template>
-            </ul>
-          </article>
-        </template>
+        <article each="artist in artists">
+          <h4>{{artist.name}}</h4>
+          <ul>
+            <li
+              each="tag in artist.tags"
+              :onclick="bar => foo(bar, tag, artist, fish)"
+            >
+              {{tag}}
+            </li>
+          </ul>
+        </article>
       `
     );
 
     mount(html`<${name}></${name}>`);
 
-    $('article:nth-of-type(2) li').click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click(); //salvador dali painter
 
     await nextFrame();
 

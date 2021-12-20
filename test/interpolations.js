@@ -74,7 +74,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html`<section class="{{classes}}"></section>`
+      html`<section :class="{{classes}}"></section>`
     );
 
     mount(html`<${name}></${name}>`);
@@ -101,7 +101,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html` <section class="{{classes}}"></section> `
+      html` <section :class="{{classes}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -126,7 +126,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html` <section style="{{foo}}"></section> `
+      html` <section :style="{{foo}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -152,7 +152,7 @@ describe("interpolation", () => {
       }) => {
         return { foo };
       },
-      html` <section style="{{foo}}"></section> `
+      html` <section :style="{{foo}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -196,7 +196,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html` <section style="{{foo}}"></section> `
+      html` <section :style="{{foo}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -224,7 +224,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html` <section style="{{foo}}"></section> `
+      html` <section :style="{{foo}}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -248,7 +248,7 @@ describe("interpolation", () => {
       () => {
         return view;
       },
-      html` <p name="{{ c1 }}">{{ c2 }}</p> `
+      html` <p :name="{{ c1 }}">{{ c2 }}</p> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -265,7 +265,7 @@ describe("interpolation", () => {
       ({ foo }) => {
         return { foo };
       },
-      html` <p hidden="{{ !foo }}">boo!</p>`
+      html` <p :hidden="{{ !foo }}">boo!</p>`
     );
 
     mount(html`<${name} foo></${name}>`);
@@ -310,16 +310,12 @@ describe("interpolation", () => {
       },
       html`
         <table>
-          <template each="column in columns">
-            <th>{{ column }}</th>
-          </template>
-          <template each="row in rows">
-            <tr>
-              <template each="col in columns">
-                <td>{{ row[col] }}</td>
-              </template>
-            </tr>
-          </template>
+          <tr>
+            <th each="column in columns">{{ column }}</th>
+          </tr>
+          <tr each="row in rows">
+            <td each="col in columns">{{ row[col] }}</td>
+          </tr>
         </table>
       `
     );
@@ -327,7 +323,7 @@ describe("interpolation", () => {
     mount(html`<${name}></${name}>`);
 
     assert.equal($$("th").length, 3);
-    assert.equal($$("tr").length, 3);
+    assert.equal($$("tr").length, 4);
     assert.deepEqual(
       $$("td").map((v) => v.textContent.trim()),
       ["1", "2", "3", "3", "2", "1", "1", "3", "2"]
@@ -349,9 +345,9 @@ describe("interpolation", () => {
       },
       html`
         <ul>
-          <template each="item in items">
-            <li><a aria-current="{{ isSecond(item) }}"></a></li>
-          </template>
+          <li each="item in items">
+            <a :aria-current="{{ isSecond(item) }}"></a>
+          </li>
         </ul>
       `
     );
@@ -380,9 +376,9 @@ describe("interpolation", () => {
       },
       html`
         <ul>
-          <template each="item in foo.items">
-            <li><a aria-current="{{ foo.isSecond(item) }}"></a></li>
-          </template>
+          <li each="item in foo.items">
+            <a :aria-current="{{ foo.isSecond(item) }}"></a>
+          </li>
         </ul>
       `
     );

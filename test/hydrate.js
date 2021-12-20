@@ -15,7 +15,7 @@ describe("hydrate", () => {
       },
       html`
         <div>
-          <a href="#" id="foo" onclick="foo()"><slot></slot></a>
+          <a href="#" id="foo" :onclick="foo()"><slot></slot></a>
         </div>
       `
     );

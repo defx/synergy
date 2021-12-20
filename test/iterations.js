@@ -61,12 +61,10 @@ describe("iterations", () => {
       },
       html`
         <ul>
-          <template each="(index, colour) in colours">
-            <li data-index="{{ index }}">
-              <p>{{ index }}</p>
-              <p>{{ colour }}</p>
-            </li>
-          </template>
+          <li each="(index, colour) in colours" :data-index="{{ index }}">
+            <p>{{ index }}</p>
+            <p>{{ colour }}</p>
+          </li>
         </ul>
       `
     );
@@ -262,12 +260,14 @@ describe("iterations", () => {
       },
       html`
         <div>
-          <template each="colour in colours">
-            <div class="colour" hidden="{{ !colour.show }}">
-              <p>{{colour.name}}</p>
-              <p>{{colour.id}}</p>
-            </div>
-          </template>
+          <div
+            each="colour in colours"
+            class="colour"
+            :hidden="{{ !colour.show }}"
+          >
+            <p>{{colour.name}}</p>
+            <p>{{colour.id}}</p>
+          </div>
         </div>
       `
     );

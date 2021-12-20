@@ -55,7 +55,7 @@ describe("define", () => {
     synergy.define(
       name,
       factory,
-      '<p hidden="{{ !show }}">hello world!</p><button onclick="toggle()">toggle</button>',
+      '<p :hidden="{{ !show }}">hello world!</p><button :onclick="toggle()">toggle</button>',
       {
         observe: ["show"],
       }
@@ -113,7 +113,7 @@ describe("define", () => {
     synergy.define(
       name,
       factory,
-      html`<button onclick="toggle()">ok</button>`,
+      html`<button :onclick="toggle()">ok</button>`,
       {
         observe: ["foo-bar"],
       }
@@ -141,7 +141,7 @@ describe("define", () => {
     synergy.define(
       name,
       factory,
-      html`<button onclick="toggle()">ok</button>`,
+      html`<button :onclick="toggle()">ok</button>`,
       {
         observe: ["aria-hidden"],
       }
@@ -214,9 +214,7 @@ describe("define", () => {
     let template = `
     <h2>{{ obj.org }}</h2>  
     <h3>{{ obj.repo }}</h3>
-      <template each="item in arr">
-        <p>{{ item }}</p>
-      </template>
+    <p each="item in arr">{{ item }}</p>
     `;
 
     synergy.define("rich-props", factory, template, {
@@ -236,7 +234,9 @@ describe("define", () => {
           },
         };
       },
-      html` <rich-props arr="{{ letters }}" obj="{{ library }}"></rich-props> `
+      html`
+        <rich-props :arr="{{ letters }}" :obj="{{ library }}"></rich-props>
+      `
     );
 
     mount(html`<${name}></${name}>`);
@@ -255,7 +255,7 @@ describe("define", () => {
           },
         };
       },
-      html` <p onclick="updateFoo()" foo="bar">{{ foo }}</p> `
+      html` <p :onclick="updateFoo()" foo="bar">{{ foo }}</p> `
     );
 
     mount(`<${name}></${name}>`);

@@ -272,9 +272,9 @@ export const render = (
               });
             }
 
-            if (name.startsWith("on")) {
+            if (name.startsWith(":on")) {
               node.removeAttribute(name);
-              let eventType = name.split("on")[1];
+              let eventType = name.split(":on")[1];
               x.push({
                 type: EVENT,
                 eventType,
@@ -282,10 +282,10 @@ export const render = (
               });
             }
 
-            if (hasMustache(value)) {
+            if (name.startsWith(":") && hasMustache(value)) {
               x.push({
                 type: ATTRIBUTE,
-                name,
+                name: name.slice(1),
                 value,
               });
               node.removeAttribute(name);
