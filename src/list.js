@@ -18,7 +18,7 @@ export function parseEach(node) {
 
 const getBlockSize = (template) => {
   let i = 0;
-  walk(template.content.firstChild, () => i++, false);
+  walk(template.content?.firstChild || template.firstChild, () => i++, false);
   return i;
 };
 

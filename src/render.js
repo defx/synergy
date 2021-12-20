@@ -233,16 +233,31 @@ export const render = (
           let each = parseEach(node);
 
           if (each) {
-            if (node.nodeName !== "TEMPLATE") {
-              node.removeAttribute("each");
-              let tpl = document.createElement("template");
+            let ns = node.namespaceURI;
+            let m;
 
+            if (ns.endsWith("/svg")) {
+              // if (node.nodeName !== "defs") {
+              node.removeAttribute("each");
+              let tpl = document.createElement("defs");
               tpl.innerHTML = node.outerHTML;
               node.parentNode.replaceChild(tpl, node);
               node = tpl;
               pickupNode = node.nextSibling;
+              // }
+              m = parse(node.firstChild);
+            } else {
+              if (node.nodeName !== "TEMPLATE") {
+                node.removeAttribute("each");
+                let tpl = document.createElement("template");
+
+                tpl.innerHTML = node.outerHTML;
+                node.parentNode.replaceChild(tpl, node);
+                node = tpl;
+                pickupNode = node.nextSibling;
+              }
+              m = parse(node.content.firstChild);
             }
-            let m = parse(node.content.firstChild);
 
             x.push({
               type: REPEAT,
