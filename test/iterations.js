@@ -398,7 +398,15 @@ describe("iterations", () => {
           height="200"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect class="foo" each="items" :x :y :fill :width :height></rect>
+          <rect
+            class="foo"
+            each="item in items"
+            :x="{{ item.x }}"
+            :y="{{ item.y }}"
+            :fill="{{ item.fill }}"
+            :width="{{ item.width }}"
+            :height="{{ item.height }}"
+          ></rect>
         </svg>
       `
     );

@@ -387,4 +387,128 @@ describe("interpolation", () => {
 
     assert.equal($$('a[aria-current="page"]').length, 1);
   });
+
+  it("resolves properties from the current item first", () => {
+    let name = createName();
+
+    let view = {
+      foo: "bar",
+      items: [
+        {
+          x: 0,
+        },
+        {
+          x: 16,
+        },
+        {
+          x: 32,
+        },
+      ],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html`
+        <div
+          class="foo"
+          each="item in items"
+          :x="{{ x }}"
+          :foo="{{ foo }}"
+        ></div>
+      `
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    let nodes = $$(".foo");
+
+    assert.equal(nodes.length, view.items.length);
+
+    view.items.forEach(({ x }, i) => {
+      let node = nodes[i];
+      assert.equal(node.getAttribute("x"), x);
+      assert.equal(node.getAttribute("foo"), view.foo);
+    });
+  });
+
+  it("supports simple each (just the collection property)", () => {
+    let name = createName();
+
+    let view = {
+      foo: "bar",
+      items: [
+        {
+          x: 0,
+        },
+        {
+          x: 16,
+        },
+        {
+          x: 32,
+        },
+      ],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html` <div class="foo" each="items" :x="{{ x }}" :foo="{{ foo }}"></div> `
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    let nodes = $$(".foo");
+
+    assert.equal(nodes.length, view.items.length);
+
+    view.items.forEach(({ x }, i) => {
+      let node = nodes[i];
+      assert.equal(node.getAttribute("x"), x);
+      assert.equal(node.getAttribute("foo"), view.foo);
+    });
+  });
+
+  it("supports shorthand attributes (when attribute name matches property name)", () => {
+    let name = createName();
+
+    let view = {
+      foo: "bar",
+      items: [
+        {
+          x: 0,
+        },
+        {
+          x: 16,
+        },
+        {
+          x: 32,
+        },
+      ],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html` <div class="foo" each="items" :x :foo></div> `
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    let nodes = $$(".foo");
+
+    assert.equal(nodes.length, view.items.length);
+
+    view.items.forEach(({ x }, i) => {
+      let node = nodes[i];
+      assert.equal(node.getAttribute("x"), x);
+      assert.equal(node.getAttribute("foo"), view.foo);
+    });
+  });
 });
