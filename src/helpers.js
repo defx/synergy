@@ -72,7 +72,7 @@ export const fragmentFromTemplate = (v) => {
   if (v.nodeName === "defs") {
     let id = v.firstElementChild.id;
     let use = document.createElement("use");
-    use.setAttribute("xlink:href", `#${id}`);
+    use.setAttribute("href", `#${id}`);
     return use;
   }
 };
