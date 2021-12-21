@@ -80,7 +80,7 @@ export const updateList = (template, delta, entries, createListItem) => {
       i === -1
         ? createListItem(entries[newIndex][1], entries[newIndex][0])
         : blocks[i];
-    let x = frag.lastChild;
+    let x = frag.lastChild || frag;
     t.after(frag);
     t = x;
   });

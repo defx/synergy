@@ -356,4 +356,68 @@ describe("iterations", () => {
       assert.equal(nodes[i].textContent, `${k} : ${v}`);
     });
   });
+
+  it("works with SVG", () => {
+    let name = createName();
+
+    let view = {
+      items: [
+        {
+          x: 0,
+          y: 0,
+          fill: "red",
+          width: 16,
+          height: 16,
+        },
+        {
+          x: 0,
+          y: 16,
+          fill: "green",
+          width: 64,
+          height: 16,
+        },
+        {
+          x: 0,
+          y: 32,
+          fill: "gold",
+          width: 32,
+          height: 16,
+        },
+      ],
+    };
+
+    synergy.define(
+      name,
+      () => {
+        return view;
+      },
+      html`
+        <svg
+          version="1.1"
+          width="300"
+          height="200"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect
+            each="item in items"
+            :x="{{ item.x }}"
+            :y="{{ item.y }}"
+            :fill="{{ item.fill }}"
+            :width="{{ width }}"
+            :height="{{ height }}"
+          ></rect>
+        </svg>
+      `
+    );
+
+    mount(html`<${name}></${name}>`);
+
+    // let nodes = $$("rect");
+
+    // assert.equal(nodes.length, Object.keys(view.foo).length);
+
+    // Object.entries(view.foo).forEach(([k, v], i) => {
+    //   assert.equal(nodes[i].textContent, `${k} : ${v}`);
+    // });
+  });
 });

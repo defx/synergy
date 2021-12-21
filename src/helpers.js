@@ -66,6 +66,9 @@ export const fragmentFromTemplate = (v) => {
     return tpl.content;
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content;
+
+  console.log(v.nodeName);
+
   if (v.nodeName === "defs") {
     let id = v.firstElementChild.id;
     let use = document.createElement("use");

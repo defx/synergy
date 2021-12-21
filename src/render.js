@@ -158,7 +158,8 @@ export const render = (
       const createListItem = (datum, i) => {
         let k = datum[key];
         let frag = fragmentFromTemplate(node);
-        initialiseBlock(frag.firstChild, i, k);
+
+        initialiseBlock(frag.firstChild || frag, i, k);
         return frag;
       };
 
@@ -239,8 +240,9 @@ export const render = (
             if (ns.endsWith("/svg")) {
               // if (node.nodeName !== "defs") {
               node.removeAttribute("each");
-              let tpl = document.createElement("defs");
+              let tpl = document.createElementNS(ns, "defs");
               tpl.innerHTML = node.outerHTML;
+              tpl.firstElementChild.id = Date.now();
               node.parentNode.replaceChild(tpl, node);
               node = tpl;
               pickupNode = node.nextSibling;
@@ -367,5 +369,6 @@ export const render = (
     update();
     target.setAttribute?.(HYDRATE_ATTR, 1);
   }
+  console.log(map);
   return p;
 };
