@@ -59,6 +59,12 @@ export const setValueAtPath = (path, value, target) => {
   return (a[b] = value);
 };
 
+function cloneAttributes(target, source) {
+  [...source.attributes].forEach(({ nodeName, nodeValue }) => {
+    target.setAttribute(nodeName, nodeValue);
+  });
+}
+
 export const fragmentFromTemplate = (v) => {
   if (typeof v === "string") {
     let tpl = document.createElement("template");
@@ -67,12 +73,10 @@ export const fragmentFromTemplate = (v) => {
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content;
 
-  console.log(v.nodeName);
-
-  if (v.nodeName === "defs") {
-    let id = v.firstElementChild.id;
-    let use = document.createElement("use");
-    use.setAttribute("href", `#${id}`);
+  if (v.nodeName === "symbol") {
+    let use = document.createElementNS(v.namespaceURI, "use");
+    cloneAttributes(use, v.firstElementChild);
+    use.setAttribute("href", `#${v.id}`);
     return use;
   }
 };

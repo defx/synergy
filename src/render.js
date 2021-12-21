@@ -211,6 +211,7 @@ export const render = (
   const { bind, update, scheduleUpdate } = mediator();
 
   let blockCount = 0;
+  let c = 0;
 
   const parse = (frag) => {
     let index = 0;
@@ -238,16 +239,25 @@ export const render = (
             let m;
 
             if (ns.endsWith("/svg")) {
-              // if (node.nodeName !== "defs") {
               node.removeAttribute("each");
-              let tpl = document.createElementNS(ns, "defs");
+              let tpl = document.createElementNS(ns, "symbol");
               tpl.innerHTML = node.outerHTML;
-              tpl.firstElementChild.id = Date.now();
+              tpl.id = `x_${c++}`;
               node.parentNode.replaceChild(tpl, node);
               node = tpl;
-              pickupNode = node.nextSibling;
-              // }
-              m = parse(node.firstChild);
+              let firstChild = node.firstElementChild;
+              m = parse(firstChild);
+
+              /* 
+              
+              If the repeated node is binding width and/or height, then the following workaround is required so that the node will assume the width and height bound of the parent <symbol>, which is the only way to transfer from <use>
+              
+              */
+
+              m[0].forEach(({ name }) => {
+                if (["width", "height"].includes(name))
+                  firstChild.setAttribute(name, "100%");
+              });
             } else {
               if (node.nodeName !== "TEMPLATE") {
                 node.removeAttribute("each");
@@ -256,10 +266,11 @@ export const render = (
                 tpl.innerHTML = node.outerHTML;
                 node.parentNode.replaceChild(tpl, node);
                 node = tpl;
-                pickupNode = node.nextSibling;
               }
               m = parse(node.content.firstChild);
             }
+
+            pickupNode = node.nextSibling;
 
             x.push({
               type: REPEAT,
@@ -369,6 +380,6 @@ export const render = (
     update();
     target.setAttribute?.(HYDRATE_ATTR, 1);
   }
-  console.log(map);
+
   return p;
 };

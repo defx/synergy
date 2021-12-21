@@ -399,12 +399,13 @@ describe("iterations", () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
+            class="foo"
             each="item in items"
             :x="{{ item.x }}"
             :y="{{ item.y }}"
             :fill="{{ item.fill }}"
-            :width="{{ width }}"
-            :height="{{ height }}"
+            :width="{{ item.width }}"
+            :height="{{ item.height }}"
           ></rect>
         </svg>
       `
@@ -412,12 +413,16 @@ describe("iterations", () => {
 
     mount(html`<${name}></${name}>`);
 
-    // let nodes = $$("rect");
+    let nodes = $$(".foo").slice(1);
 
-    // assert.equal(nodes.length, Object.keys(view.foo).length);
+    assert.equal(nodes.length, view.items.length);
 
-    // Object.entries(view.foo).forEach(([k, v], i) => {
-    //   assert.equal(nodes[i].textContent, `${k} : ${v}`);
-    // });
+    view.items.forEach(({ width, height, x, y }, i) => {
+      let box = nodes[i].getBBox();
+      assert.equal(box.x, x);
+      assert.equal(box.y, y);
+      assert.equal(box.width, width);
+      assert.equal(box.height, height);
+    });
   });
 });
