@@ -2,8 +2,14 @@ import { isWhitespace, walk } from "./helpers.js";
 
 export function parseEach(node) {
   let each = node.getAttribute("each");
-  let m = each && each.match(/(.+)\s+in\s+(.+)/);
-  if (!m) return;
+  let m = each?.match(/(.+)\s+in\s+(.+)/);
+  if (!m) {
+    if (!each) return m;
+    return {
+      path: each.trim(),
+      key: node.getAttribute("key"),
+    };
+  }
   let [_, left, right] = m;
   let parts = left.match(/\(([^\)]+)\)/);
   let [a, b] = (parts ? parts[1].split(",") : [left]).map((v) => v.trim());
