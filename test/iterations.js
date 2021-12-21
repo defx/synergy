@@ -401,11 +401,11 @@ describe("iterations", () => {
           <rect
             class="foo"
             each="item in items"
-            :x="{{ item.x }}"
-            :y="{{ item.y }}"
-            :fill="{{ item.fill }}"
-            :width="{{ item.width }}"
-            :height="{{ item.height }}"
+            :x
+            :y
+            :fill
+            :width
+            :height
           ></rect>
         </svg>
       `

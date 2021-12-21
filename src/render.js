@@ -113,9 +113,9 @@ export const render = (
       const initialiseBlock = (rootNode, i, k, exitNode) => {
         let wrapper = new Proxy(model, {
           get(_, property) {
-            if (property === identifier) {
-              let x = getValueAtPath(path, model);
+            let x = getValueAtPath(path, model);
 
+            if (property === identifier) {
               for (let n in x) {
                 let v = x[n];
 
@@ -128,8 +128,6 @@ export const render = (
             }
 
             if (property === index) {
-              let x = getValueAtPath(path, model);
-
               for (let n in x) {
                 let v = x[n];
                 if (key) {
@@ -139,6 +137,9 @@ export const render = (
                 }
               }
             }
+
+            if (x[i]?.hasOwnProperty?.(property)) return x[i][property];
+
             return Reflect.get(...arguments);
           },
         });
@@ -254,7 +255,7 @@ export const render = (
               
               */
 
-              m[0].forEach(({ name }) => {
+              m[0]?.forEach(({ name }) => {
                 if (["width", "height"].includes(name))
                   firstChild.setAttribute(name, "100%");
               });
@@ -308,13 +309,13 @@ export const render = (
                 eventType,
                 ...parseEventHandler(value),
               });
-            }
+            } else if (name.startsWith(":")) {
+              let prop = name.slice(1);
 
-            if (name.startsWith(":") && hasMustache(value)) {
               x.push({
                 type: ATTRIBUTE,
-                name: name.slice(1),
-                value,
+                name: prop,
+                value: value || `{{${prop}}}`,
               });
               node.removeAttribute(name);
             }
