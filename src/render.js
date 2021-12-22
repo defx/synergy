@@ -241,24 +241,12 @@ export const render = (
 
             if (ns.endsWith("/svg")) {
               node.removeAttribute("each");
-              let tpl = document.createElementNS(ns, "symbol");
-              tpl.innerHTML = node.outerHTML;
-              tpl.id = `x_${c++}`;
+              let tpl = document.createElementNS(ns, "defs");
+              tpl.innerHTML = `<g>${node.outerHTML}</g>`;
               node.parentNode.replaceChild(tpl, node);
               node = tpl;
-              let firstChild = node.firstElementChild;
+              let firstChild = node.querySelector("g").firstChild;
               m = parse(firstChild);
-
-              /* 
-              
-              If the repeated node is binding width and/or height, then the following workaround is required so that the node will assume the width and height bound of the parent <symbol>, which is the only way to transfer from <use>
-              
-              */
-
-              m[0]?.forEach(({ name }) => {
-                if (["width", "height"].includes(name))
-                  firstChild.setAttribute(name, "100%");
-              });
             } else {
               if (node.nodeName !== "TEMPLATE") {
                 node.removeAttribute("each");

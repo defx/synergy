@@ -72,13 +72,7 @@ export const fragmentFromTemplate = (v) => {
     return tpl.content;
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content;
-
-  if (v.nodeName === "symbol") {
-    let use = document.createElementNS(v.namespaceURI, "use");
-    cloneAttributes(use, v.firstElementChild);
-    use.setAttribute("href", `#${v.id}`);
-    return use;
-  }
+  if (v.nodeName === "defs") return v.querySelector("g").cloneNode(true);
 };
 
 export const debounce = (fn) => {
