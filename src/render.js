@@ -242,11 +242,10 @@ export const render = (
             if (ns.endsWith("/svg")) {
               node.removeAttribute("each");
               let tpl = document.createElementNS(ns, "defs");
-              tpl.innerHTML = `<g>${node.outerHTML}</g>`;
+              tpl.innerHTML = node.outerHTML;
               node.parentNode.replaceChild(tpl, node);
               node = tpl;
-              let firstChild = node.querySelector("g").firstChild;
-              m = parse(firstChild);
+              m = parse(node.firstChild);
             } else {
               if (node.nodeName !== "TEMPLATE") {
                 node.removeAttribute("each");

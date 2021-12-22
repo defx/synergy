@@ -72,7 +72,7 @@ export const fragmentFromTemplate = (v) => {
     return tpl.content;
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content;
-  if (v.nodeName === "defs") return v.querySelector("g").cloneNode(true);
+  if (v.nodeName === "defs") return v.firstElementChild.cloneNode(true);
 };
 
 export const debounce = (fn) => {
