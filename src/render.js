@@ -106,6 +106,7 @@ export const render = (
       key,
       blockIndex,
       hydrate,
+      pickupNode,
     }) => {
       let oldValue;
       node.$t = blockIndex - 1;
@@ -164,8 +165,6 @@ export const render = (
         return frag;
       };
 
-      let pickupNode;
-
       if (hydrate) {
         let x = getValueAtPath(path, model);
         let length = typeOf(x) === "Object" ? Object.keys(x).length : x.length;
@@ -182,6 +181,7 @@ export const render = (
         handler: () => {
           const newValue = Object.entries(getValueAtPath(path, model) || []);
           const delta = compareKeyedLists(key, oldValue, newValue);
+
           if (delta) {
             updateList(node, delta, newValue, createListItem);
           }
@@ -278,6 +278,7 @@ export const render = (
               map: m,
               blockIndex: blockCount++,
               ...each,
+              pickupNode,
             });
 
             break;
