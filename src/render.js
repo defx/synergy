@@ -157,11 +157,14 @@ export const render = (
         );
       };
 
+      function firstChild(v) {
+        return (v.nodeType === v.DOCUMENT_FRAGMENT_NODE && v.firstChild) || v;
+      }
+
       const createListItem = (datum, i) => {
         let k = datum[key];
         let frag = fragmentFromTemplate(node);
-
-        initialiseBlock(frag.firstChild || frag, i, k);
+        initialiseBlock(firstChild(frag), i, k);
         return frag;
       };
 

@@ -76,6 +76,10 @@ export const compareKeyedLists = (key, a = [], b = []) => {
   if (a.length !== b.length || !delta.every((a, b) => a === b)) return delta;
 };
 
+function lastChild(v) {
+  return (v.nodeType === v.DOCUMENT_FRAGMENT_NODE && v.lastChild) || v;
+}
+
 export const updateList = (template, delta, entries, createListItem) => {
   let n = template.getAttribute("length") || 0;
   let blocks = getBlockFragments(template, n);
@@ -86,7 +90,7 @@ export const updateList = (template, delta, entries, createListItem) => {
       i === -1
         ? createListItem(entries[newIndex][1], entries[newIndex][0])
         : blocks[i];
-    let x = frag.lastChild || frag;
+    let x = lastChild(frag);
     t.after(frag);
     t = x;
   });
