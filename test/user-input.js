@@ -257,14 +257,12 @@ describe("user input", () => {
 
     synergy.define(
       name,
-      ({ pets = ["hamster"] }) => {
-        return {
-          pets,
-        };
-      },
+      () => ({
+        $pets: ["hamster"],
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
-        <select name="pets" id="pet-select" multiple>
+        <select name="$pets" id="pet-select" multiple>
           <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>

@@ -1,5 +1,5 @@
-describe('lifecycle', () => {
-  it('should fire after update', async () => {
+describe("lifecycle", () => {
+  it("should fire after update", async () => {
     mount(html` <div id="container"></div> `);
 
     let stack = [];
@@ -8,91 +8,91 @@ describe('lifecycle', () => {
 
     synergy.define(
       name,
-      ({ message = 'hi!' }) => {
+      () => {
         return {
-          message,
+          $message: "hi!",
           updatedCallback() {
             stack.push(true);
           },
         };
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{ $message }}</p>`
     );
 
     mount(html`<${name}></${name}>`);
 
     assert.equal(stack.length, 0);
 
-    $(name).message = 'bye!';
+    $(name).message = "bye!";
 
     await nextFrame();
 
     assert.equal(stack.length, 1);
   });
-  it('should provide previous state', async () => {
+  it("should provide previous state", async () => {
     let stack = [];
 
     let name = createName();
 
     synergy.define(
       name,
-      ({ message }) => {
+      () => {
         return {
-          message,
+          $message: "",
           updatedCallback(prevState) {
-            stack.push(prevState.message);
+            stack.push(prevState.$message);
           },
         };
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{ $message }}</p>`
     );
 
     mount(html`<${name} message="hi!"></${name}>`);
 
     assert.equal(stack.length, 0);
 
-    $(name).message = 'bye!';
+    $(name).message = "bye!";
 
     await nextFrame();
 
     assert.equal(stack.length, 1);
 
-    assert.equal(stack[0], 'hi!');
+    assert.equal(stack[0], "hi!");
   });
-  it('should have correct thisArg', async () => {
+  it("should have correct thisArg", async () => {
     let name = createName();
 
     let stack = [];
 
     synergy.define(
       name,
-      ({ message = 'hi!' }) => {
+      () => {
         return {
-          message,
+          $message: "hi!",
           updatedCallback(prevState) {
             stack.push({
-              prev: prevState.message,
-              next: this.message,
+              prev: prevState.$message,
+              next: this.$message,
             });
           },
         };
       },
-      html`<p>{{message}}</p>`
+      html`<p>{{ $message }}</p>`
     );
 
     mount(html`<${name}></${name}>`);
 
     assert.equal(stack.length, 0);
 
-    $(name).message = 'bye!';
+    $(name).message = "bye!";
 
     await nextFrame();
 
     assert.equal(stack.length, 1);
 
     assert.deepEqual(stack[0], {
-      prev: 'hi!',
-      next: 'bye!',
+      prev: "hi!",
+      next: "bye!",
     });
   });
 });

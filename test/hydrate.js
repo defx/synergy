@@ -31,7 +31,7 @@ describe("hydrate", () => {
 
     mount(newNode);
 
-    newNode.querySelector("#foo").click();
+    $("#foo").click();
 
     assert.deepEqual(stack, ["foo!"]);
   });

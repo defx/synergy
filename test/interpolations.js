@@ -7,20 +7,16 @@ describe("interpolation", () => {
   it("should always cast primitive values to strings, unless null or undefined", () => {
     let name = createName();
 
-    let view = {
-      boolean: false,
-      undefined: undefined,
-      null: null,
-      number: 0,
-      string: "string",
-      foo: "bar",
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        boolean: false,
+        undefined: undefined,
+        null: null,
+        number: 0,
+        string: "string",
+        foo: "bar",
+      }),
       html`
         <ul>
           <li id="boolean">{{ boolean }}</li>
@@ -44,16 +40,12 @@ describe("interpolation", () => {
   it("should support multiple bindings", () => {
     let name = createName();
 
-    let view = {
-      c1: "red",
-      c2: "green",
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        c1: "red",
+        c2: "green",
+      }),
       html` <p>{{c1}} + {{c2}}</p> `
     );
 
@@ -65,15 +57,11 @@ describe("interpolation", () => {
   it("should apply all the values", () => {
     let name = createName();
 
-    let view = {
-      classes: ["one", "two", "three"],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        classes: ["one", "two", "three"],
+      }),
       html`<section :class="{{classes}}"></section>`
     );
 
@@ -85,22 +73,18 @@ describe("interpolation", () => {
   it("should apply all the keys with truthy values", () => {
     let name = createName();
 
-    let view = {
-      classes: {
-        one: true,
-        two: false,
-        three: {},
-        four: null,
-        five: "",
-        six: "ok",
-      },
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        classes: {
+          one: true,
+          two: false,
+          three: {},
+          four: null,
+          five: "",
+          six: "ok",
+        },
+      }),
       html` <section :class="{{classes}}"></section> `
     );
 
@@ -112,20 +96,16 @@ describe("interpolation", () => {
   it("should apply styles", () => {
     let name = createName();
 
-    let view = {
-      foo: `
-        background-color: gold;
-        color: tomato;
-        width: 100px;
-        height: 100px;
-      `,
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        foo: `
+          background-color: gold;
+          color: tomato;
+          width: 100px;
+          height: 100px;
+        `,
+      }),
       html` <section :style="{{foo}}"></section> `
     );
 
@@ -142,17 +122,15 @@ describe("interpolation", () => {
 
     synergy.define(
       name,
-      ({
-        foo = `
+      () => ({
+        $foo: `
         background-color: gold;
         color: tomato;
         width: 100px;
         height: 100px;
         `,
-      }) => {
-        return { foo };
-      },
-      html` <section :style="{{foo}}"></section> `
+      }),
+      html` <section :style="{{ $foo }}"></section> `
     );
 
     mount(html`<${name}></${name}>`);
@@ -182,20 +160,16 @@ describe("interpolation", () => {
   it("should apply styles (Object / kebab)", () => {
     let name = createName();
 
-    let view = {
-      foo: {
-        "background-color": "gold",
-        color: "tomato",
-        width: "100px",
-        height: "100px",
-      },
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        foo: {
+          "background-color": "gold",
+          color: "tomato",
+          width: "100px",
+          height: "100px",
+        },
+      }),
       html` <section :style="{{foo}}"></section> `
     );
 
@@ -210,20 +184,16 @@ describe("interpolation", () => {
   it("should apply styles (Object / pascal)", () => {
     let name = createName();
 
-    let view = {
-      foo: {
-        backgroundColor: "gold",
-        color: "tomato",
-        width: "100px",
-        height: "100px",
-      },
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        foo: {
+          backgroundColor: "gold",
+          color: "tomato",
+          width: "100px",
+          height: "100px",
+        },
+      }),
       html` <section :style="{{foo}}"></section> `
     );
 
@@ -238,16 +208,12 @@ describe("interpolation", () => {
   it("should allow whitespace formatting", () => {
     let name = createName();
 
-    let view = {
-      c1: "red",
-      c2: "green",
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        c1: "red",
+        c2: "green",
+      }),
       html` <p :name="{{ c1 }}">{{ c2 }}</p> `
     );
 
@@ -262,10 +228,8 @@ describe("interpolation", () => {
 
     synergy.define(
       name,
-      ({ foo }) => {
-        return { foo };
-      },
-      html` <p :hidden="{{ !foo }}">boo!</p>`
+      () => ({ $foo: true }),
+      html` <p :hidden="{{ !$foo }}">boo!</p>`
     );
 
     mount(html`<${name} foo></${name}>`);
@@ -282,32 +246,28 @@ describe("interpolation", () => {
   it("should support square brackets", () => {
     let name = createName();
 
-    let view = {
-      columns: ["one", "two", "three"],
-      rows: [
-        {
-          one: 1,
-          two: 2,
-          three: 3,
-        },
-        {
-          one: 3,
-          two: 2,
-          three: 1,
-        },
-        {
-          one: 1,
-          two: 3,
-          three: 2,
-        },
-      ],
-    };
-
     synergy.define(
       name,
-      () => {
-        return view;
-      },
+      () => ({
+        columns: ["one", "two", "three"],
+        rows: [
+          {
+            one: 1,
+            two: 2,
+            three: 3,
+          },
+          {
+            one: 3,
+            two: 2,
+            three: 1,
+          },
+          {
+            one: 1,
+            two: 3,
+            three: 2,
+          },
+        ],
+      }),
       html`
         <table>
           <tr>

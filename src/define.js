@@ -13,38 +13,24 @@ export const define = (name, factory, template, options = {}) =>
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
-          let observedProps = new Set();
-          let element = this;
+          this.$viewmodel = factory(this);
 
-          let x = factory(
-            new Proxy(
-              {},
-              {
-                get(_, prop) {
-                  let attr = pascalToKebab(prop);
-                  observedProps.add(prop);
-                  return (
-                    (element.hasAttribute(attr) &&
-                      element.getAttribute(attr)) ||
-                    element[prop]
-                  );
-                },
-              }
-            ),
-            this
+          if (this.$viewmodel instanceof Promise)
+            this.$viewmodel = await this.$viewmodel;
+
+          let observedProps = Object.keys(this.$viewmodel).filter(
+            (v) => v.charAt(0) === "$"
           );
 
-          this.$viewmodel = x instanceof Promise ? await x : x;
-
-          observedProps = Array.from(observedProps);
-
-          let observedAttributes = observedProps.map(pascalToKebab);
+          let observedAttributes = observedProps
+            .map((v) => v.slice(1))
+            .map(pascalToKebab);
 
           let sa = this.setAttribute;
           this.setAttribute = (k, v) => {
             if (observedAttributes.includes(k)) {
               let { name, value } = attributeToProp(k, v);
-              this.$viewmodel[name] = value;
+              this.$viewmodel["$" + name] = value;
             }
             sa.apply(this, [k, v]);
           };
@@ -57,15 +43,15 @@ export const define = (name, factory, template, options = {}) =>
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name);
             } else {
-              value = this[property] || this.$viewmodel[property];
+              value = this[property] || this.$viewmodel["$" + property];
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return this.$viewmodel[property];
+                return this.$viewmodel["$" + property];
               },
               set(v) {
-                this.$viewmodel[property] = v;
+                this.$viewmodel["$" + property] = v;
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v);
                 }
@@ -92,7 +78,7 @@ export const define = (name, factory, template, options = {}) =>
             () => {
               observedProps.forEach((k) => {
                 let v = this.$viewmodel[k];
-                if (isPrimitive(v)) applyAttribute(this, k, v);
+                if (isPrimitive(v)) applyAttribute(this, k.slice(1), v);
               });
             },
             beforeMountCallback

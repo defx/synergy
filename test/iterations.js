@@ -82,8 +82,8 @@ describe("iterations", () => {
 
     synergy.define(
       name,
-      ({
-        colours = [
+      () => ({
+        $colours: [
           {
             name: "red",
           },
@@ -94,11 +94,9 @@ describe("iterations", () => {
             name: "gold",
           },
         ],
-      }) => {
-        return { colours };
-      },
+      }),
       html`
-        <template each="colour in colours">
+        <template each="colour in $colours">
           <p>{{colour.name}}</p>
         </template>
       `
@@ -134,8 +132,8 @@ describe("iterations", () => {
 
     synergy.define(
       name,
-      ({
-        colours = [
+      () => ({
+        $colours: [
           {
             name: "red",
             foo: 1,
@@ -149,11 +147,9 @@ describe("iterations", () => {
             foo: 3,
           },
         ],
-      }) => {
-        return { colours };
-      },
+      }),
       html`
-        <template each="colour in colours" key="foo">
+        <template each="colour in $colours" key="foo">
           <p>{{colour.name}}</p>
         </template>
       `
@@ -431,19 +427,17 @@ describe("iterations", () => {
 
     synergy.define(
       name,
-      ({ colours1 = ["gold", "tomato"], colours2 = ["green", "orange"] }) => {
-        return {
-          colours1,
-          colours2,
-        };
-      },
+      () => ({
+        $colours1: ["gold", "tomato"],
+        $colours2: ["green", "orange"],
+      }),
       html`
         <ul>
-          <li each="(index, colour) in colours1" :data-index="{{ index }}">
+          <li each="(index, colour) in $colours1" :data-index="{{ index }}">
             <p>{{ index }}</p>
             <p>{{ colour }}</p>
           </li>
-          <li each="(index, colour) in colours2" :data-index="{{ index }}">
+          <li each="(index, colour) in $colours2" :data-index="{{ index }}">
             <p>{{ index }}</p>
             <p>{{ colour }}</p>
           </li>
@@ -462,52 +456,48 @@ describe("iterations", () => {
   it("works with SVG", () => {
     let name = createName();
 
-    let view = {
-      circles: [
-        {
-          r: 16,
-          cx: 64,
-          cy: 16,
-          fill: "green",
-        },
-        {
-          r: 16,
-          cx: 64,
-          cy: 64,
-          fill: "olive",
-        },
-        ,
-      ],
-      rects: [
-        {
-          x: 0,
-          y: 0,
-          fill: "red",
-          width: 16,
-          height: 16,
-        },
-        {
-          x: 0,
-          y: 16,
-          fill: "green",
-          width: 64,
-          height: 16,
-        },
-        {
-          x: 0,
-          y: 32,
-          fill: "gold",
-          width: 32,
-          height: 16,
-        },
-      ],
-    };
-
     synergy.define(
       name,
-      ({ rects = [] }) => {
-        return view;
-      },
+      () => ({
+        circles: [
+          {
+            r: 16,
+            cx: 64,
+            cy: 16,
+            fill: "green",
+          },
+          {
+            r: 16,
+            cx: 64,
+            cy: 64,
+            fill: "olive",
+          },
+          ,
+        ],
+        $rects: [
+          {
+            x: 0,
+            y: 0,
+            fill: "red",
+            width: 16,
+            height: 16,
+          },
+          {
+            x: 0,
+            y: 16,
+            fill: "green",
+            width: 64,
+            height: 16,
+          },
+          {
+            x: 0,
+            y: 32,
+            fill: "gold",
+            width: 32,
+            height: 16,
+          },
+        ],
+      }),
       html`
         <svg
           version="1.1"
@@ -517,7 +507,7 @@ describe("iterations", () => {
         >
           <rect
             class="foo"
-            each="item in rects"
+            each="item in $rects"
             :x="{{ item.x }}"
             :y="{{ item.y }}"
             :fill="{{ item.fill }}"
