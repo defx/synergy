@@ -1,21 +1,21 @@
 export const storage = {
   get: (k) => JSON.parse(localStorage.getItem(k)),
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
-};
+}
 
 const html = (strings, ...values) =>
-  strings.reduce((a, v, i) => a + v + (values[i] || ""), "");
+  strings.reduce((a, v, i) => a + v + (values[i] || ""), "")
 
 const filters = {
   all: (todos) => todos,
   active: (todos) => todos.filter(({ completed }) => !completed),
   done: (todos) => todos.filter(({ completed }) => completed),
-};
+}
 
 const KEYS = {
   RETURN: 13,
   ESCAPE: 27,
-};
+}
 
 export const TodoApp = () => {
   return {
@@ -23,80 +23,80 @@ export const TodoApp = () => {
     todos: [],
     activeFilter: "all",
     addTodo() {
-      let title = this.newTodo && this.newTodo.trim();
-      this.todos.push({ title, id: Date.now() });
-      this.newTodo = null;
+      let title = this.newTodo && this.newTodo.trim()
+      this.todos.push({ title, id: Date.now() })
+      this.newTodo = null
     },
     startEdit(e, item) {
       this.todos = this.todos.map((todo) => {
         if (todo === item) {
-          this.titleEdit = item.title;
+          this.titleEdit = item.title
         }
 
         return {
           ...todo,
           editing: todo === item,
-        };
-      });
+        }
+      })
       return () => {
-        e.target.parentNode.querySelector(".edit").focus();
-      };
+        e.target.parentNode.querySelector(".edit").focus()
+      }
     },
     saveEdit(item) {
-      if (!item.editing) return;
+      if (!item.editing) return
 
-      item.editing = false;
+      item.editing = false
 
-      let title = String(this.titleEdit);
+      let title = String(this.titleEdit)
 
       if (!title.trim()) {
         this.todos = this.todos.filter((todo) => {
-          return todo !== item;
-        });
+          return todo !== item
+        })
       } else {
-        item.title = title;
+        item.title = title
       }
     },
     deleteTodo(e, item) {
-      this.todos.splice(this.todos.indexOf(item), 1);
+      this.todos.splice(this.todos.indexOf(item), 1)
     },
     get allDone() {
-      return this.todos.every((todo) => todo.completed);
+      return this.todos.every((todo) => todo.completed)
     },
     set allDone(completed) {
       this.todos = this.todos.map((todo) => ({
         ...todo,
         completed,
-      }));
+      }))
     },
     get filteredTodos() {
-      return filters[this.activeFilter](this.todos);
+      return filters[this.activeFilter](this.todos)
     },
     get numCompleted() {
-      return this.todos.filter(({ completed }) => completed).length;
+      return this.todos.filter(({ completed }) => completed).length
     },
     removeCompleted() {
-      this.todos = this.todos.filter(({ completed }) => !completed);
+      this.todos = this.todos.filter(({ completed }) => !completed)
     },
     get itemsLeft() {
-      const n = this.todos.filter(({ completed }) => !completed).length;
-      return `${n} item${n === 1 ? "" : "s"} left`;
+      const n = this.todos.filter(({ completed }) => !completed).length
+      return `${n} item${n === 1 ? "" : "s"} left`
     },
     dispatchKeyDown(e, item) {
       switch (e.keyCode) {
         case KEYS.ESCAPE:
-          item.editing = false;
-          this.titleEdit = "";
-          break;
+          item.editing = false
+          this.titleEdit = ""
+          break
         case KEYS.RETURN:
-          this.saveEdit(item);
+          this.saveEdit(item)
       }
     },
     updatedCallback() {
-      storage.set("todos", this.todos);
+      storage.set("todos", this.todos)
     },
-  };
-};
+  }
+}
 
 export const markup = html`
   <style>
@@ -123,13 +123,13 @@ export const markup = html`
       autofocus
       autocomplete="off"
       placeholder="What needs to be done?"
-      name="newTodo"
+      :name="newTodo"
       :onkeydown="addTodo()"
     />
   </header>
   <main :hidden="{{ !todos.length }}">
     <label for="allDone">Mark all as complete</label>
-    <input id="allDone" type="checkbox" name="allDone" />
+    <input id="allDone" type="checkbox" :name="allDone" />
     <ul>
       <li
         class="todo"
@@ -138,11 +138,11 @@ export const markup = html`
         key="id"
         each="todo in filteredTodos"
       >
-        <input class="toggle" type="checkbox" name="todo.completed" />
+        <input class="toggle" type="checkbox" :name="todo.completed" />
         <label :ondblclick="e => startEdit(e, todo)">{{todo.title}}</label>
         <input
           class="edit"
-          name="titleEdit"
+          :name="titleEdit"
           :onblur="saveEdit(todo)"
           :onkeydown="e => dispatchKeyDown(e, todo)"
         />
@@ -154,7 +154,7 @@ export const markup = html`
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
       <li each="filter in filters">
-        <input type="radio" name="activeFilter" :value="{{filter}}" />
+        <input type="radio" :name="activeFilter" :value="{{filter}}" />
         <label>{{ filter }}</label>
       </li>
     </ul>
@@ -166,4 +166,4 @@ export const markup = html`
       clear completed ({{ numCompleted }})
     </button>
   </footer>
-`;
+`
