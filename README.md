@@ -9,7 +9,7 @@ Synergy is a JavaScript library for building Web Components
 - Simple templates for declarative data & event binding
 - Reactive data bindings update your view efficiently and
   automatically
-- Full component workflow using standard Web Components
+- Full component workflow using standard Custom Elements
 - Small footprint (~4k)
 - No special tooling required (e.g., compilers, plugins)
 - Minimal learning curve (almost entirely standard HTML, JS,
@@ -35,7 +35,7 @@ You can also import Synergy directly in the browser via CDN:
 
 ```html
 <script type="module">
-  import { define } from "https://unpkg.com/synergy@6.0.0";
+  import { define } from "https://unpkg.com/synergy@7.0.1"
 </script>
 ```
 
@@ -50,19 +50,19 @@ You can find the Synergy documentation
 
 ```html
 <script type="module">
-  import { define } from "https://unpkg.com/synergy@6.0.0";
+  import { define } from "https://unpkg.com/synergy@7.0.1"
 
-  define("hello-world", ({ name }) => ({ name }), "<p>Hello {{ name }}</p>");
+  define("hello-world", () => ({ name }), "<p>Hello {{ name }}!</p>")
 </script>
 ```
 
-### Step 2. Use the custom element
+### Step 2. Use the Custom Element
 
 ```html
 <hello-world name="kimberley"></hello-world>
 ```
 
-This example will render "Hello Kimberley" into a container
+This example will render "Hello Kimberley!" into a container
 on the page.
 
 You'll notice that everything here is valid HTML and JS, and
