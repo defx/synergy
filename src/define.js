@@ -85,10 +85,10 @@ export const define = (name, factory, template, options = {}) =>
           );
           this.initialised = true;
         }
-        this.$viewmodel.connectedCallback?.(this.$viewmodel);
+        this.$viewmodel.connectedCallback?.();
       }
       disconnectedCallback() {
-        this.$viewmodel?.disconnectedCallback?.(this.$viewmodel);
+        this.$viewmodel?.disconnectedCallback?.();
       }
     }
   );
