@@ -11,9 +11,10 @@ Synergy is a JavaScript library for building Web Components
   automatically
 - Full component workflow using standard Custom Elements
 - Small footprint (~4k)
-- No special tooling required (e.g., compilers, plugins)
+- No special compiler, plugins, required
 - Minimal learning curve (almost entirely standard HTML, JS,
   and CSS!)
+- Interoperable with other libraries and frameworks
 
 [Learn how to use Synergy in your own project](https://synergyjs.org/learn/introduction).
 
