@@ -70,6 +70,7 @@ export const render = (
           node.getAttribute("type") === "checkbox" ? node.checked : node.value
 
         if (value.trim?.().length && !isNaN(value)) value = +value
+
         setValueAtPath(path, value, model)
       })
       return {
@@ -119,7 +120,6 @@ export const render = (
             if (property === identifier) {
               for (let n in x) {
                 let v = x[n]
-
                 if (key) {
                   if (v[key] === k) return v
                 } else {
@@ -142,6 +142,15 @@ export const render = (
             if (x[i]?.hasOwnProperty?.(property)) return x[i][property]
 
             return Reflect.get(...arguments)
+          },
+          set(_, property, value) {
+            let x = getValueAtPath(path, model)
+
+            if (x[i]?.hasOwnProperty?.(property)) {
+              return (x[i][property] = value)
+            }
+
+            return Reflect.set(...arguments)
           },
         })
 
