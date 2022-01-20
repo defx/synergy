@@ -75,7 +75,6 @@ export const render = (
       })
       return {
         handler: () => {
-          // let a = node.value;
           let b = getValueAtPath(path, model)
           updateFormControl(node, b)
         },
@@ -224,7 +223,6 @@ export const render = (
   const { bind, update, scheduleUpdate } = mediator()
 
   let blockCount = 0
-  let c = 0
 
   const parse = (frag) => {
     let index = 0
@@ -312,10 +310,14 @@ export const render = (
             } else if (name.startsWith(":")) {
               let prop = name.slice(1)
 
+              let v = value || prop
+
+              if (!v.includes("{{")) v = `{{${v}}}`
+
               x.push({
                 type: ATTRIBUTE,
                 name: prop,
-                value: value || `{{${prop}}}`,
+                value: v,
               })
               node.removeAttribute(name)
             }
