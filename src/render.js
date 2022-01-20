@@ -285,6 +285,7 @@ export const render = (
           let i = attrs.length
           while (i--) {
             let { name, value } = attrs[i]
+            let isNamedInput = false
 
             if (
               name === ":name" &&
@@ -297,6 +298,7 @@ export const render = (
                 type: INPUT,
                 path: value,
               })
+              isNamedInput = true
             }
 
             if (name.startsWith(":on")) {
@@ -312,7 +314,7 @@ export const render = (
 
               let v = value || prop
 
-              if (!v.includes("{{")) v = `{{${v}}}`
+              if (!isNamedInput && !v.includes("{{")) v = `{{${v}}}`
 
               x.push({
                 type: ATTRIBUTE,
