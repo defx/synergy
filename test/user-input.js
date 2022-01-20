@@ -187,11 +187,11 @@ describe("user input", () => {
     assert.equal(view.filter, "complete")
   })
 
-  it("should select the correct option", () => {
+  it("should select the correct option", async () => {
     let name = createName()
 
     let view = {
-      pets: "hamster",
+      $pets: "hamster",
     }
 
     synergy.define(
@@ -201,7 +201,7 @@ describe("user input", () => {
       },
       html`
         <label for="pet-select">Choose a pet:</label>
-        <select :name="pets" id="pet-select">
+        <select :name="$pets" id="pet-select">
           <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>
@@ -216,6 +216,45 @@ describe("user input", () => {
     mount(html`<${name}></${name}>`)
 
     assert.equal($("select option:checked").value, "hamster")
+
+    $(name).pets = "parrot"
+
+    await nextFrame()
+
+    assert.equal($("select option:checked").value, "parrot")
+  })
+
+  it("should select the correct option (each option)", async () => {
+    let name = createName()
+
+    let view = {
+      $pets: "Hamster",
+      options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
+    }
+
+    synergy.define(
+      name,
+      () => {
+        return view
+      },
+      html`
+        <label for="pet-select">Choose a pet:</label>
+        <select :name="$pets" id="pet-select">
+          <option value="">--Please choose an option--</option>
+          <option each="option in options" :value="option">{{ option }}</option>
+        </select>
+      `
+    )
+
+    mount(html`<${name}></${name}>`)
+
+    assert.equal($("select option:checked").value, "Hamster")
+
+    $(name).pets = "Parrot"
+
+    await nextFrame()
+
+    assert.equal($("select option:checked").value, "Parrot")
   })
 
   it("should select multiple", () => {

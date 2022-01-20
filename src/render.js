@@ -61,6 +61,12 @@ export const render = (
         handler: () => {
           let b = getValueFromParts(model, getParts(value))
           applyAttribute(node, name, b)
+
+          if (node.nodeName === "OPTION") {
+            let path = node.parentNode.getAttribute("name")
+            let selected = getValueAtPath(path, model)
+            node.selected = selected === b
+          }
         },
       }
     },
@@ -73,6 +79,7 @@ export const render = (
 
         setValueAtPath(path, value, model)
       })
+
       return {
         handler: () => {
           let b = getValueAtPath(path, model)
