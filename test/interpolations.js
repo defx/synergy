@@ -1,13 +1,15 @@
+import { define } from "../src/index.js"
+
 describe("interpolation", () => {
-  let view, rootNode;
+  let view, rootNode
   beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-  });
+    rootNode = mount(html`<div id="container"></div>`)
+  })
 
   it("should always cast primitive values to strings, unless null or undefined", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         boolean: false,
@@ -26,54 +28,54 @@ describe("interpolation", () => {
           <li id="string">{{ string }}</li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($("#boolean").textContent, "false");
-    assert.equal($("#undefined").textContent, "");
-    assert.equal($("#null").textContent, "");
-    assert.equal($("#number").textContent, "0");
-    assert.equal($("#string").textContent, "string");
-  });
+    assert.equal($("#boolean").textContent, "false")
+    assert.equal($("#undefined").textContent, "")
+    assert.equal($("#null").textContent, "")
+    assert.equal($("#number").textContent, "0")
+    assert.equal($("#string").textContent, "string")
+  })
 
   it("should support multiple bindings", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         c1: "red",
         c2: "green",
       }),
       html` <p>{{c1}} + {{c2}}</p> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($("p").textContent, "red + green");
-  });
+    assert.equal($("p").textContent, "red + green")
+  })
 
   it("should apply all the values", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         classes: ["one", "two", "three"],
       }),
       html`<section :class="{{classes}}"></section>`
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($("section").className, "one two three");
-  });
+    assert.equal($("section").className, "one two three")
+  })
 
   it("should apply all the keys with truthy values", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         classes: {
@@ -86,17 +88,17 @@ describe("interpolation", () => {
         },
       }),
       html` <section :class="{{classes}}"></section> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($("section").className, "one three six");
-  });
+    assert.equal($("section").className, "one three six")
+  })
 
   it("should apply styles", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: `
@@ -107,20 +109,20 @@ describe("interpolation", () => {
         `,
       }),
       html` <section :style="{{foo}}"></section> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     assert.equal(
       $("section").getAttribute("style"),
       "background-color: gold; color: tomato; width: 100px; height: 100px;"
-    );
-  });
+    )
+  })
 
   it("should preserve browser styles", async () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $foo: `
@@ -131,36 +133,36 @@ describe("interpolation", () => {
         `,
       }),
       html` <section :style="{{ $foo }}"></section> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    $("section").style.opacity = "0.5";
+    $("section").style.opacity = "0.5"
 
     assert.ok(
       $("section").getAttribute("style").includes("background-color: gold;")
-    );
+    )
 
     $(name).foo = `
       background-color: tomato;
       color: gold;
       width: 100px;
       height: 100px;
-  `;
+  `
 
-    await nextFrame();
+    await nextFrame()
 
     assert.ok(
       $("section").getAttribute("style").includes("background-color: tomato;")
-    );
+    )
 
-    assert.ok($("section").getAttribute("style").includes("opacity: 0.5;"));
-  });
+    assert.ok($("section").getAttribute("style").includes("opacity: 0.5;"))
+  })
 
   it("should apply styles (Object / kebab)", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: {
@@ -171,20 +173,20 @@ describe("interpolation", () => {
         },
       }),
       html` <section :style="{{foo}}"></section> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     assert.equal(
       $("section").getAttribute("style"),
       "background-color: gold; color: tomato; width: 100px; height: 100px;"
-    );
-  });
+    )
+  })
 
   it("should apply styles (Object / pascal)", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: {
@@ -195,58 +197,58 @@ describe("interpolation", () => {
         },
       }),
       html` <section :style="{{foo}}"></section> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     assert.equal(
       $("section").getAttribute("style"),
       "background-color: gold; color: tomato; width: 100px; height: 100px;"
-    );
-  });
+    )
+  })
 
   it("should allow whitespace formatting", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         c1: "red",
         c2: "green",
       }),
       html` <p :name="{{ c1 }}">{{ c2 }}</p> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($("p").getAttribute("name"), "red");
-    assert.equal($("p").textContent, "green");
-  });
+    assert.equal($("p").getAttribute("name"), "red")
+    assert.equal($("p").textContent, "green")
+  })
 
   it("should support negation", async () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({ $foo: true }),
       html` <p :hidden="{{ !$foo }}">boo!</p>`
-    );
+    )
 
-    mount(html`<${name} foo></${name}>`);
+    mount(html`<${name} foo></${name}>`)
 
-    assert.notOk($("p").hidden);
+    assert.notOk($("p").hidden)
 
-    $(name).foo = false;
+    $(name).foo = false
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.ok($("p").hidden);
-  });
+    assert.ok($("p").hidden)
+  })
 
   it("should support square brackets", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         columns: ["one", "two", "three"],
@@ -278,30 +280,30 @@ describe("interpolation", () => {
           </tr>
         </table>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($$("th").length, 3);
-    assert.equal($$("tr").length, 4);
+    assert.equal($$("th").length, 3)
+    assert.equal($$("tr").length, 4)
     assert.deepEqual(
       $$("td").map((v) => v.textContent.trim()),
       ["1", "2", "3", "3", "2", "1", "1", "3", "2"]
-    );
-  });
+    )
+  })
 
   it("should support function invocation", () => {
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
           items: [1, 2, 3],
           isSecond(item) {
-            return item === this.items[1] ? "page" : null;
+            return item === this.items[1] ? "page" : null
           },
-        };
+        }
       },
       html`
         <ul>
@@ -310,29 +312,29 @@ describe("interpolation", () => {
           </li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($$('a[aria-current="page"]').length, 1);
-  });
+    assert.equal($$('a[aria-current="page"]').length, 1)
+  })
 
   it("should support nested function invocation", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       foo: {
         items: [1, 2, 3],
         isSecond(item) {
-          return item === this.items[1] ? "page" : null;
+          return item === this.items[1] ? "page" : null
         },
       },
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <ul>
@@ -341,15 +343,15 @@ describe("interpolation", () => {
           </li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($$('a[aria-current="page"]').length, 1);
-  });
+    assert.equal($$('a[aria-current="page"]').length, 1)
+  })
 
   it("resolves properties from the current item first", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       foo: "bar",
@@ -364,12 +366,12 @@ describe("interpolation", () => {
           x: 32,
         },
       ],
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <div
@@ -379,23 +381,23 @@ describe("interpolation", () => {
           :foo="{{ foo }}"
         ></div>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let nodes = $$(".foo");
+    let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length);
+    assert.equal(nodes.length, view.items.length)
 
     view.items.forEach(({ x }, i) => {
-      let node = nodes[i];
-      assert.equal(node.getAttribute("x"), x);
-      assert.equal(node.getAttribute("foo"), view.foo);
-    });
-  });
+      let node = nodes[i]
+      assert.equal(node.getAttribute("x"), x)
+      assert.equal(node.getAttribute("foo"), view.foo)
+    })
+  })
 
   it("supports simple each (just the collection property)", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       foo: "bar",
@@ -410,31 +412,31 @@ describe("interpolation", () => {
           x: 32,
         },
       ],
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html` <div class="foo" each="items" :x="{{ x }}" :foo="{{ foo }}"></div> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let nodes = $$(".foo");
+    let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length);
+    assert.equal(nodes.length, view.items.length)
 
     view.items.forEach(({ x }, i) => {
-      let node = nodes[i];
-      assert.equal(node.getAttribute("x"), x);
-      assert.equal(node.getAttribute("foo"), view.foo);
-    });
-  });
+      let node = nodes[i]
+      assert.equal(node.getAttribute("x"), x)
+      assert.equal(node.getAttribute("foo"), view.foo)
+    })
+  })
 
   it("supports shorthand attributes (when attribute name matches property name)", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       foo: "bar",
@@ -449,26 +451,26 @@ describe("interpolation", () => {
           x: 32,
         },
       ],
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html` <div class="foo" each="items" :x :foo></div> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let nodes = $$(".foo");
+    let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length);
+    assert.equal(nodes.length, view.items.length)
 
     view.items.forEach(({ x }, i) => {
-      let node = nodes[i];
-      assert.equal(node.getAttribute("x"), x);
-      assert.equal(node.getAttribute("foo"), view.foo);
-    });
-  });
-});
+      let node = nodes[i]
+      assert.equal(node.getAttribute("x"), x)
+      assert.equal(node.getAttribute("foo"), view.foo)
+    })
+  })
+})

@@ -1,16 +1,18 @@
+import { define } from "../src/index.js"
+
 describe("events", () => {
-  let rootNode;
+  let rootNode
 
   beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-  });
+    rootNode = mount(html`<div id="container"></div>`)
+  })
 
   it("should support invocation of named function with parentheses but without arguments", async () => {
-    let args;
+    let args
 
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -31,9 +33,9 @@ describe("events", () => {
             },
           ],
           foo(...argz) {
-            args = argz;
+            args = argz
           },
-        };
+        }
       },
       html`
         <article each="artist in artists">
@@ -43,21 +45,21 @@ describe("events", () => {
           </ul>
         </article>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    $("article:nth-of-type(2) li").click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click() //salvador dali painter
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.deepEqual(args.length, 0);
-  });
+    assert.deepEqual(args.length, 0)
+  })
 
   it("should support scoped arguments", async () => {
-    let args;
+    let args
 
-    let name = createName();
+    let name = createName()
 
     let view = {
       artists: [
@@ -77,14 +79,14 @@ describe("events", () => {
         },
       ],
       foo(...argz) {
-        args = argz;
+        args = argz
       },
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <article each="artist in artists">
@@ -96,22 +98,22 @@ describe("events", () => {
           </ul>
         </article>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    $("article:nth-of-type(2) li").click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click() //salvador dali painter
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.equal(args[0], view.artists[1].tags[0]);
-    assert.deepEqual(args[1], view.artists[1]);
-  });
+    assert.equal(args[0], view.artists[1].tags[0])
+    assert.deepEqual(args[1], view.artists[1])
+  })
 
   it("should support fat arrow syntax for passing named event object", async () => {
-    let args;
+    let args
 
-    let name = createName();
+    let name = createName()
 
     let view = {
       fish: "plankton",
@@ -132,14 +134,14 @@ describe("events", () => {
         },
       ],
       foo(...argz) {
-        args = argz;
+        args = argz
       },
-    };
+    }
 
-    synergy.define(
+    define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <article each="artist in artists">
@@ -154,17 +156,17 @@ describe("events", () => {
           </ul>
         </article>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    $("article:nth-of-type(2) li").click(); //salvador dali painter
+    $("article:nth-of-type(2) li").click() //salvador dali painter
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.ok(args[0] instanceof MouseEvent);
-    assert.equal(args[1], view.artists[1].tags[0]);
-    assert.deepEqual(args[2], view.artists[1]);
-    assert.equal(args[3], view.fish);
-  });
-});
+    assert.ok(args[0] instanceof MouseEvent)
+    assert.equal(args[1], view.artists[1].tags[0])
+    assert.deepEqual(args[2], view.artists[1])
+    assert.equal(args[3], view.fish)
+  })
+})

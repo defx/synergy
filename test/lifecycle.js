@@ -1,70 +1,72 @@
+import { define } from "../src/index.js"
+
 describe("lifecycle", () => {
   it("should fire after update", async () => {
-    mount(html` <div id="container"></div> `);
+    mount(html` <div id="container"></div> `)
 
-    let stack = [];
+    let stack = []
 
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
           $message: "hi!",
           updatedCallback() {
-            stack.push(true);
+            stack.push(true)
           },
-        };
+        }
       },
       html`<p>{{ $message }}</p>`
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal(stack.length, 0);
+    assert.equal(stack.length, 0)
 
-    $(name).message = "bye!";
+    $(name).message = "bye!"
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.equal(stack.length, 1);
-  });
+    assert.equal(stack.length, 1)
+  })
   it("should provide previous state", async () => {
-    let stack = [];
+    let stack = []
 
-    let name = createName();
+    let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
           $message: "",
           updatedCallback(prevState) {
-            stack.push(prevState.$message);
+            stack.push(prevState.$message)
           },
-        };
+        }
       },
       html`<p>{{ $message }}</p>`
-    );
+    )
 
-    mount(html`<${name} message="hi!"></${name}>`);
+    mount(html`<${name} message="hi!"></${name}>`)
 
-    assert.equal(stack.length, 0);
+    assert.equal(stack.length, 0)
 
-    $(name).message = "bye!";
+    $(name).message = "bye!"
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.equal(stack.length, 1);
+    assert.equal(stack.length, 1)
 
-    assert.equal(stack[0], "hi!");
-  });
+    assert.equal(stack[0], "hi!")
+  })
   it("should have correct thisArg", async () => {
-    let name = createName();
+    let name = createName()
 
-    let stack = [];
+    let stack = []
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -73,26 +75,26 @@ describe("lifecycle", () => {
             stack.push({
               prev: prevState.$message,
               next: this.$message,
-            });
+            })
           },
-        };
+        }
       },
       html`<p>{{ $message }}</p>`
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal(stack.length, 0);
+    assert.equal(stack.length, 0)
 
-    $(name).message = "bye!";
+    $(name).message = "bye!"
 
-    await nextFrame();
+    await nextFrame()
 
-    assert.equal(stack.length, 1);
+    assert.equal(stack.length, 1)
 
     assert.deepEqual(stack[0], {
       prev: "hi!",
       next: "bye!",
-    });
-  });
-});
+    })
+  })
+})

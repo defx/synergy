@@ -1,38 +1,40 @@
+import { define } from "../src/index.js"
+
 describe("hydrate", () => {
   it("should preserve prerendered DOM", () => {
-    let name = createName();
+    let name = createName()
 
-    let stack = [];
+    let stack = []
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
           foo() {
-            stack.push("foo!");
+            stack.push("foo!")
           },
-        };
+        }
       },
       html`
         <div>
           <a href="#" id="foo" :onclick="foo()"><slot></slot></a>
         </div>
       `
-    );
+    )
 
-    mount(html`<${name}>click me!</${name}>`);
+    mount(html`<${name}>click me!</${name}>`)
 
-    let outerHTML = $(name).outerHTML;
+    let outerHTML = $(name).outerHTML
 
-    $(name).parentNode.removeChild($(name));
+    $(name).parentNode.removeChild($(name))
 
-    let newNode = document.createElement("div");
-    newNode.innerHTML = outerHTML;
+    let newNode = document.createElement("div")
+    newNode.innerHTML = outerHTML
 
-    mount(newNode);
+    mount(newNode)
 
-    $("#foo").click();
+    $("#foo").click()
 
-    assert.deepEqual(stack, ["foo!"]);
-  });
-});
+    assert.deepEqual(stack, ["foo!"])
+  })
+})
