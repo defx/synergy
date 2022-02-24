@@ -1,31 +1,31 @@
 const childNodes = (node) => {
-  let frag = document.createDocumentFragment();
+  let frag = document.createDocumentFragment()
   while (node.firstChild) {
-    frag.appendChild(node.firstChild);
+    frag.appendChild(node.firstChild)
   }
-  return frag;
-};
+  return frag
+}
 
 export const mergeSlots = (targetNode, sourceNode) => {
-  let namedSlots = sourceNode.querySelectorAll("slot[name]");
+  let namedSlots = sourceNode.querySelectorAll("slot[name]")
 
   namedSlots.forEach((slot) => {
-    let name = slot.attributes.name.value;
-    let node = targetNode.querySelector(`[slot="${name}"]`);
+    let name = slot.attributes.name.value
+    let node = targetNode.querySelector(`[slot="${name}"]`)
     if (!node) {
-      slot.parentNode.replaceChild(childNodes(slot), slot);
-      return;
+      slot.parentNode.replaceChild(childNodes(slot), slot)
+      return
     }
-    node.removeAttribute("slot");
-    slot.parentNode.replaceChild(node, slot);
-  });
+    node.removeAttribute("slot")
+    slot.parentNode.replaceChild(node, slot)
+  })
 
-  let defaultSlot = sourceNode.querySelector("slot:not([name])");
+  let defaultSlot = sourceNode.querySelector("slot:not([name])")
 
   if (defaultSlot) {
     defaultSlot.parentNode.replaceChild(
       childNodes(targetNode.innerHTML.trim() ? targetNode : defaultSlot),
       defaultSlot
-    );
+    )
   }
-};
+}

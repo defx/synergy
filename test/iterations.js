@@ -1,11 +1,11 @@
 describe("iterations", () => {
-  let view, rootNode;
+  let view, rootNode
   beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`);
-  });
+    rootNode = mount(html`<div id="container"></div>`)
+  })
 
   it("should iterate over Array", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       todos: [
@@ -20,12 +20,12 @@ describe("iterations", () => {
           colour: "gold",
         },
       ],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <ul>
@@ -36,28 +36,28 @@ describe("iterations", () => {
           </template>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos);
+    let todos = Array.from(view.todos)
 
     $$("#container li").forEach((li, i) => {
-      assert.equal(li.querySelector("p").textContent, todos[i].title);
-    });
-  });
+      assert.equal(li.querySelector("p").textContent, todos[i].title)
+    })
+  })
 
   it("should iterate over Array keys", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       colours: ["gold", "tomato"],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <ul>
@@ -67,18 +67,18 @@ describe("iterations", () => {
           </li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     $$("li").forEach((li, i) => {
-      assert.equal(li.querySelector("p").textContent, i);
-      assert.equal(li.dataset.index, i);
-    });
-  });
+      assert.equal(li.querySelector("p").textContent, i)
+      assert.equal(li.dataset.index, i)
+    })
+  })
 
   it("should overwrite non-keyed list nodes", async () => {
-    let name = createName();
+    let name = createName()
 
     synergy.define(
       name,
@@ -100,11 +100,11 @@ describe("iterations", () => {
           <p>{{colour.name}}</p>
         </template>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let previousNodes = $$("p");
+    let previousNodes = $$("p")
 
     $(name).colours = [
       {
@@ -116,19 +116,19 @@ describe("iterations", () => {
       {
         name: "red",
       },
-    ];
+    ]
 
-    await nextFrame();
+    await nextFrame()
 
-    let currentNodes = $$("p");
+    let currentNodes = $$("p")
 
-    assert.ok(previousNodes[0].isSameNode(currentNodes[0]));
-    assert.ok(previousNodes[1].isSameNode(currentNodes[1]));
-    assert.ok(previousNodes[2].isSameNode(currentNodes[2]));
-  });
+    assert.ok(previousNodes[0].isSameNode(currentNodes[0]))
+    assert.ok(previousNodes[1].isSameNode(currentNodes[1]))
+    assert.ok(previousNodes[2].isSameNode(currentNodes[2]))
+  })
 
   it("should not overwrite non-keyed list nodes (custom key)", async () => {
-    let name = createName();
+    let name = createName()
 
     synergy.define(
       name,
@@ -153,11 +153,11 @@ describe("iterations", () => {
           <p>{{colour.name}}</p>
         </template>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let previousNodes = $$("p");
+    let previousNodes = $$("p")
 
     $(name).colours = [
       {
@@ -172,19 +172,19 @@ describe("iterations", () => {
         name: "red",
         foo: 3,
       },
-    ];
+    ]
 
-    await nextFrame();
+    await nextFrame()
 
-    let currentNodes = $$("p");
+    let currentNodes = $$("p")
 
-    assert.ok(previousNodes[0].isSameNode(currentNodes[1]));
-    assert.ok(previousNodes[1].isSameNode(currentNodes[0]));
-    assert.ok(previousNodes[2].isSameNode(currentNodes[2]));
-  });
+    assert.ok(previousNodes[0].isSameNode(currentNodes[1]))
+    assert.ok(previousNodes[1].isSameNode(currentNodes[0]))
+    assert.ok(previousNodes[2].isSameNode(currentNodes[2]))
+  })
 
   it("should support multiple top-level nodes", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       colours: [
@@ -201,12 +201,12 @@ describe("iterations", () => {
           id: 3,
         },
       ],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <div>
@@ -216,18 +216,18 @@ describe("iterations", () => {
           </template>
         </div>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     assert.deepEqual(
       $$(`${name} p`).map((v) => v.textContent),
       ["red", "1", "green", "2", "gold", "3"]
-    );
-  });
+    )
+  })
 
   it("should support negations within repeated block", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       colours: [
@@ -247,12 +247,12 @@ describe("iterations", () => {
           show: false,
         },
       ],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <div>
@@ -266,17 +266,17 @@ describe("iterations", () => {
           </div>
         </div>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    assert.equal($$(".colour")[0].hidden, false);
-    assert.equal($$(".colour")[1].hidden, true);
-    assert.equal($$(".colour")[2].hidden, true);
-  });
+    assert.equal($$(".colour")[0].hidden, false)
+    assert.equal($$(".colour")[1].hidden, true)
+    assert.equal($$(".colour")[2].hidden, true)
+  })
 
   it("should work without templates", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       todos: [
@@ -291,12 +291,12 @@ describe("iterations", () => {
           colour: "gold",
         },
       ],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <ul>
@@ -305,23 +305,23 @@ describe("iterations", () => {
           </li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos);
+    let todos = Array.from(view.todos)
 
-    let listItems = $$("li");
+    let listItems = $$("li")
 
-    assert.equal(listItems.length, 2);
+    assert.equal(listItems.length, 2)
 
     $$("li").forEach((li, i) => {
-      assert.equal(li.querySelector("p").textContent, todos[i].title);
-    });
-  });
+      assert.equal(li.querySelector("p").textContent, todos[i].title)
+    })
+  })
 
   it("works with Objects too", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       foo: {
@@ -332,29 +332,29 @@ describe("iterations", () => {
         4: 8,
         foo: "bar",
       },
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let nodes = $$("p");
+    let nodes = $$("p")
 
-    assert.equal(nodes.length, Object.keys(view.foo).length);
+    assert.equal(nodes.length, Object.keys(view.foo).length)
 
     Object.entries(view.foo).forEach(([k, v], i) => {
-      assert.equal(nodes[i].textContent, `${k} : ${v}`);
-    });
-  });
+      assert.equal(nodes[i].textContent, `${k} : ${v}`)
+    })
+  })
 
   it("works with SVG", () => {
-    let name = createName();
+    let name = createName()
 
     let view = {
       items: [
@@ -380,12 +380,12 @@ describe("iterations", () => {
           height: 16,
         },
       ],
-    };
+    }
 
     synergy.define(
       name,
       () => {
-        return view;
+        return view
       },
       html`
         <svg
@@ -405,25 +405,25 @@ describe("iterations", () => {
           ></rect>
         </svg>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    let nodes = $$(".foo").slice(1);
+    let nodes = $$(".foo").slice(1)
 
-    assert.equal(nodes.length, view.items.length);
+    assert.equal(nodes.length, view.items.length)
 
     view.items.forEach(({ width, height, x, y }, i) => {
-      let box = nodes[i].getBBox();
-      assert.equal(box.x, x);
-      assert.equal(box.y, y);
-      assert.equal(box.width, width);
-      assert.equal(box.height, height);
-    });
-  });
+      let box = nodes[i].getBBox()
+      assert.equal(box.x, x)
+      assert.equal(box.y, y)
+      assert.equal(box.width, width)
+      assert.equal(box.height, height)
+    })
+  })
 
   it("should render two lists", () => {
-    let name = createName();
+    let name = createName()
 
     synergy.define(
       name,
@@ -443,18 +443,18 @@ describe("iterations", () => {
           </li>
         </ul>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
-    $(name).colours1.push("black");
-    $(name).colours2.unshift("white");
+    $(name).colours1.push("black")
+    $(name).colours2.unshift("white")
 
     // @TODO
-  });
+  })
 
   it("works with SVG", () => {
-    let name = createName();
+    let name = createName()
 
     synergy.define(
       name,
@@ -525,9 +525,9 @@ describe("iterations", () => {
           ></circle>
         </svg>
       `
-    );
+    )
 
-    mount(html`<${name}></${name}>`);
+    mount(html`<${name}></${name}>`)
 
     $(name).rects.push({
       x: 0,
@@ -535,7 +535,7 @@ describe("iterations", () => {
       fill: "aqua",
       width: 96,
       height: 16,
-    });
+    })
 
     $(name).rects.unshift({
       x: 0,
@@ -543,7 +543,7 @@ describe("iterations", () => {
       fill: "olive",
       width: 64,
       height: 16,
-    });
+    })
 
     // assert.equal(nodes.length, view.items.length);
 
@@ -554,5 +554,5 @@ describe("iterations", () => {
     //   assert.equal(box.width, width);
     //   assert.equal(box.height, height);
     // });
-  });
-});
+  })
+})
