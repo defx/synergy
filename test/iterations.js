@@ -1,4 +1,9 @@
 import { define } from "../src/index.js"
+describe("iterations", () => {
+  let view, rootNode
+  beforeEach(() => {
+    rootNode = mount(html`<div id="container"></div>`)
+  })
 
 describe("iterations", () => {
   it("should iterate over Array", () => {
@@ -69,7 +74,6 @@ describe("iterations", () => {
     mount(html`<${name}></${name}>`)
 
     $$("li").forEach((li, i) => {
-      console.log(li)
       assert.equal(li.querySelector("p").textContent, i)
       assert.equal(li.dataset.index, i)
     })

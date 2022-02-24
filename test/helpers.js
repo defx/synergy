@@ -1,39 +1,39 @@
-import { applyAttribute } from '../src/helpers.js';
+import { applyAttribute } from "../src/helpers.js"
 
-describe('applyAttribute', () => {
-  it('', () => {
-    let node = document.createElement('div');
+describe("applyAttribute", () => {
+  it("", () => {
+    let node = document.createElement("div")
 
-    applyAttribute(node, 'foo', true);
+    applyAttribute(node, "foo", true)
 
-    assert.equal(node.getAttribute('foo'), '');
-  });
-  it('', () => {
-    let node = document.createElement('div');
+    assert.equal(node.getAttribute("foo"), "")
+  })
+  it("", () => {
+    let node = document.createElement("div")
 
-    applyAttribute(node, 'foo', false);
+    applyAttribute(node, "foo", false)
 
-    assert.equal(node.getAttribute('foo'), null);
-  });
-  it('', () => {
-    let node = document.createElement('div');
+    assert.equal(node.getAttribute("foo"), null)
+  })
+  it("", () => {
+    let node = document.createElement("div")
 
-    applyAttribute(node, 'ariaFoo', false);
+    applyAttribute(node, "ariaFoo", false)
 
-    assert.equal(node.getAttribute('aria-foo'), 'false');
-  });
-  it('', () => {
-    let node = document.createElement('div');
+    assert.equal(node.getAttribute("aria-foo"), "false")
+  })
+  it("", () => {
+    let node = document.createElement("div")
 
-    applyAttribute(node, 'ariaFoo', true);
+    applyAttribute(node, "ariaFoo", true)
 
-    assert.equal(node.getAttribute('aria-foo'), 'true');
-  });
-  it('', () => {
-    let node = document.createElement('div');
+    assert.equal(node.getAttribute("aria-foo"), "true")
+  })
+  it("", () => {
+    let node = document.createElement("div")
 
-    applyAttribute(node, 'dataIndex', 0);
+    applyAttribute(node, "dataIndex", 0)
 
-    assert.equal(node.getAttribute('data-index'), '0');
-  });
-});
+    assert.equal(node.getAttribute("data-index"), "0")
+  })
+})

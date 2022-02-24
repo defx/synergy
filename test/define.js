@@ -285,6 +285,4 @@ describe("define", () => {
     await nextFrame()
     assert.equal($(name).innerText.trim(), "bar")
   })
-
-  // it("");
 })
