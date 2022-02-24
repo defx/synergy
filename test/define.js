@@ -1,14 +1,16 @@
+import { define } from "../src/index.js"
+
 describe("define", () => {
   it("should define a custom element", () => {
     let name = createName()
-    synergy.define(name, () => {}, "")
+    define(name, () => {}, "")
     assert.ok(customElements.get(name))
   })
 
   it("initialise factory with node", () => {
     let name = createName()
     let el
-    synergy.define(
+    define(
       name,
       (node) => {
         el = node
@@ -28,7 +30,7 @@ describe("define", () => {
 
     let template = document.createElement("template")
     template.innerHTML = "<p>{{ $title }}</p>"
-    synergy.define(
+    define(
       name,
       () => ({
         $title: "",
@@ -44,7 +46,7 @@ describe("define", () => {
 
   it("reflects attribute changes on to viewmodel", async () => {
     let name = createName()
-    synergy.define(name, () => ({ $title: "" }), "<p>{{ $title }}</p>", {
+    define(name, () => ({ $title: "" }), "<p>{{ $title }}</p>", {
       observe: ["title"],
     })
     mount(`
@@ -57,7 +59,7 @@ describe("define", () => {
   it("reflects viewmodel changes back on to attributes", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         show: true,
@@ -78,7 +80,7 @@ describe("define", () => {
 
   it("merges default slot", () => {
     let name = createName()
-    synergy.define(
+    define(
       name,
       () => ({}),
       html`<p>hello <slot></slot>!</p>
@@ -93,7 +95,7 @@ describe("define", () => {
 
   it("merges named slots", () => {
     let name = createName()
-    synergy.define(
+    define(
       name,
       () => ({}),
       html`<p>
@@ -109,7 +111,7 @@ describe("define", () => {
 
   it("converts between kebab and pascal casing", async () => {
     let name = createName()
-    synergy.define(
+    define(
       name,
       () => ({
         $fooBar: false,
@@ -134,7 +136,7 @@ describe("define", () => {
   it("correctly handles aria string booleans", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $ariaHidden: true,
@@ -168,7 +170,7 @@ describe("define", () => {
         },
       }
     }
-    synergy.define(name, factory, "<template></template>")
+    define(name, factory, "<template></template>")
     mount(`
     <${name}></${name}>
     `)
@@ -192,7 +194,7 @@ describe("define", () => {
       <slot></slot>
     `
 
-    synergy.define("x-shadow", factory, template, {
+    define("x-shadow", factory, template, {
       shadow: "open",
     })
 
@@ -215,13 +217,13 @@ describe("define", () => {
     <p each="item in arr">{{ item }}</p>
     `
 
-    synergy.define("rich-props", factory, template, {
+    define("rich-props", factory, template, {
       observe: ["arr", "obj"],
     })
 
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -243,7 +245,7 @@ describe("define", () => {
   it("reflects observed properties from viewmodel to element", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $foo: "",
@@ -266,7 +268,7 @@ describe("define", () => {
   it("supports async initialisation", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () =>
         Promise.resolve({
@@ -283,6 +285,4 @@ describe("define", () => {
     await nextFrame()
     assert.equal($(name).innerText.trim(), "bar")
   })
-
-  // it("");
 })

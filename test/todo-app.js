@@ -1,10 +1,11 @@
+import { define } from "../src/index.js"
 import { TodoApp, markup, storage } from "../examples/todo-app/index.js"
 
 describe("Todo List", () => {
   beforeEach(() => {
     let name = createName()
 
-    synergy.define(name, TodoApp, markup)
+    define(name, TodoApp, markup)
     mount(`<${name}></${name}>`)
   })
 

@@ -1,3 +1,5 @@
+import { define } from "../src/index.js"
+
 describe("lifecycle", () => {
   it("should fire after update", async () => {
     mount(html` <div id="container"></div> `)
@@ -6,7 +8,7 @@ describe("lifecycle", () => {
 
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -34,7 +36,7 @@ describe("lifecycle", () => {
 
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -64,7 +66,7 @@ describe("lifecycle", () => {
 
     let stack = []
 
-    synergy.define(
+    define(
       name,
       () => {
         return {

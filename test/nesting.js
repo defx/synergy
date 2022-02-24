@@ -1,9 +1,11 @@
+import { define } from "../src/index.js"
+
 describe("nesting", () => {
   it("should...", () => {
     let n1 = createName()
     let n2 = createName()
 
-    synergy.define(
+    define(
       n1,
       () => {
         return {}
@@ -11,7 +13,7 @@ describe("nesting", () => {
       `<li><slot></slot></li>`
     )
 
-    synergy.define(
+    define(
       n2,
       ({ items = [] }) => {
         return { items }

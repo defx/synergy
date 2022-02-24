@@ -16,11 +16,11 @@
     "test": "test"
   },
   "scripts": {
-    "test": "karma start --coverage",
-    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test": "mocha-express --coverage",
+    "test:watch": "mocha-express --watch",
     "build": "rm -rf dist && rollup -c && npm run size",
     "size": "gzip -c9 ./dist/synergy.min.js | wc -c",
-    "coveralls": "cat ./coverage/chrome/lcov.info | coveralls",
+    "coveralls": "cat ./coverage/lcov-report/lcov.info | coveralls",
     "prepublish": "npm t && npm run build",
     "release": "npm t && standard-version"
   },
@@ -49,17 +49,11 @@
   },
   "homepage": "https://github.com/defx/synergy#readme",
   "devDependencies": {
-    "@open-wc/karma-esm": "^3.0.5",
-    "@open-wc/testing-karma": "^4.0.5",
-    "chai": "^4.2.0",
     "coveralls": "^3.1.0",
-    "karma": "^5.1.1",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-coverage": "^2.0.3",
-    "mocha": "^8.1.1",
+    "mocha-express": "^0.1.2",
     "rollup": "^2.26.4",
     "rollup-plugin-terser": "^7.0.1",
     "standard-version": "^9.1.1"
-  }
+  },
+  "dependencies": {}
 }

@@ -1,3 +1,5 @@
+import { define } from "../src/index.js"
+
 describe("interpolation", () => {
   let view, rootNode
   beforeEach(() => {
@@ -7,7 +9,7 @@ describe("interpolation", () => {
   it("should always cast primitive values to strings, unless null or undefined", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         boolean: false,
@@ -40,7 +42,7 @@ describe("interpolation", () => {
   it("should support multiple bindings", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         c1: "red",
@@ -57,7 +59,7 @@ describe("interpolation", () => {
   it("should apply all the values", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         classes: ["one", "two", "three"],
@@ -73,7 +75,7 @@ describe("interpolation", () => {
   it("should apply all the keys with truthy values", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         classes: {
@@ -96,7 +98,7 @@ describe("interpolation", () => {
   it("should apply styles", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: `
@@ -120,7 +122,7 @@ describe("interpolation", () => {
   it("should preserve browser styles", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $foo: `
@@ -160,7 +162,7 @@ describe("interpolation", () => {
   it("should apply styles (Object / kebab)", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: {
@@ -184,7 +186,7 @@ describe("interpolation", () => {
   it("should apply styles (Object / pascal)", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         foo: {
@@ -208,7 +210,7 @@ describe("interpolation", () => {
   it("should allow whitespace formatting", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         c1: "red",
@@ -226,7 +228,7 @@ describe("interpolation", () => {
   it("should support negation", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({ $foo: true }),
       html` <p :hidden="{{ !$foo }}">boo!</p>`
@@ -246,7 +248,7 @@ describe("interpolation", () => {
   it("should support square brackets", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         columns: ["one", "two", "three"],
@@ -293,7 +295,7 @@ describe("interpolation", () => {
   it("should support function invocation", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -329,7 +331,7 @@ describe("interpolation", () => {
       },
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -366,7 +368,7 @@ describe("interpolation", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -412,7 +414,7 @@ describe("interpolation", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -451,7 +453,7 @@ describe("interpolation", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view

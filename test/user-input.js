@@ -1,3 +1,5 @@
+import { define } from "../src/index.js"
+
 describe("user input", () => {
   let rootNode
   beforeEach(() => {
@@ -11,7 +13,7 @@ describe("user input", () => {
       message: "?",
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -34,7 +36,7 @@ describe("user input", () => {
       },
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -66,7 +68,7 @@ describe("user input", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -94,7 +96,7 @@ describe("user input", () => {
   it("should check the correct radio button", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -127,7 +129,7 @@ describe("user input", () => {
 
     let view = {}
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -160,7 +162,7 @@ describe("user input", () => {
       filter: "active",
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -194,7 +196,7 @@ describe("user input", () => {
       $pets: "hamster",
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -232,7 +234,7 @@ describe("user input", () => {
       options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -264,7 +266,7 @@ describe("user input", () => {
       pets: ["dog", "hamster"],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -294,7 +296,7 @@ describe("user input", () => {
   it("should reflect selected option", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $pets: ["hamster"],
@@ -335,7 +337,7 @@ describe("user input", () => {
       text: "ok",
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view

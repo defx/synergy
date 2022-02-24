@@ -1,9 +1,11 @@
+import { define } from "../src/index.js"
 describe("iterations", () => {
   let view, rootNode
   beforeEach(() => {
     rootNode = mount(html`<div id="container"></div>`)
   })
 
+describe("iterations", () => {
   it("should iterate over Array", () => {
     let name = createName()
 
@@ -22,7 +24,7 @@ describe("iterations", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -54,7 +56,7 @@ describe("iterations", () => {
       colours: ["gold", "tomato"],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -80,7 +82,7 @@ describe("iterations", () => {
   it("should overwrite non-keyed list nodes", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $colours: [
@@ -130,7 +132,7 @@ describe("iterations", () => {
   it("should not overwrite non-keyed list nodes (custom key)", async () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $colours: [
@@ -203,7 +205,7 @@ describe("iterations", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -249,7 +251,7 @@ describe("iterations", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -293,7 +295,7 @@ describe("iterations", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -334,7 +336,7 @@ describe("iterations", () => {
       },
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -382,7 +384,7 @@ describe("iterations", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -425,7 +427,7 @@ describe("iterations", () => {
   it("should render two lists", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         $colours1: ["gold", "tomato"],
@@ -456,7 +458,7 @@ describe("iterations", () => {
   it("works with SVG", () => {
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => ({
         circles: [

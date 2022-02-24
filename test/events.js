@@ -1,3 +1,5 @@
+import { define } from "../src/index.js"
+
 describe("events", () => {
   let rootNode
 
@@ -10,7 +12,7 @@ describe("events", () => {
 
     let name = createName()
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
@@ -81,7 +83,7 @@ describe("events", () => {
       },
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -136,7 +138,7 @@ describe("events", () => {
       },
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view

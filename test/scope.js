@@ -1,3 +1,5 @@
+import { define } from "../src/index.js"
+
 describe("scope", () => {
   let rootNode
   beforeEach(() => {
@@ -24,7 +26,7 @@ describe("scope", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view
@@ -71,7 +73,7 @@ describe("scope", () => {
       ],
     }
 
-    synergy.define(
+    define(
       name,
       () => {
         return view

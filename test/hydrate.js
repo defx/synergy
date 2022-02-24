@@ -1,10 +1,12 @@
+import { define } from "../src/index.js"
+
 describe("hydrate", () => {
   it("should preserve prerendered DOM", () => {
     let name = createName()
 
     let stack = []
 
-    synergy.define(
+    define(
       name,
       () => {
         return {
