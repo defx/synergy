@@ -15,7 +15,7 @@ export const walk = (node, callback, deep = true) => {
   walk(node.nextSibling, callback, deep)
 }
 
-const transformBrackets = (str) => {
+const transformBrackets = (str = "") => {
   let parts = str.split(/(\[[^\]]+\])/).filter((v) => v)
   return parts.reduce((a, part) => {
     let v = part.charAt(0) === "[" ? "." + part.replace(/\./g, ":") : part
