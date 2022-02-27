@@ -1,9 +1,4 @@
 import { define } from "../src/index.js"
-describe("iterations", () => {
-  let view, rootNode
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`)
-  })
 
 describe("iterations", () => {
   it("should iterate over Array", () => {

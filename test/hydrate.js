@@ -1,20 +1,17 @@
 import { define } from "../src/index.js"
 
 describe("hydrate", () => {
-  it("should preserve prerendered DOM", () => {
+  it("rehydrates event listeners", () => {
     let name = createName()
-
     let stack = []
 
     define(
       name,
-      () => {
-        return {
-          foo() {
-            stack.push("foo!")
-          },
-        }
-      },
+      () => ({
+        foo() {
+          stack.push("foo!")
+        },
+      }),
       html`
         <div>
           <a href="#" id="foo" :onclick="foo()"><slot></slot></a>
@@ -24,17 +21,50 @@ describe("hydrate", () => {
 
     mount(html`<${name}>click me!</${name}>`)
 
-    let outerHTML = $(name).outerHTML
+    let node = $(name)
+    let outerHTML = node.outerHTML
 
-    $(name).parentNode.removeChild($(name))
+    node.remove()
 
-    let newNode = document.createElement("div")
-    newNode.innerHTML = outerHTML
-
-    mount(newNode)
+    mount(outerHTML)
 
     $("#foo").click()
 
     assert.deepEqual(stack, ["foo!"])
+  })
+  it("rehydrates repeated blocks", async () => {
+    let name = createName()
+
+    define(
+      name,
+      () => {
+        return {
+          $todos: [
+            {
+              title: "feed the duck",
+            },
+            {
+              title: "walk the cat",
+            },
+          ],
+          click(todo) {
+            console.log(todo.title)
+          },
+        }
+      },
+      `
+      <ul>
+        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+      </ul>
+    `
+    )
+
+    mount(`<${name}></${name}>`)
+
+    let html = $(name).outerHTML
+
+    $(name).remove()
+
+    mount(html)
   })
 })
