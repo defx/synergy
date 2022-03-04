@@ -31,23 +31,21 @@
   "keywords": [
     "simple",
     "declarative",
-    "data",
     "binding",
     "dom",
     "ui",
-    "interface",
-    "interaction",
+    "user interface",
     "web components",
+    "framework",
     "vue",
-    "react",
-    "alternative"
+    "react"
   ],
   "author": "Matt Donkin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/defx/synergy/issues"
   },
-  "homepage": "https://github.com/defx/synergy#readme",
+  "homepage": "https://synergyjs.org",
   "devDependencies": {
     "coveralls": "^3.1.0",
     "mocha-express": "^0.1.2",
