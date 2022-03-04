@@ -8,7 +8,6 @@ import {
   last,
   setValueAtPath,
   walk,
-  typeOf,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
 import { proxy } from "./proxy.js"
@@ -185,13 +184,14 @@ export const render = (
 
       if (hydrate) {
         let x = getValueAtPath(path, model)
-        let length = typeOf(x) === "Object" ? Object.keys(x).length : x.length
-        let blocks = getBlocks(node, length)
+        let blocks = getBlocks(node)
+
         blocks.forEach((block, i) => {
           let datum = x[i]
-          let k = datum[key]
+          let k = datum?.[key]
           initialiseBlock(block[0], i, k, last(block).nextSibling)
         })
+
         pickupNode = last(last(blocks)).nextSibling
       }
 
@@ -387,7 +387,7 @@ export const render = (
   } else {
     walk(frag, bindAll(p, map))
     beforeMountCallback?.(frag)
-    target.appendChild(frag)
+    target.prepend(frag)
     update()
     target.setAttribute?.(HYDRATE_ATTR, 1)
   }

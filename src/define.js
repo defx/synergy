@@ -7,6 +7,26 @@ import {
   pascalToKebab,
 } from "./helpers.js"
 
+function getDataScript(node) {
+  return node.querySelector(`script[type="application/synergy"]`)
+}
+
+function createDataScript(node) {
+  let ds = document.createElement("script")
+  ds.setAttribute("type", "application/synergy")
+  node.append(ds)
+  return ds
+}
+
+function serialise(node) {
+  let ds = getDataScript(node) || createDataScript(node)
+  ds.innerText = JSON.stringify(node.$viewmodel)
+}
+
+function deserialise(node) {
+  return JSON.parse(getDataScript(node)?.innerText || "{}")
+}
+
 export const define = (name, factory, template, options = {}) =>
   customElements.define(
     name,
@@ -17,6 +37,8 @@ export const define = (name, factory, template, options = {}) =>
 
           if (this.$viewmodel instanceof Promise)
             this.$viewmodel = await this.$viewmodel
+
+          Object.assign(this.$viewmodel, deserialise(this))
 
           let observedProps = Object.keys(this.$viewmodel).filter(
             (v) => v.charAt(0) === "$"
@@ -76,6 +98,8 @@ export const define = (name, factory, template, options = {}) =>
             this.$viewmodel,
             template,
             () => {
+              serialise(this)
+
               observedProps.forEach((k) => {
                 let v = this.$viewmodel[k]
                 if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)

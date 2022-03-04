@@ -51,7 +51,8 @@ const getBlockFragments = (template, numBlocks) => {
   return r
 }
 
-export const getBlocks = (template, numBlocks) => {
+export const getBlocks = (template) => {
+  let numBlocks = template.getAttribute("length")
   let blockSize = getBlockSize(template)
   let r = []
   let node = template

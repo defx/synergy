@@ -34,6 +34,7 @@ describe("hydrate", () => {
   })
   it("rehydrates repeated blocks", async () => {
     let name = createName()
+    let stack = []
 
     define(
       name,
@@ -48,7 +49,7 @@ describe("hydrate", () => {
             },
           ],
           click(todo) {
-            console.log(todo.title)
+            stack.push(todo.title)
           },
         }
       },
@@ -66,5 +67,64 @@ describe("hydrate", () => {
     $(name).remove()
 
     mount(html)
+
+    $(name).todos.push({
+      title: "eat the frog",
+    })
+
+    await nextFrame()
+
+    $("li:nth-of-type(3)").click()
+
+    assert.deepEqual(stack, ["eat the frog"])
+  })
+
+  it("rehydrates from the last state", async () => {
+    let name = createName()
+    let stack = []
+
+    define(
+      name,
+      () => {
+        return {
+          $todos: [
+            {
+              title: "feed the duck",
+            },
+            {
+              title: "walk the cat",
+            },
+          ],
+          click(todo) {
+            stack.push(todo.title)
+          },
+        }
+      },
+      `
+      <ul>
+        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+      </ul>
+    `
+    )
+
+    mount(`<${name}></${name}>`)
+
+    $(name).todos.push({
+      title: "eat the frog",
+    })
+
+    await nextFrame()
+
+    let html = $(name).outerHTML
+
+    $(name).remove()
+
+    mount(html)
+
+    await nextFrame()
+
+    $("li:nth-of-type(3)").click()
+
+    assert.deepEqual(stack, ["eat the frog"])
   })
 })

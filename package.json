@@ -1,6 +1,6 @@
 {
   "name": "synergy",
-  "version": "7.0.3",
+  "version": "7.0.4",
   "description": "A JavaScript library for building Web Components",
   "main": "dist/synergy.min.js",
   "browser": "dist/synergy.min.js",
