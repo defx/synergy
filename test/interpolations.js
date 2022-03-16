@@ -260,7 +260,7 @@ describe.only("interpolation", () => {
     assert.ok($("p").hidden)
   })
 
-  it.only("should support square brackets", () => {
+  it("should support square brackets", () => {
     let name = createName()
 
     define(
@@ -314,14 +314,14 @@ describe.only("interpolation", () => {
 
     define(
       name,
-      () => {
-        return {
+      () => ({
+        update: () => ({
           items: [1, 2, 3],
           isSecond(item) {
             return item === this.items[1] ? "page" : null
           },
-        }
-      },
+        }),
+      }),
       html`
         <ul>
           <li each="item in items">
@@ -350,9 +350,9 @@ describe.only("interpolation", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <ul>
           <li each="item in foo.items">
@@ -387,9 +387,9 @@ describe.only("interpolation", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <div
           class="foo"
@@ -433,9 +433,9 @@ describe.only("interpolation", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html` <div class="foo" each="items" :x="{{ x }}" :foo="{{ foo }}"></div> `
     )
 
@@ -472,9 +472,9 @@ describe.only("interpolation", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html` <div class="foo" each="items" :x :foo></div> `
     )
 

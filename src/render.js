@@ -19,6 +19,7 @@ import {
   parseEventHandler,
 } from "./token.js"
 import { applyAttribute } from "./attribute.js"
+import { createContext } from "./context.js"
 
 const HYDRATE_ATTR = "synergy-hydrate"
 
@@ -47,19 +48,20 @@ export const render = (
   const _ = (a, b) => (a === undefined ? b : a)
 
   const createSubscription = {
-    [TEXT]: ({ value, node }, { getState }) => {
+    [TEXT]: ({ value, node, context }, { getState }) => {
       return {
         handler: () => {
+          let state = context ? context.wrap(getState()) : getState()
           let a = node.textContent
-          let b = getValueFromParts(getState(), getParts(value))
+          let b = getValueFromParts(state, getParts(value))
           if (a !== b) node.textContent = b
         },
       }
     },
-    [ATTRIBUTE]: ({ value, node, name }, { getState }) => {
+    [ATTRIBUTE]: ({ value, node, name, context }, { getState }) => {
       return {
         handler: () => {
-          const state = getState()
+          let state = context ? context.wrap(getState()) : getState()
           let b = getValueFromParts(state, getParts(value))
 
           applyAttribute(node, name, b)
@@ -105,72 +107,45 @@ export const render = (
         handler: () => {},
       }
     },
-    [REPEAT]: ({
-      node,
-      model,
-      map,
-      path,
-      identifier,
-      index,
-      key,
-      blockIndex,
-      hydrate,
-      pickupNode,
-    }) => {
+    [REPEAT]: (
+      {
+        node,
+        context,
+        map,
+        path,
+        identifier,
+        index,
+        key,
+        blockIndex,
+        hydrate,
+        pickupNode,
+      },
+      { getState }
+    ) => {
       let oldValue
       node.$t = blockIndex - 1
 
       const initialiseBlock = (rootNode, i, k, exitNode) => {
-        let wrapper = new Proxy(model, {
-          get(_, property) {
-            let x = getValueAtPath(path, model)
-
-            // x === the collection
-
-            if (property === identifier) {
-              for (let n in x) {
-                let v = x[n]
-                if (key) {
-                  if (v[key] === k) return v
-                } else {
-                  if (n == i) return v
-                }
-              }
-            }
-
-            if (property === index) {
-              for (let n in x) {
-                let v = x[n]
-                if (key) {
-                  if (v[key] === k) return n
-                } else {
-                  if (n == i) return n
-                }
-              }
-            }
-
-            if (x[i]?.hasOwnProperty?.(property)) return x[i][property]
-
-            return Reflect.get(...arguments)
-          },
-          set(_, property, value) {
-            let x = getValueAtPath(path, model)
-
-            if (x[i]?.hasOwnProperty?.(property)) {
-              return (x[i][property] = value)
-            }
-
-            return Reflect.set(...arguments)
-          },
-        })
-
         walk(
           rootNode,
           multi(
             (node) => {
               if (node === exitNode) return false
             },
-            bindAll(wrapper, map, hydrate),
+            bindAll(
+              map,
+              hydrate,
+              createContext(
+                (context?.get() || []).concat({
+                  path,
+                  identifier,
+                  key,
+                  index,
+                  i,
+                  k,
+                })
+              )
+            ),
             (child) => (child.$t = blockIndex)
           )
         )
@@ -188,7 +163,7 @@ export const render = (
       }
 
       if (hydrate) {
-        let x = getValueAtPath(path, model)
+        let x = getValueAtPath(path, getState())
         let blocks = getBlocks(node)
 
         blocks.forEach((block, i) => {
@@ -202,7 +177,9 @@ export const render = (
 
       return {
         handler: () => {
-          const newValue = Object.entries(getValueAtPath(path, model) || [])
+          const newValue = Object.entries(
+            getValueAtPath(path, getState()) || []
+          )
           const delta = compareKeyedLists(key, oldValue, newValue)
 
           if (delta) {
@@ -354,7 +331,7 @@ export const render = (
       }
     }
 
-  const bindAll = (model, bMap, hydrate) => {
+  const bindAll = (bMap, hydrate = 0, context) => {
     let index = 0
     return (node) => {
       let k = index
@@ -364,7 +341,7 @@ export const render = (
           let x = bind({
             ...v,
             node,
-            model,
+            context,
             hydrate,
           })
           p = x.pickupNode
@@ -395,9 +372,9 @@ export const render = (
   let map = parse(frag)
   let hydrate = target.hasAttribute?.(HYDRATE_ATTR)
   if (hydrate) {
-    walk(target, bindAll({}, map, 1))
+    walk(target, bindAll(map, 1))
   } else {
-    walk(frag, bindAll({}, map))
+    walk(frag, bindAll(map))
     beforeMountCallback?.(frag)
     target.prepend(frag)
     update(getState())
