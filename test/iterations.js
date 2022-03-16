@@ -21,9 +21,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <ul>
           <template each="todo in todos">
@@ -39,7 +39,9 @@ describe("iterations", () => {
 
     let todos = Array.from(view.todos)
 
-    $$("#container li").forEach((li, i) => {
+    assert.equal($$("li").length, "2")
+
+    $$("li").forEach((li, i) => {
       assert.equal(li.querySelector("p").textContent, todos[i].title)
     })
   })
@@ -53,9 +55,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <ul>
           <li each="(index, colour) in colours" :data-index="{{ index }}">
@@ -80,17 +82,19 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        $colours: [
-          {
-            name: "red",
-          },
-          {
-            name: "green",
-          },
-          {
-            name: "gold",
-          },
-        ],
+        update: () => ({
+          $colours: [
+            {
+              name: "red",
+            },
+            {
+              name: "green",
+            },
+            {
+              name: "gold",
+            },
+          ],
+        }),
       }),
       html`
         <template each="colour in $colours">
@@ -130,20 +134,22 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        $colours: [
-          {
-            name: "red",
-            foo: 1,
-          },
-          {
-            name: "green",
-            foo: 2,
-          },
-          {
-            name: "gold",
-            foo: 3,
-          },
-        ],
+        update: () => ({
+          $colours: [
+            {
+              name: "red",
+              foo: 1,
+            },
+            {
+              name: "green",
+              foo: 2,
+            },
+            {
+              name: "gold",
+              foo: 3,
+            },
+          ],
+        }),
       }),
       html`
         <template each="colour in $colours" key="foo">
@@ -202,9 +208,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <div>
           <template each="colour in colours">
@@ -248,9 +254,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <div>
           <div
@@ -292,9 +298,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <ul>
           <li each="todo in todos" style="background-color: {{todo.colour}}">
@@ -333,9 +339,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
     )
 
@@ -381,9 +387,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <svg
           version="1.1"
@@ -425,8 +431,10 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        $colours1: ["gold", "tomato"],
-        $colours2: ["green", "orange"],
+        update: () => ({
+          $colours1: ["gold", "tomato"],
+          $colours2: ["green", "orange"],
+        }),
       }),
       html`
         <ul>

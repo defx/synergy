@@ -11,7 +11,6 @@ import {
   realPath,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
-import { proxy } from "./proxy.js"
 import {
   getParts,
   getValueFromParts,
@@ -352,15 +351,6 @@ export const render = (
       return p
     }
   }
-
-  // // let prevState = Object.assign({}, model)
-  // let p = proxy(model, () =>
-  //   scheduleUpdate(() => {
-  //     updatedCallback?.()
-  //     // p.updatedCallback?.(prevState)
-  //     // prevState = Object.assign({}, model)
-  //   })
-  // )
 
   subscribe((state) =>
     scheduleUpdate(state, () => {

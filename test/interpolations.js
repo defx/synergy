@@ -1,6 +1,6 @@
 import { define } from "../src/index.js"
 
-describe.only("interpolation", () => {
+describe("interpolation", () => {
   it("should always cast primitive values to strings, unless null or undefined", () => {
     let name = createName()
 
