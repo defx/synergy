@@ -34,8 +34,6 @@ export const define = (name, factory, template, options = {}) =>
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
-          // const { dispatch, getState } = configure()
-
           let config = factory(this)
 
           if (config instanceof Promise) config = await config
