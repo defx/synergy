@@ -176,9 +176,9 @@ export const render = (
 
       return {
         handler: () => {
-          const newValue = Object.entries(
-            getValueAtPath(path, getState()) || []
-          )
+          let state = context ? context.wrap(getState()) : getState()
+
+          const newValue = Object.entries(getValueAtPath(path, state) || [])
           const delta = compareKeyedLists(key, oldValue, newValue)
 
           if (delta) {

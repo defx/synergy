@@ -28,9 +28,9 @@ describe("scope", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html` <h1 first>{{todo}}</h1>
         <ul>
           <template each="todo in todos">
@@ -75,9 +75,9 @@ describe("scope", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <template each="(i, artist) in artists">
           <article>
