@@ -1,23 +1,20 @@
 import { define } from "../src/index.js"
 
-describe("interpolation", () => {
-  let view, rootNode
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`)
-  })
-
+describe.only("interpolation", () => {
   it("should always cast primitive values to strings, unless null or undefined", () => {
     let name = createName()
 
     define(
       name,
       () => ({
-        boolean: false,
-        undefined: undefined,
-        null: null,
-        number: 0,
-        string: "string",
-        foo: "bar",
+        update: () => ({
+          boolean: false,
+          undefined: undefined,
+          null: null,
+          number: 0,
+          string: "string",
+          foo: "bar",
+        }),
       }),
       html`
         <ul>
@@ -45,8 +42,10 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        c1: "red",
-        c2: "green",
+        update: () => ({
+          c1: "red",
+          c2: "green",
+        }),
       }),
       html` <p>{{c1}} + {{c2}}</p> `
     )
@@ -62,7 +61,9 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        classes: ["one", "two", "three"],
+        update: () => ({
+          classes: ["one", "two", "three"],
+        }),
       }),
       html`<section :class="{{classes}}"></section>`
     )
@@ -78,14 +79,16 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        classes: {
-          one: true,
-          two: false,
-          three: {},
-          four: null,
-          five: "",
-          six: "ok",
-        },
+        update: () => ({
+          classes: {
+            one: true,
+            two: false,
+            three: {},
+            four: null,
+            five: "",
+            six: "ok",
+          },
+        }),
       }),
       html` <section :class="{{classes}}"></section> `
     )
@@ -101,12 +104,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        foo: `
-          background-color: gold;
-          color: tomato;
-          width: 100px;
-          height: 100px;
-        `,
+        update: () => ({
+          foo: `
+            background-color: gold;
+            color: tomato;
+            width: 100px;
+            height: 100px;
+          `,
+        }),
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -125,12 +130,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        $foo: `
-        background-color: gold;
-        color: tomato;
-        width: 100px;
-        height: 100px;
-        `,
+        update: () => ({
+          $foo: `
+          background-color: gold;
+          color: tomato;
+          width: 100px;
+          height: 100px;
+          `,
+        }),
       }),
       html` <section :style="{{ $foo }}"></section> `
     )
@@ -165,12 +172,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        foo: {
-          "background-color": "gold",
-          color: "tomato",
-          width: "100px",
-          height: "100px",
-        },
+        update: () => ({
+          foo: {
+            "background-color": "gold",
+            color: "tomato",
+            width: "100px",
+            height: "100px",
+          },
+        }),
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -189,12 +198,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        foo: {
-          backgroundColor: "gold",
-          color: "tomato",
-          width: "100px",
-          height: "100px",
-        },
+        update: () => ({
+          foo: {
+            backgroundColor: "gold",
+            color: "tomato",
+            width: "100px",
+            height: "100px",
+          },
+        }),
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -213,8 +224,10 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        c1: "red",
-        c2: "green",
+        update: () => ({
+          c1: "red",
+          c2: "green",
+        }),
       }),
       html` <p :name="{{ c1 }}">{{ c2 }}</p> `
     )
@@ -230,13 +243,15 @@ describe("interpolation", () => {
 
     define(
       name,
-      () => ({ $foo: true }),
+      () => ({
+        update: () => ({ $foo: true }),
+      }),
       html` <p :hidden="{{ !$foo }}">boo!</p>`
     )
 
     mount(html`<${name} foo></${name}>`)
 
-    assert.notOk($("p").hidden)
+    assert.notOk($("p").hidden) // [hidden]
 
     $(name).foo = false
 
@@ -245,30 +260,32 @@ describe("interpolation", () => {
     assert.ok($("p").hidden)
   })
 
-  it("should support square brackets", () => {
+  it.only("should support square brackets", () => {
     let name = createName()
 
     define(
       name,
       () => ({
-        columns: ["one", "two", "three"],
-        rows: [
-          {
-            one: 1,
-            two: 2,
-            three: 3,
-          },
-          {
-            one: 3,
-            two: 2,
-            three: 1,
-          },
-          {
-            one: 1,
-            two: 3,
-            three: 2,
-          },
-        ],
+        update: () => ({
+          columns: ["one", "two", "three"],
+          rows: [
+            {
+              one: 1,
+              two: 2,
+              three: 3,
+            },
+            {
+              one: 3,
+              two: 2,
+              three: 1,
+            },
+            {
+              one: 1,
+              two: 3,
+              three: 2,
+            },
+          ],
+        }),
       }),
       html`
         <table>

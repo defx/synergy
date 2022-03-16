@@ -1,3 +1,4 @@
+import { configure } from "./update.js"
 import { render } from "./render.js"
 import { mergeSlots } from "./mergeSlots.js"
 import {
@@ -33,14 +34,24 @@ export const define = (name, factory, template, options = {}) =>
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
-          this.$viewmodel = factory(this)
+          // const { dispatch, getState } = configure()
 
-          if (this.$viewmodel instanceof Promise)
-            this.$viewmodel = await this.$viewmodel
+          let config = factory(this)
 
-          Object.assign(this.$viewmodel, deserialise(this))
+          if (config instanceof Promise) config = await config
 
-          let observedProps = Object.keys(this.$viewmodel).filter(
+          const { update } = config
+
+          const { dispatch, getState, subscribe } = configure(update)
+
+          dispatch({
+            type: "MERGE",
+            payload: deserialise(this),
+          })
+
+          let initialState = getState()
+
+          let observedProps = Object.keys(initialState).filter(
             (v) => v.charAt(0) === "$"
           )
 
@@ -52,7 +63,11 @@ export const define = (name, factory, template, options = {}) =>
           this.setAttribute = (k, v) => {
             if (observedAttributes.includes(k)) {
               let { name, value } = attributeToProp(k, v)
-              this.$viewmodel["$" + name] = value
+              // this.$viewmodel["$" + name] = value
+              dispatch({
+                type: "SET",
+                payload: { name: "$" + name, value },
+              })
             }
             sa.apply(this, [k, v])
           }
@@ -65,15 +80,19 @@ export const define = (name, factory, template, options = {}) =>
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name)
             } else {
-              value = this[property] || this.$viewmodel["$" + property]
+              value = this[property] || initialState["$" + property]
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return this.$viewmodel["$" + property]
+                return getState()["$" + property]
               },
               set(v) {
-                this.$viewmodel["$" + property] = v
+                // this.$viewmodel["$" + property] = v
+                dispatch({
+                  type: "SET",
+                  payload: { name: "$" + property, value: v },
+                })
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v)
                 }
@@ -95,13 +114,14 @@ export const define = (name, factory, template, options = {}) =>
 
           this.$viewmodel = render(
             this.shadowRoot || this,
-            this.$viewmodel,
+            { getState, dispatch, subscribe },
             template,
             () => {
               serialise(this)
 
               observedProps.forEach((k) => {
-                let v = this.$viewmodel[k]
+                // let v = this.$viewmodel[k]
+                let v = getState()[k]
                 if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
               })
             },
@@ -109,10 +129,10 @@ export const define = (name, factory, template, options = {}) =>
           )
           this.initialised = true
         }
-        this.$viewmodel.connectedCallback?.()
+        // this.$viewmodel.connectedCallback?.()
       }
       disconnectedCallback() {
-        this.$viewmodel?.disconnectedCallback?.()
+        // this.$viewmodel?.disconnectedCallback?.()
       }
     }
   )

@@ -23,6 +23,21 @@ const transformBrackets = (str = "") => {
   }, "")
 }
 
+export const realPath = (path, target) => {
+  let parts = transformBrackets(path)
+    .split(".")
+    .map((k) => {
+      if (k.charAt(0) === "[") {
+        let p = k.slice(1, -1).replace(/:/g, ".")
+        return getValueAtPath(p, target)
+      } else {
+        return k
+      }
+    })
+
+  return parts.join(".")
+}
+
 const getTarget = (path, target) => {
   let parts = transformBrackets(path)
     .split(".")

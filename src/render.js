@@ -8,6 +8,7 @@ import {
   last,
   setValueAtPath,
   walk,
+  realPath,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
 import { proxy } from "./proxy.js"
@@ -23,7 +24,7 @@ const HYDRATE_ATTR = "synergy-hydrate"
 
 export const render = (
   target,
-  model,
+  { getState, dispatch, subscribe },
   template,
   updatedCallback,
   beforeMountCallback
@@ -31,9 +32,9 @@ export const render = (
   let observer = () => {
     let subscribers = new Set()
     return {
-      publish: (cb) => {
+      publish: (state, cb) => {
         for (let fn of subscribers) {
-          fn()
+          fn(state)
         }
         cb?.()
       },
@@ -46,24 +47,26 @@ export const render = (
   const _ = (a, b) => (a === undefined ? b : a)
 
   const createSubscription = {
-    [TEXT]: ({ value, node, model }) => {
+    [TEXT]: ({ value, node }, { getState }) => {
       return {
         handler: () => {
           let a = node.textContent
-          let b = getValueFromParts(model, getParts(value))
+          let b = getValueFromParts(getState(), getParts(value))
           if (a !== b) node.textContent = b
         },
       }
     },
-    [ATTRIBUTE]: ({ value, node, model, name }) => {
+    [ATTRIBUTE]: ({ value, node, name }, { getState }) => {
       return {
         handler: () => {
-          let b = getValueFromParts(model, getParts(value))
+          const state = getState()
+          let b = getValueFromParts(state, getParts(value))
+
           applyAttribute(node, name, b)
 
           if (node.nodeName === "OPTION") {
             let path = node.parentNode.getAttribute("name")
-            let selected = getValueAtPath(path, model)
+            let selected = getValueAtPath(path, state)
             node.selected = selected === b
           }
         },
@@ -117,10 +120,71 @@ export const render = (
       let oldValue
       node.$t = blockIndex - 1
 
+      /*
+      
+      wrapper is passed into bind for scoped property access 
+
+      this is to support the ability to...
+
+        - ask for todo (if "todo in todos")
+        - ask for i (if "(i, todo) in todos")
+
+        ...it also ensures that the list key is used if provided, falling back to the initial property (index in the case of an array) if not
+
+      this additional wrapper is created for each new block
+
+      in the new world, we're going to start with a call to getState()...
+
+      everything unique about the proxy is alread passed in as arguments to the createSubscription function....
+
+      in the handler itself, its only the repeated blocks that are updated, the proxy wrapper is provided when setting up the bindings so that updates to each node within a block work as expected.
+
+      perhaps another approach might be to provide this information on the map?
+      
+      it _could_ be exactly the same proxy, yet attached to the map via a function, so that whenever we want to pass the current context, or get a value, then we do something like withContext(getState())
+
+      in the case of _setting_ values, we need to dispatch, so we would first need to (for example) find the index of the array item, and then dispatch the SET action on its current full path. 
+
+      is this all too complicated?
+
+      is it as simple as possible?
+
+      this is all driven by the need to work with scoped value implied by the template...
+
+      perhaps this is all part of the same solution in the sense that, when we invoke actions, we need to pass the context anyway. so maybe start by solving the issue from that angle....
+
+      when a property needs to be set, we're not passing the context, because the system has no idea about this, but we need to use the context info to resolve the real path of the property to be set.
+
+      the same info used to resolve the real path can be used to construct the context object, whether that is a proxy or just  several objects spread together. 
+
+      HOWEVER! and this is a big however...
+
+      nested contexts "just work" atm because the model is being wrapped recursively. if we try to reconstruct this later then it would require multiple sets of context info applied one after the other to achieve the same end result. 
+
+      in a way, you would need multiple layers of proxy with the ability to swap out the core target at any point in the future. 
+
+      i mean. this is really just a stack. we push another context object onto the stack, and then when we need to take a value, we apply the stack operations to create the object that we need. its seems a bit laborious, but its not much different to using proxies, its just a bit more of a manual approach. the result is the same, albeit with the ability to change the target.
+
+      although...
+
+      nowi think of it, isn't it possible to overwrite the target? i mean, we're keeping a reference to the outermost wrapper, which can stay in tact, if the core proxy is overwritten everything else should be fine. 
+
+      or even, the core object can be created on a property of the first proxy. so then that property is replaced but the proxy remains. resolution beyond anything context specific is directed towards the "magic" property. nah, thats too weird. 
+
+      why not approach by trying to change as little as possible in the first instance. 
+
+
+      so keep the recurive proxy as it is, but see if its possible to overwrite the wrapper directly and retain the proxies.
+      
+      
+      */
+
       const initialiseBlock = (rootNode, i, k, exitNode) => {
         let wrapper = new Proxy(model, {
           get(_, property) {
             let x = getValueAtPath(path, model)
+
+            // x === the collection
 
             if (property === identifier) {
               for (let n in x) {
@@ -214,15 +278,15 @@ export const render = (
     const o = observer()
     return {
       bind(v) {
-        let s = createSubscription[v.type](v)
+        let s = createSubscription[v.type](v, { getState })
         o.subscribe(s.handler)
         return s
       },
-      scheduleUpdate: debounce((cb) => {
-        return o.publish(cb)
+      scheduleUpdate: debounce((state, cb) => {
+        return o.publish(state, cb)
       }),
-      update(cb) {
-        return o.publish(cb)
+      update(state) {
+        return o.publish(state)
       },
     }
   }
@@ -371,14 +435,23 @@ export const render = (
     }
   }
 
-  let prevState = Object.assign({}, model)
-  let p = proxy(model, () =>
-    scheduleUpdate(() => {
+  // // let prevState = Object.assign({}, model)
+  // let p = proxy(model, () =>
+  //   scheduleUpdate(() => {
+  //     updatedCallback?.()
+  //     // p.updatedCallback?.(prevState)
+  //     // prevState = Object.assign({}, model)
+  //   })
+  // )
+
+  subscribe((state) =>
+    scheduleUpdate(state, () => {
       updatedCallback?.()
-      p.updatedCallback?.(prevState)
-      prevState = Object.assign({}, model)
     })
   )
+
+  let p = {} // @todo
+
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)
   let hydrate = target.hasAttribute?.(HYDRATE_ATTR)
@@ -388,7 +461,7 @@ export const render = (
     walk(frag, bindAll(p, map))
     beforeMountCallback?.(frag)
     target.prepend(frag)
-    update()
+    update(getState())
     target.setAttribute?.(HYDRATE_ATTR, 1)
   }
 
