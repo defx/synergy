@@ -112,7 +112,7 @@ export const define = (name, factory, template, options = {}) =>
             beforeMountCallback = (frag) => mergeSlots(this, frag)
           }
 
-          this.$viewmodel = render(
+          render(
             this.shadowRoot || this,
             { getState, dispatch, subscribe },
             template,
