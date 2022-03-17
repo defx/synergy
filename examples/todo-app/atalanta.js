@@ -6,10 +6,10 @@ const defaultState = {
 
 /* this can also potentially be abstracted away in the template with something like :onkeydown|esc */
 
-export const preUpdate = (action, { dispatch }, event) => {
+export const preUpdate = (action, { dispatch }) => {
   switch (action.type) {
     case "keydown": {
-      const { keyCode } = event
+      const { keyCode } = action.event
       switch (keyCode) {
         case KEYS.ESCAPE: {
           dispatch({ type: "cancelEdit" })
@@ -30,10 +30,10 @@ called after update + nextAnimationFrame (so the DOM now reflects the last chang
 
 */
 
-export const postUpdate = (action, getState, event) => {
+export const postUpdate = (action, { getState }) => {
   switch (action.type) {
     case "startEdit": {
-      event.target.parentNode.querySelector(".edit").focus()
+      action.event.target.parentNode.querySelector(".edit").focus()
     }
   }
 
@@ -51,7 +51,9 @@ export const derived = {
   },
 }
 
-export const update = (state = defaultState, action, { context, event }) => {
+export const update = (state = defaultState, action) => {
+  const { context, event } = action
+
   switch (action.type) {
     case "toggleAll": {
       return {
@@ -75,10 +77,9 @@ export const update = (state = defaultState, action, { context, event }) => {
       }
     }
     case "startEdit": {
-      const { item } = context
       const todos = state.todos.map((todo) => ({
         ...todo,
-        editing: todo.id === item.id,
+        editing: todo.id === context.todo.id,
       }))
       const titleEdit = todos.find((todo) => todo.editing)?.title
       return {
@@ -88,10 +89,9 @@ export const update = (state = defaultState, action, { context, event }) => {
       }
     }
     case "deleteTodo": {
-      const { todo: item } = context
       return {
         ...state,
-        todos: state.todos.filter((todo) => todo.id !== item.id),
+        todos: state.todos.filter((todo) => todo.id !== context.todo.id),
       }
     }
     case "removeCompleted": {

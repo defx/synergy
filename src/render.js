@@ -1,7 +1,6 @@
 import { TEXT, ATTRIBUTE, INPUT, EVENT, REPEAT } from "./constants.js"
 import { updateFormControl } from "./formControl.js"
 import {
-  callFunctionAtPath,
   debounce,
   fragmentFromTemplate,
   getValueAtPath,
@@ -11,12 +10,7 @@ import {
   realPath,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
-import {
-  getParts,
-  getValueFromParts,
-  hasMustache,
-  parseEventHandler,
-} from "./token.js"
+import { getParts, getValueFromParts, hasMustache } from "./token.js"
 import { applyAttribute } from "./attribute.js"
 import { createContext } from "./context.js"
 
@@ -90,17 +84,16 @@ export const render = (
         },
       }
     },
-    [EVENT]: ({ node, model, eventType, event, method, args }) => {
-      node.addEventListener(eventType, (e) => {
-        let x = args
-          ? args.map((v) => (v === event ? e : _(getValueAtPath(v, model), v)))
-          : []
-
-        let fn = callFunctionAtPath(method, model, x)
-
-        if (fn) {
-          requestAnimationFrame(fn)
-        }
+    [EVENT]: (
+      { node, model, eventType, action, context },
+      { dispatch, getState }
+    ) => {
+      node.addEventListener(eventType, (event) => {
+        dispatch({
+          type: action,
+          context: context ? context.wrap(getState()) : getState(),
+          event,
+        })
       })
       return {
         handler: () => {},
@@ -195,7 +188,7 @@ export const render = (
     const o = observer()
     return {
       bind(v) {
-        let s = createSubscription[v.type](v, { getState })
+        let s = createSubscription[v.type](v, { getState, dispatch })
         o.subscribe(s.handler)
         return s
       },
@@ -294,7 +287,7 @@ export const render = (
               x.push({
                 type: EVENT,
                 eventType,
-                ...parseEventHandler(value),
+                action: value,
               })
             } else if (name.startsWith(":")) {
               let prop = name.slice(1)

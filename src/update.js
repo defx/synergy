@@ -18,7 +18,7 @@ function systemReducer(state, action) {
 
 export function configure(userReducer) {
   let subscribers = []
-  let state = userReducer()
+  let state = userReducer(undefined, {})
 
   function getState() {
     return { ...state }
