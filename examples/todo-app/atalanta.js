@@ -81,7 +81,6 @@ export const update = (state = defaultState, action, { context, event }) => {
         editing: todo.id === item.id,
       }))
       const titleEdit = todos.find((todo) => todo.editing)?.title
-
       return {
         ...state,
         titleEdit,
@@ -119,12 +118,13 @@ export const update = (state = defaultState, action, { context, event }) => {
           editing: false,
         }
       })
-
       return {
         ...state,
         todos,
       }
     }
+    default:
+      return state
   }
 }
 
