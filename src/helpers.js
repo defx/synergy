@@ -57,14 +57,9 @@ const getTarget = (path, target) => {
   return [t, last(parts)]
 }
 
-export const callFunctionAtPath = (path, target, args) => {
-  let [a, b] = getTarget(path, target)
-  return a[b]?.apply?.(a, args)
-}
-
 export const getValueAtPath = (path, target) => {
   let [a, b] = getTarget(path, target)
-  let v = a[b]
+  let v = a?.[b]
   if (typeof v === "function") return v.bind(a)
   return v
 }
@@ -72,12 +67,6 @@ export const getValueAtPath = (path, target) => {
 export const setValueAtPath = (path, value, target) => {
   let [a, b] = getTarget(path, target)
   return (a[b] = value)
-}
-
-function cloneAttributes(target, source) {
-  ;[...source.attributes].forEach(({ nodeName, nodeValue }) => {
-    target.setAttribute(nodeName, nodeValue)
-  })
 }
 
 export const fragmentFromTemplate = (v) => {

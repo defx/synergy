@@ -1,11 +1,6 @@
 import { define } from "../src/index.js"
 
 describe("user input", () => {
-  let rootNode
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`)
-  })
-
   it("should bind the value to the named property", () => {
     let name = createName()
 
@@ -15,9 +10,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`<input name="message" /> the message is:
         <span class="message">{{message}}</span>`
     )
@@ -38,9 +33,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <input :name="nested.message" />
         the message is:
@@ -70,9 +65,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <ul>
           <template each="todo in todos">
@@ -98,11 +93,11 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return {
+      () => ({
+        update: () => ({
           filter: "active",
-        }
-      },
+        }),
+      }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -131,9 +126,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -164,9 +159,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -184,9 +179,11 @@ describe("user input", () => {
 
     mount(html`<${name}></${name}>`)
 
-    $(`input[type="radio"][value="complete"]`).click()
+    $(`input[value="complete"]`).click()
+
     await nextFrame()
-    assert.equal(view.filter, "complete")
+
+    assert.equal($(`input:checked`).value, "complete")
   })
 
   it("should select the correct option", async () => {
@@ -198,9 +195,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="$pets" id="pet-select">
@@ -236,9 +233,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="$pets" id="pet-select">
@@ -268,9 +265,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="pets" id="pet-select" multiple>
@@ -299,7 +296,9 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        $pets: ["hamster"],
+        update: () => ({
+          $pets: ["hamster"],
+        }),
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -339,9 +338,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        update: () => view,
+      }),
       html` <textarea :name="text"></textarea> `
     )
 

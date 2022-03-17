@@ -67,27 +67,30 @@ export const render = (
         },
       }
     },
-    [INPUT]: ({ node, model, path }) => {
+    [INPUT]: ({ node, path, context }, { getState, dispatch }) => {
       node.addEventListener("input", () => {
         let value =
           node.getAttribute("type") === "checkbox" ? node.checked : node.value
 
         if (value.trim?.().length && !isNaN(value)) value = +value
 
-        setValueAtPath(path, value, model)
+        dispatch({
+          type: "SET",
+          payload: {
+            name: path,
+            value,
+          },
+        })
       })
 
       return {
         handler: () => {
-          let b = getValueAtPath(path, model)
-          updateFormControl(node, b)
+          let state = context ? context.wrap(getState()) : getState()
+          updateFormControl(node, getValueAtPath(path, state))
         },
       }
     },
-    [EVENT]: (
-      { node, model, eventType, action, context },
-      { dispatch, getState }
-    ) => {
+    [EVENT]: ({ node, eventType, action, context }, { dispatch, getState }) => {
       node.addEventListener(eventType, (event) => {
         dispatch({
           type: action,
