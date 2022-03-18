@@ -348,11 +348,11 @@ export const render = (
     }
   }
 
-  subscribe((state) =>
+  subscribe((state) => {
     scheduleUpdate(state, () => {
       updatedCallback?.()
     })
-  )
+  })
 
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)

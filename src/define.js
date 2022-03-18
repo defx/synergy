@@ -19,9 +19,10 @@ function createDataScript(node) {
   return ds
 }
 
-function serialise(node) {
+function serialise(node, state) {
   let ds = getDataScript(node) || createDataScript(node)
-  ds.innerText = JSON.stringify(node.$viewmodel)
+
+  ds.innerText = JSON.stringify(state)
 }
 
 function deserialise(node) {
@@ -86,7 +87,6 @@ export const define = (name, factory, template, options = {}) =>
                 return getState()["$" + property]
               },
               set(v) {
-                // this.$viewmodel["$" + property] = v
                 dispatch({
                   type: "SET",
                   payload: { name: "$" + property, value: v },
@@ -115,7 +115,7 @@ export const define = (name, factory, template, options = {}) =>
             { getState, dispatch, subscribe },
             template,
             () => {
-              serialise(this)
+              serialise(this, getState())
 
               observedProps.forEach((k) => {
                 // let v = this.$viewmodel[k]

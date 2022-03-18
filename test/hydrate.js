@@ -8,13 +8,18 @@ describe("hydrate", () => {
     define(
       name,
       () => ({
-        foo() {
-          stack.push("foo!")
+        update: (state, action) => {
+          switch (action.type) {
+            case "foo": {
+              stack.push("foo!")
+            }
+          }
+          return state
         },
       }),
       html`
         <div>
-          <a href="#" id="foo" :onclick="foo()"><slot></slot></a>
+          <a href="#" id="foo" :onclick="foo"><slot></slot></a>
         </div>
       `
     )
@@ -35,27 +40,32 @@ describe("hydrate", () => {
   it("rehydrates repeated blocks", async () => {
     let name = createName()
     let stack = []
+    let initialState = {
+      $todos: [
+        {
+          title: "feed the duck",
+        },
+        {
+          title: "walk the cat",
+        },
+      ],
+    }
 
     define(
       name,
-      () => {
-        return {
-          $todos: [
-            {
-              title: "feed the duck",
-            },
-            {
-              title: "walk the cat",
-            },
-          ],
-          click(todo) {
-            stack.push(todo.title)
-          },
-        }
-      },
+      () => ({
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "click": {
+              stack.push(action.context.todo.title)
+            }
+          }
+          return state
+        },
+      }),
       `
       <ul>
-        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+        <li each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
@@ -68,7 +78,7 @@ describe("hydrate", () => {
 
     mount(html)
 
-    $(name).todos.push({
+    $(name).todos = $(name).todos.concat({
       title: "eat the frog",
     })
 
@@ -83,33 +93,39 @@ describe("hydrate", () => {
     let name = createName()
     let stack = []
 
+    let initialState = {
+      $todos: [
+        {
+          title: "feed the duck",
+        },
+        {
+          title: "walk the cat",
+        },
+      ],
+    }
+
     define(
       name,
-      () => {
-        return {
-          $todos: [
-            {
-              title: "feed the duck",
-            },
-            {
-              title: "walk the cat",
-            },
-          ],
-          click(todo) {
-            stack.push(todo.title)
-          },
-        }
-      },
+      () => ({
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "click": {
+              stack.push(action.context.todo.title)
+            }
+          }
+          return state
+        },
+      }),
       `
       <ul>
-        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+        <li each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
 
     mount(`<${name}></${name}>`)
 
-    $(name).todos.push({
+    $(name).todos = $(name).todos.concat({
       title: "eat the frog",
     })
 
