@@ -1,3 +1,19 @@
+export const storage = {
+  get: (k) => JSON.parse(localStorage.getItem(k)),
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+}
+
+const filters = {
+  all: (todos) => todos,
+  active: (todos) => todos.filter(({ completed }) => !completed),
+  done: (todos) => todos.filter(({ completed }) => completed),
+}
+
+const KEYS = {
+  RETURN: 13,
+  ESCAPE: 27,
+}
+
 const defaultState = {
   filters: Object.keys(filters),
   todos: [],

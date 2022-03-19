@@ -1,11 +1,17 @@
 import { define } from "../src/index.js"
-import { TodoApp, markup, storage } from "../examples/todo-app/index.js"
+import { update, markup, storage } from "../examples/todo-app/atalanta.js"
 
 describe("Todo List", () => {
   beforeEach(() => {
     let name = createName()
 
-    define(name, TodoApp, markup)
+    define(
+      name,
+      () => ({
+        update,
+      }),
+      markup
+    )
     mount(`<${name}></${name}>`)
   })
 
@@ -101,7 +107,7 @@ describe("Todo List", () => {
   })
 
   describe("New Todo", () => {
-    it("should allow me to add todo items", async () => {
+    it.only("should allow me to add todo items", async () => {
       const title1 = "walk the dog"
       const title2 = "feed the cat"
       await addTodo(title1)
