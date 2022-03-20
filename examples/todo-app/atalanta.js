@@ -20,43 +20,58 @@ const defaultState = {
   activeFilter: "all",
 }
 
-/* this can also potentially be abstracted away in the template with something like :onkeydown|esc */
-
-export const preUpdate = (action, { dispatch }) => {
-  switch (action.type) {
-    case "keydown": {
-      const { keyCode } = action.event
-      switch (keyCode) {
-        case KEYS.ESCAPE: {
-          dispatch({ type: "cancelEdit" })
-          break
-        }
-        case KEYS.RETURN: {
-          dispatch({ type: "saveEdit" })
-          break
+export const middleware = [
+  (action, next) => {
+    switch (action.type) {
+      case "keydown": {
+        const { keyCode } = action.event
+        switch (keyCode) {
+          case KEYS.ESCAPE: {
+            next({ ...action, type: "cancelEdit" })
+            break
+          }
+          case KEYS.RETURN: {
+            next({ ...action, type: "saveEdit" })
+            break
+          }
         }
       }
     }
-  }
-}
-
-/*
-
-called after update + nextAnimationFrame (so the DOM now reflects the last change)
-
-*/
-
-export const postUpdate = (action, { getState }) => {
-  switch (action.type) {
-    case "startEdit": {
-      action.event.target.parentNode.querySelector(".edit").focus()
+  },
+  (action, next, { dispatch }) => {
+    switch (action.type) {
+      case "startEdit": {
+        dispatch({
+          type: "focus",
+          payload: {
+            target: action.event.target.parentNode,
+          },
+        })
+        next(action)
+        break
+      }
+      case "focus": {
+        action.payload.target.querySelector(".edit").focus()
+        next(action)
+        break
+      }
     }
-  }
+  },
+  (action, next, { dispatch, getState }) => {
+    /* 
+      perfect example of when a short circuit makes sense 
+      (e.g., no call to next) 
+    */
+    if (action.type === "persist") {
+      storage.set("todos", getState())
+    } else {
+      dispatch({ type: "persist" })
+      next(action)
+    }
+  },
+]
 
-  storage.set("todos", getState().todos)
-}
-
-export const derived = {
+export const derivations = {
   allDone: ({ todos }) => todos.every((todo) => todo.completed),
   filteredTodos: ({ todos, activeFilter }) => filters[activeFilter](todos),
   numCompleted: ({ todos }) =>
