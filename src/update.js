@@ -16,7 +16,7 @@ function systemReducer(state, action) {
   }
 }
 
-export function configure(userReducer) {
+export function configure(userReducer, middleware = []) {
   let subscribers = []
   let state = userReducer(undefined, {})
 
@@ -28,7 +28,17 @@ export function configure(userReducer) {
     if (action.type === "SET" || action.type === "MERGE") {
       state = systemReducer(state, action)
     } else {
-      state = userReducer(state, action)
+      if (middleware.length) {
+        let [first, ...rest] = middleware.concat((action) =>
+          userReducer(getState(), action)
+        )
+        rest.reduce(
+          (a, b) => (action) => a(action, b, { getState, dispatch }),
+          first
+        )(action)
+      } else {
+        state = userReducer(state, action)
+      }
     }
     // @todo: debounce this...
     subscribers.forEach((fn) => fn(getState()))

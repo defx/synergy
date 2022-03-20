@@ -1,7 +1,7 @@
 import { define } from "../src/index.js"
 import { update, markup, storage } from "../examples/todo-app/atalanta.js"
 
-describe("Todo List", () => {
+xdescribe("Todo List", () => {
   beforeEach(() => {
     let name = createName()
 
@@ -107,7 +107,7 @@ describe("Todo List", () => {
   })
 
   describe("New Todo", () => {
-    it.only("should allow me to add todo items", async () => {
+    it("should allow me to add todo items", async () => {
       const title1 = "walk the dog"
       const title2 = "feed the cat"
       await addTodo(title1)

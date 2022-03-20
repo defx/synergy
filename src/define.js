@@ -41,7 +41,10 @@ export const define = (name, factory, template, options = {}) =>
 
           const { update } = config
 
-          const { dispatch, getState, subscribe } = configure(update)
+          const { dispatch, getState, subscribe } = configure(
+            update,
+            options.middleware
+          )
 
           dispatch({
             type: "MERGE",
