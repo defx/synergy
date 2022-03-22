@@ -26,9 +26,9 @@ export const render = (
   let observer = () => {
     let subscribers = new Set()
     return {
-      publish: (state, cb) => {
+      publish: (cb) => {
         for (let fn of subscribers) {
-          fn(state)
+          fn()
         }
         cb?.()
       },
@@ -195,16 +195,16 @@ export const render = (
         o.subscribe(s.handler)
         return s
       },
-      scheduleUpdate: debounce((state, cb) => {
-        return o.publish(state, cb)
-      }),
-      update(state) {
-        return o.publish(state)
+      // scheduleUpdate: debounce((state, cb) => {
+      //   return o.publish(state, cb)
+      // }),
+      update(cb) {
+        return o.publish(cb)
       },
     }
   }
 
-  const { bind, update, scheduleUpdate } = mediator()
+  const { bind, update } = mediator()
 
   let blockCount = 0
 
@@ -348,11 +348,7 @@ export const render = (
     }
   }
 
-  subscribe((state) => {
-    scheduleUpdate(state, () => {
-      updatedCallback?.()
-    })
-  })
+  subscribe(() => update(updatedCallback))
 
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)
