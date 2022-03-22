@@ -68,4 +68,45 @@ describe("middleware", () => {
     assert.equal(stack[0].type, "saveEdit")
     assert.equal(stack[1].type, "cancelEdit")
   })
+  // @todo: just test that getState works
+  it.only("allows actions to be enqueued after the next update", () => {
+    let name = createName()
+    let initialState = {
+      hidden: true,
+    }
+    define(
+      name,
+      () => ({
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "toggle": {
+              return {
+                ...state,
+                hidden: !state.hidden,
+              }
+            }
+            default:
+              return state
+          }
+        },
+      }),
+      `<button :onclick="toggle">toggle</button><input :hidden>`,
+      {
+        middleware: [
+          (action, next, { getState }) => {
+            switch (action.type) {
+              case "toggle": {
+                if (getState().hidden) {
+                  requestAnimationFrame(() => $("input").focus())
+                }
+                break
+              }
+            }
+            return next(action)
+          },
+        ],
+      }
+    )
+    mount(`<${name}></${name}>`)
+  })
 })

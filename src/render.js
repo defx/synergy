@@ -357,7 +357,7 @@ export const render = (
     walk(frag, bindAll(map))
     beforeMountCallback?.(frag)
     target.prepend(frag)
-    update(getState())
+    update()
     target.setAttribute?.(HYDRATE_ATTR, 1)
   }
 }

@@ -83,16 +83,35 @@ export const fragmentFromTemplate = (v) => {
 
 this version of debounce will call the function immediately on first invocation within a single frame. any subsequent invocations within the same frame will be dropped.
 
+@todo: trailing -> leading
+
 */
 
+// export const debounce = (fn) => {
+//   let t
+//   return function (...args) {
+//     if (t) return
+//     t = requestAnimationFrame(() => {
+//       fn(...args)
+//       t = null
+//     })
+//   }
+// }
+
 export const debounce = (fn) => {
-  let t
-  return function (...args) {
-    if (t) return
-    t = requestAnimationFrame(() => {
-      fn(...args)
-      t = null
-    })
+  let wait = false
+  let invoke = false
+  return () => {
+    if (wait) {
+      invoke = true
+    } else {
+      wait = true
+      fn()
+      requestAnimationFrame(() => {
+        if (invoke) fn()
+        wait = false
+      })
+    }
   }
 }
 

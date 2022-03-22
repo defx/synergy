@@ -42,8 +42,8 @@ export function configure(userReducer, middleware = []) {
       state = systemReducer(state, action)
     } else {
       if (middleware.length) {
-        let [first, ...rest] = middleware.concat((action) =>
-          userReducer(getState(), action)
+        let [first, ...rest] = middleware.concat(
+          (action) => (state = userReducer(getState(), action))
         )
         rest.reduce(
           (a, b) => (action) => a(action, b, { getState, dispatch }),
