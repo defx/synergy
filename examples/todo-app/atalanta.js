@@ -41,12 +41,14 @@ export const middleware = [
   (action, next, { dispatch }) => {
     switch (action.type) {
       case "startEdit": {
-        dispatch({
-          type: "focus",
-          payload: {
-            target: action.event.target.parentNode,
-          },
-        })
+        requestAnimationFrame(() =>
+          dispatch({
+            type: "focus",
+            payload: {
+              target: action.event.target.parentNode,
+            },
+          })
+        )
         next(action)
         break
       }
@@ -58,10 +60,6 @@ export const middleware = [
     }
   },
   (action, next, { dispatch, getState }) => {
-    /* 
-      perfect example of when a short circuit makes sense 
-      (e.g., no call to next) 
-    */
     if (action.type === "persist") {
       storage.set("todos", getState())
     } else {

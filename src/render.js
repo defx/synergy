@@ -5,9 +5,7 @@ import {
   fragmentFromTemplate,
   getValueAtPath,
   last,
-  setValueAtPath,
   walk,
-  realPath,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
 import { getParts, getValueFromParts, hasMustache } from "./token.js"
@@ -348,7 +346,7 @@ export const render = (
     }
   }
 
-  subscribe(() => update(updatedCallback))
+  subscribe(debounce(() => update(updatedCallback)))
 
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)

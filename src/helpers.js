@@ -79,6 +79,12 @@ export const fragmentFromTemplate = (v) => {
   if (v.nodeName === "defs") return v.firstElementChild.cloneNode(true)
 }
 
+/*
+
+this version of debounce will call the function immediately on first invocation within a single frame. any subsequent invocations within the same frame will be dropped.
+
+*/
+
 export const debounce = (fn) => {
   let t
   return function (...args) {

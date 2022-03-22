@@ -1,7 +1,7 @@
 import { define } from "../src/index.js"
 
 describe("middleware", () => {
-  it.only("enables actions to be modified", () => {
+  it("enables actions to be modified", () => {
     const KEYS = {
       RETURN: 13,
       ESCAPE: 27,

@@ -51,10 +51,7 @@ describe("define", () => {
     define(
       name,
       () => ({ update: () => ({ $title: "" }) }),
-      "<p>{{ $title }}</p>",
-      {
-        observe: ["title"],
-      }
+      "<p>{{ $title }}</p>"
     )
     mount(`
       <${name} title="ok!"></${name}>
@@ -237,9 +234,7 @@ describe("define", () => {
     <p each="item in arr">{{ item }}</p>
     `
 
-    define("rich-props", factory, template, {
-      observe: ["arr", "obj"],
-    })
+    define("rich-props", factory, template)
 
     let name = createName()
 

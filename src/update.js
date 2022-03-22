@@ -16,6 +16,19 @@ function systemReducer(state, action) {
   }
 }
 
+/*
+
+Notes
+
+  - any call to dispatch will immediately invoke the reducer
+  - any call to dispatch within middleware is also immediately processed
+  - SET and MERGE are not interceptable by middleware
+  - middleware functions are assumed to call next synchronously
+  - the render function (subscriber) is invoked once for every call to dispatch
+  - the render function is debounced
+
+*/
+
 export function configure(userReducer, middleware = []) {
   let subscribers = []
   let state = userReducer(undefined, {})
@@ -40,7 +53,6 @@ export function configure(userReducer, middleware = []) {
         state = userReducer(state, action)
       }
     }
-    // @todo: debounce this...
     subscribers.forEach((fn) => fn(getState()))
   }
 
