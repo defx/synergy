@@ -14,10 +14,11 @@ const KEYS = {
   ESCAPE: 27,
 }
 
-const defaultState = {
+const initialState = {
   filters: Object.keys(filters),
   todos: [],
   activeFilter: "all",
+  // filteredTodos: [],
 }
 
 export const middleware = [
@@ -42,12 +43,12 @@ export const middleware = [
       }
     }
   },
-  (action, next, store) => {
+  (action, next, { afterNextRender }) => {
     switch (action.type) {
       case "startEdit": {
-        // afterNextRender(() =>
-        //   action.event.target.parentNode.querySelector(".edit").focus()
-        // )
+        afterNextRender(() =>
+          action.event.target.parentNode.querySelector(".edit").focus()
+        )
         next(action)
         break
       }
@@ -56,13 +57,9 @@ export const middleware = [
       }
     }
   },
-  (action, next, { dispatch, getState }) => {
-    if (action.type === "persist") {
-      storage.set("todos", getState())
-    } else {
-      dispatch({ type: "persist" })
-      next(action)
-    }
+  (action, next, { getState, afterNextRender }) => {
+    afterNextRender(() => storage.set("todos", getState().todos))
+    next(action)
   },
 ]
 
@@ -77,7 +74,7 @@ export const derivations = {
   },
 }
 
-export const update = (state = defaultState, action) => {
+export const update = (state = initialState, action) => {
   const { context, event } = action
 
   switch (action.type) {
@@ -90,21 +87,16 @@ export const update = (state = defaultState, action) => {
     }
     case "todoInput": {
       if (event.keyCode === KEYS.RETURN) {
-        console.log({
-          ...state,
-          todos: state.todos.concat({ title: state.newTodo, id: Date.now() }),
-          newTodo: null,
-        })
         return {
           ...state,
           todos: state.todos.concat({ title: state.newTodo, id: Date.now() }),
           newTodo: null,
         }
       } else {
-        // return {
-        //   ...state,
-        //   newTodo: title,
-        // }
+        return {
+          ...state,
+          newTodo: title,
+        }
       }
     }
     case "startEdit": {
@@ -155,7 +147,7 @@ export const update = (state = defaultState, action) => {
       }
     }
     default:
-      return state
+      return { ...state }
   }
 }
 
@@ -197,10 +189,10 @@ export const markup = html`
         :is-done="completed"
         :editing="editing"
         key="id"
-        :each="todo in filteredTodos"
+        each="todo in filteredTodos"
       >
         <input class="toggle" type="checkbox" :name="completed" />
-        <label :ondblclick="startEdit">{{title}}</label>
+        <label :ondblclick="startEdit">{{ title }}</label>
         <input
           class="edit"
           :name="titleEdit"

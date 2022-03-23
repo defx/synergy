@@ -35,10 +35,10 @@ export function configure(userReducer, middleware = [], derivations = {}) {
   let update = () => {}
 
   function updateState(o) {
+    state = { ...o }
     for (let k in derivations) {
-      o[k] = derivations[k](o)
+      state[k] = derivations[k](o)
     }
-    state = o
   }
 
   updateState(userReducer(undefined, {}))
