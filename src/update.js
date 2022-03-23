@@ -32,9 +32,23 @@ Notes
 export function configure(userReducer, middleware = []) {
   let subscribers = []
   let state = userReducer(undefined, {})
+  let update = () => {}
 
   function getState() {
     return { ...state }
+  }
+
+  function subscribe(fn) {
+    subscribers.push(fn)
+  }
+
+  function flush() {
+    subscribers.forEach((fn) => fn())
+    subscribers = []
+  }
+
+  function onUpdate(fn) {
+    update = fn
   }
 
   function dispatch(action) {
@@ -46,23 +60,21 @@ export function configure(userReducer, middleware = []) {
           (action) => (state = userReducer(getState(), action))
         )
         rest.reduce(
-          (a, b) => (action) => a(action, b, { getState, dispatch }),
+          (a, b) => (action) =>
+            a(action, b, { getState, dispatch, afterNextRender: subscribe }),
           first
         )(action)
       } else {
         state = userReducer(state, action)
       }
     }
-    subscribers.forEach((fn) => fn(getState()))
-  }
-
-  function subscribe(fn) {
-    subscribers.push(fn)
+    update()
   }
 
   return {
     dispatch,
     getState,
-    subscribe,
+    onUpdate,
+    flush,
   }
 }

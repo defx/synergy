@@ -16,7 +16,7 @@ const HYDRATE_ATTR = "synergy-hydrate"
 
 export const render = (
   target,
-  { getState, dispatch, subscribe },
+  { getState, dispatch },
   template,
   updatedCallback,
   beforeMountCallback
@@ -346,8 +346,6 @@ export const render = (
     }
   }
 
-  subscribe(debounce(() => update(updatedCallback)))
-
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)
   let hydrate = target.hasAttribute?.(HYDRATE_ATTR)
@@ -360,4 +358,6 @@ export const render = (
     update()
     target.setAttribute?.(HYDRATE_ATTR, 1)
   }
+
+  return debounce(() => update(updatedCallback))
 }

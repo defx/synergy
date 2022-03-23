@@ -69,7 +69,7 @@ describe("middleware", () => {
     assert.equal(stack[1].type, "cancelEdit")
   })
   // @todo: just test that getState works
-  it.only("allows actions to be enqueued after the next update", () => {
+  it("afterNextRender allows for things like focusing a newly rendered input", () => {
     let name = createName()
     let initialState = {
       hidden: true,
@@ -93,11 +93,11 @@ describe("middleware", () => {
       `<button :onclick="toggle">toggle</button><input :hidden>`,
       {
         middleware: [
-          (action, next, { getState }) => {
+          (action, next, { getState, afterNextRender }) => {
             switch (action.type) {
               case "toggle": {
                 if (getState().hidden) {
-                  requestAnimationFrame(() => $("input").focus())
+                  afterNextRender(() => $("input").focus())
                 }
                 break
               }

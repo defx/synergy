@@ -41,7 +41,7 @@ export const define = (name, factory, template, options = {}) =>
 
           const { update } = config
 
-          const { dispatch, getState, subscribe } = configure(
+          const { dispatch, getState, onUpdate, flush } = configure(
             update,
             options.middleware
           )
@@ -113,20 +113,23 @@ export const define = (name, factory, template, options = {}) =>
             beforeMountCallback = (frag) => mergeSlots(this, frag)
           }
 
-          render(
-            this.shadowRoot || this,
-            { getState, dispatch, subscribe },
-            template,
-            () => {
-              serialise(this, getState())
+          onUpdate(
+            render(
+              this.shadowRoot || this,
+              { getState, dispatch },
+              template,
+              () => {
+                serialise(this, getState())
 
-              observedProps.forEach((k) => {
-                // let v = this.$viewmodel[k]
-                let v = getState()[k]
-                if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
-              })
-            },
-            beforeMountCallback
+                observedProps.forEach((k) => {
+                  let v = getState()[k]
+                  if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
+                })
+
+                flush()
+              },
+              beforeMountCallback
+            )
           )
           this.initialised = true
         }
