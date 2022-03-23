@@ -36,26 +36,23 @@ export const middleware = [
           }
         }
       }
-    }
-  },
-  (action, next, { dispatch }) => {
-    switch (action.type) {
-      case "startEdit": {
-        requestAnimationFrame(() =>
-          dispatch({
-            type: "focus",
-            payload: {
-              target: action.event.target.parentNode,
-            },
-          })
-        )
+      default: {
         next(action)
         break
       }
-      case "focus": {
-        action.payload.target.querySelector(".edit").focus()
+    }
+  },
+  (action, next, store) => {
+    switch (action.type) {
+      case "startEdit": {
+        // afterNextRender(() =>
+        //   action.event.target.parentNode.querySelector(".edit").focus()
+        // )
         next(action)
         break
+      }
+      default: {
+        next(action)
       }
     }
   },
@@ -99,10 +96,10 @@ export const update = (state = defaultState, action) => {
           newTodo: null,
         }
       } else {
-        return {
-          ...state,
-          newTodo: title,
-        }
+        // return {
+        //   ...state,
+        //   newTodo: title,
+        // }
       }
     }
     case "startEdit": {

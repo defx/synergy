@@ -56,14 +56,21 @@ export function configure(userReducer, middleware = []) {
       state = systemReducer(state, action)
     } else {
       if (middleware.length) {
-        let [first, ...rest] = middleware.concat(
-          (action) => (state = userReducer(getState(), action))
-        )
-        rest.reduce(
-          (a, b) => (action) =>
-            a(action, b, { getState, dispatch, afterNextRender: subscribe }),
-          first
-        )(action)
+        let fns = middleware.slice()
+
+        let next = (action) => {
+          if (fns.length) {
+            fns.shift()(action, next, {
+              getState,
+              dispatch,
+              afterNextRender: subscribe,
+            })
+          } else {
+            state = userReducer(getState(), action)
+          }
+        }
+
+        fns.shift()(action, next)
       } else {
         state = userReducer(state, action)
       }

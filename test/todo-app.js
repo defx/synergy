@@ -1,5 +1,10 @@
 import { define } from "../src/index.js"
-import { update, markup, storage } from "../examples/todo-app/atalanta.js"
+import {
+  update,
+  markup,
+  storage,
+  middleware,
+} from "../examples/todo-app/atalanta.js"
 
 xdescribe("Todo List", () => {
   beforeEach(() => {
@@ -10,7 +15,8 @@ xdescribe("Todo List", () => {
       () => ({
         update,
       }),
-      markup
+      markup,
+      { middleware }
     )
     mount(`<${name}></${name}>`)
   })

@@ -68,7 +68,7 @@ describe("middleware", () => {
     assert.equal(stack[0].type, "saveEdit")
     assert.equal(stack[1].type, "cancelEdit")
   })
-  // @todo: just test that getState works
+
   it("afterNextRender allows for things like focusing a newly rendered input", () => {
     let name = createName()
     let initialState = {
@@ -108,5 +108,47 @@ describe("middleware", () => {
       }
     )
     mount(`<${name}></${name}>`)
+  })
+
+  it("allows one middleware function to pass action to next", () => {
+    let name = createName()
+    let stack = []
+    define(
+      name,
+      () => ({
+        update: (state = {}, action) => {
+          switch (action.type) {
+            case "fire": {
+              stack.push(action)
+              return {
+                ...state,
+              }
+            }
+            default: {
+              return {
+                ...state,
+              }
+            }
+          }
+        },
+      }),
+      `<button :onclick="fire">fire!</button>`,
+      {
+        middleware: [
+          (action, next) => {
+            next({ ...action, foo: "bar" })
+          },
+          (action, next) => {
+            next({ ...action, moo: "baa" })
+          },
+        ],
+      }
+    )
+    mount(`<${name}></${name}>`)
+    $(`button`).click()
+    assert.equal(stack.length, 1)
+    assert.equal(stack[0].type, "fire")
+    assert.equal(stack[0].foo, "bar")
+    assert.equal(stack[0].moo, "baa")
   })
 })
