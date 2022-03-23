@@ -90,9 +90,14 @@ export const update = (state = defaultState, action) => {
     }
     case "todoInput": {
       if (event.keyCode === KEYS.RETURN) {
+        console.log({
+          ...state,
+          todos: state.todos.concat({ title: state.newTodo, id: Date.now() }),
+          newTodo: null,
+        })
         return {
           ...state,
-          todos: state.todos.concat([{ title: state.newTodo, id: Date.now() }]),
+          todos: state.todos.concat({ title: state.newTodo, id: Date.now() }),
           newTodo: null,
         }
       } else {

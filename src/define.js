@@ -43,7 +43,8 @@ export const define = (name, factory, template, options = {}) =>
 
           const { dispatch, getState, onUpdate, flush } = configure(
             update,
-            options.middleware
+            options.middleware,
+            options.derivations
           )
 
           dispatch({

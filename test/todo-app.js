@@ -4,6 +4,7 @@ import {
   markup,
   storage,
   middleware,
+  derivations,
 } from "../examples/todo-app/atalanta.js"
 
 xdescribe("Todo List", () => {
@@ -16,7 +17,7 @@ xdescribe("Todo List", () => {
         update,
       }),
       markup,
-      { middleware }
+      { derivations, middleware }
     )
     mount(`<${name}></${name}>`)
   })
@@ -97,7 +98,7 @@ xdescribe("Todo List", () => {
 
     input.dispatchEvent(
       new KeyboardEvent("keydown", {
-        key: "Enter",
+        keyCode: 13,
         bubbles: true,
       })
     )
@@ -117,12 +118,12 @@ xdescribe("Todo List", () => {
       const title1 = "walk the dog"
       const title2 = "feed the cat"
       await addTodo(title1)
-      await addTodo(title2)
-      let todoLabels = app.todoLabels
-      assert.equal(todoLabels.length, 2)
-      assert.equal(todoLabels[0].textContent.trim(), title1)
-      assert.equal(todoLabels[1].textContent.trim(), title2)
-      assert.equal(storage.get("todos").length, 2)
+      // await addTodo(title2)
+      // let todoLabels = app.todoLabels
+      // assert.equal(todoLabels.length, 2)
+      // assert.equal(todoLabels[0].textContent.trim(), title1)
+      // assert.equal(todoLabels[1].textContent.trim(), title2)
+      // assert.equal(storage.get("todos").length, 2)
     })
 
     it("should clear text input field when an item is added", async () => {

@@ -29,10 +29,19 @@ Notes
 
 */
 
-export function configure(userReducer, middleware = []) {
+export function configure(userReducer, middleware = [], derivations = {}) {
   let subscribers = []
-  let state = userReducer(undefined, {})
+  let state
   let update = () => {}
+
+  function updateState(o) {
+    for (let k in derivations) {
+      o[k] = derivations[k](o)
+    }
+    state = o
+  }
+
+  updateState(userReducer(undefined, {}))
 
   function getState() {
     return { ...state }
@@ -53,7 +62,7 @@ export function configure(userReducer, middleware = []) {
 
   function dispatch(action) {
     if (action.type === "SET" || action.type === "MERGE") {
-      state = systemReducer(state, action)
+      updateState(systemReducer(getState(), action))
     } else {
       if (middleware.length) {
         let fns = middleware.slice()
@@ -66,13 +75,13 @@ export function configure(userReducer, middleware = []) {
               afterNextRender: subscribe,
             })
           } else {
-            state = userReducer(getState(), action)
+            updateState(userReducer(getState(), action))
           }
         }
 
         fns.shift()(action, next)
       } else {
-        state = userReducer(state, action)
+        updateState(userReducer(getState(), action))
       }
     }
     update()
