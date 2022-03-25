@@ -1,4 +1,4 @@
-import { getValueAtPath } from "./helpers.js"
+import { getValueAtPath, isPrimitive } from "./helpers.js"
 
 const handler = ({ path, identifier, key, index, i, k }) => ({
   get(target, property) {
@@ -28,15 +28,17 @@ const handler = ({ path, identifier, key, index, i, k }) => ({
       }
     }
 
-    if (x[i]?.hasOwnProperty?.(property)) return x[i][property]
+    let t = key ? x.find((v) => v[key] === k) : x[i]
+    if (t?.hasOwnProperty?.(property)) return t[property]
 
     return Reflect.get(...arguments)
   },
   set(target, property, value) {
     let x = getValueAtPath(path, target)
-
-    if (x[i]?.hasOwnProperty?.(property)) {
-      return (x[i][property] = value)
+    let t = key ? x.find((v) => v[key] === k) : x[i]
+    if (t && !isPrimitive(t)) {
+      t[property] = value
+      return true
     }
 
     return Reflect.set(...arguments)

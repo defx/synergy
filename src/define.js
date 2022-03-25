@@ -126,7 +126,7 @@ export const define = (name, factory, template, options = {}) =>
                   let v = getState()[k]
                   if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
                 })
-
+                options.subscribe?.(getState())
                 flush()
               },
               beforeMountCallback

@@ -1,6 +1,11 @@
 export const storage = {
-  get: (k) => JSON.parse(localStorage.getItem(k)),
-  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  get: (k) => {
+    let v = JSON.parse(localStorage.getItem(k))
+    return v
+  },
+  set: (k, v) => {
+    localStorage.setItem(k, JSON.stringify(v))
+  },
 }
 
 const filters = {
@@ -57,11 +62,11 @@ export const middleware = [
       }
     }
   },
-  (action, next, { getState, afterNextRender }) => {
-    afterNextRender(() => storage.set("todos", getState().todos))
-    next(action)
-  },
 ]
+
+export const subscribe = (state) => {
+  storage.set("todos", state.todos)
+}
 
 export const derivations = {
   allDone: ({ todos }) => todos.every((todo) => todo.completed),
@@ -79,6 +84,7 @@ export const update = (state = initialState, action) => {
 
   switch (action.type) {
     case "toggleAll": {
+      let allDone = event.target.checked
       return {
         ...state,
         allDone,
@@ -89,7 +95,11 @@ export const update = (state = initialState, action) => {
       if (event.keyCode === KEYS.RETURN) {
         return {
           ...state,
-          todos: state.todos.concat({ title: state.newTodo, id: Date.now() }),
+          todos: state.todos.concat({
+            title: state.newTodo,
+            id: Date.now(),
+            completed: false,
+          }),
           newTodo: null,
         }
       } else {
@@ -134,13 +144,21 @@ export const update = (state = initialState, action) => {
       }
     }
     case "saveEdit": {
-      const todos = state.todos.map((todo) => {
-        return {
-          ...todo,
-          title: todo.editing ? state.titleEdit : todo.title,
-          editing: false,
-        }
-      })
+      let titleEdit = state.titleEdit.trim()
+      let todos
+
+      if (titleEdit) {
+        todos = state.todos.map((todo) => {
+          return {
+            ...todo,
+            title: todo.editing ? state.titleEdit : todo.title,
+            editing: false,
+          }
+        })
+      } else {
+        todos = state.todos.filter(({ editing }) => !editing)
+      }
+
       return {
         ...state,
         todos,
@@ -206,7 +224,7 @@ export const markup = html`
   <footer :hidden="{{ !todos.length }}">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
-      <li :each="filter in filters">
+      <li each="filter in filters">
         <input type="radio" :name="activeFilter" :value="filter" />
         <label>{{ filter }}</label>
       </li>

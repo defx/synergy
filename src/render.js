@@ -72,13 +72,23 @@ export const render = (
 
         if (value.trim?.().length && !isNaN(value)) value = +value
 
-        dispatch({
-          type: "SET",
-          payload: {
-            name: path,
-            value,
-          },
-        })
+        if (context) {
+          let state = context.wrap(getState())
+          state[path] = value
+          dispatch({
+            type: "MERGE",
+            payload: state,
+          })
+        } else {
+          dispatch({
+            type: "SET",
+            payload: {
+              name: path,
+              value,
+              context,
+            },
+          })
+        }
       })
 
       return {
