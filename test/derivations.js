@@ -33,14 +33,12 @@ describe("derivations", () => {
             }
           }
         },
-      }),
-      `<p>{{ numCompleted }}</p>`,
-      {
         derivations: {
           numCompleted: ({ todos }) =>
             todos.filter(({ completed }) => completed).length,
         },
-      }
+      }),
+      `<p>{{ numCompleted }}</p>`
     )
 
     mount(`<${name}></${name}>`)

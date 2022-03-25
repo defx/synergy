@@ -14,7 +14,7 @@ describe("define", () => {
       name,
       (node) => {
         el = node
-        return {}
+        return { update: () => {} }
       },
       "<p></p>"
     )
@@ -61,22 +61,29 @@ describe("define", () => {
     assert.equal($(`${name} p`).textContent, "foo!")
   })
 
-  //@todo
-
-  xit("reflects viewmodel changes back on to attributes", async () => {
+  it("reflects viewmodel changes back on to attributes", async () => {
     let name = createName()
-
+    let initialState = {
+      show: true,
+    }
     define(
       name,
       () => ({
-        update: () => ({
-          show: true,
-          toggle() {
-            this.show = !this.show
-          },
-        }),
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "toggle": {
+              return {
+                ...state,
+                show: !state.show,
+              }
+            }
+            default: {
+              return { ...state }
+            }
+          }
+        },
       }),
-      '<p :hidden="{{ !show }}">hello world!</p><button :onclick="toggle()">toggle</button>'
+      '<p :hidden="{{ !show }}">hello world!</p><button :onclick="toggle">toggle</button>'
     )
     mount(`
       <${name}></${name}>
@@ -122,19 +129,28 @@ describe("define", () => {
     assert.equal($(`${name} p`).innerHTML.trim(), "<span>!</span>hello")
   })
 
-  //@todo
-
-  xit("converts between kebab and pascal casing", async () => {
+  it("converts between kebab and pascal casing", async () => {
     let name = createName()
+
+    let initialState = {
+      $fooBar: false,
+    }
+
     define(
       name,
       () => ({
-        $fooBar: false,
-        toggle() {
-          this.$fooBar = !this.$fooBar
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "toggle": {
+              return { ...state, $fooBar: !state.$fooBar }
+            }
+            default: {
+              return { ...state }
+            }
+          }
         },
       }),
-      html`<button :onclick="toggle()">ok</button>`
+      html`<button :onclick="toggle">ok</button>`
     )
     mount(`
     <${name} foo-bar></${name}>
@@ -148,18 +164,31 @@ describe("define", () => {
     assert.equal($(`${name}`).hasAttribute("foo-bar"), false)
   })
 
-  xit("correctly handles aria string booleans", async () => {
+  it("correctly handles aria string booleans", async () => {
     let name = createName()
+
+    let initialState = {
+      $ariaHidden: true,
+    }
 
     define(
       name,
       () => ({
-        $ariaHidden: true,
-        toggle() {
-          this.$ariaHidden = !this.$ariaHidden
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "toggle": {
+              return {
+                ...state,
+                $ariaHidden: !state.$ariaHidden,
+              }
+            }
+            default: {
+              return { ...state }
+            }
+          }
         },
       }),
-      html`<button :onclick="toggle()">ok</button>`
+      html`<button :onclick="toggle">ok</button>`
     )
     mount(`
     <${name} aria-hidden="false"></${name}>
@@ -170,13 +199,16 @@ describe("define", () => {
     assert.equal($(`${name}`).getAttribute("aria-hidden"), "true")
   })
 
-  xit("forwards lifecycle events", () => {
+  it("forwards lifecycle events", () => {
     let name = createName()
 
     let connected = false
     let disconnected = false
     let factory = () => {
       return {
+        update(state = {}, action) {
+          return state
+        },
         connectedCallback() {
           connected = true
         },
@@ -196,7 +228,7 @@ describe("define", () => {
   })
 
   it("optionally supports shadow root", () => {
-    let factory = () => ({ update: () => ({}) })
+    let factory = () => ({ update: () => ({}), shadow: "open" })
 
     let template = html`
       <style>
@@ -209,9 +241,7 @@ describe("define", () => {
       <slot></slot>
     `
 
-    define("x-shadow", factory, template, {
-      shadow: "open",
-    })
+    define("x-shadow", factory, template)
 
     mount(html`<x-shadow>hello shadow</x-shadow>`)
 
@@ -259,25 +289,36 @@ describe("define", () => {
     //@todo ...assert or delete?
   })
 
-  // @todo (events)
-
-  xit("reflects observed properties from viewmodel to element", async () => {
+  it("reflects observed properties from viewmodel to element", async () => {
     let name = createName()
+
+    let initialState = {
+      $foo: "",
+    }
 
     define(
       name,
       () => ({
-        $foo: "",
-        updateFoo() {
-          this.$foo = "baz"
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "updateFoo": {
+              return {
+                ...state,
+                $foo: "baz",
+              }
+            }
+            default: {
+              return { ...state }
+            }
+          }
         },
       }),
-      html` <p :onclick="updateFoo()" foo="bar">{{ $foo }}</p> `
+      html` <p :onclick="updateFoo" foo="bar">{{ $foo }}</p> `
     )
 
     mount(`<${name}></${name}>`)
 
-    $(`${name} p`).click()
+    $(`p`).click()
 
     await nextFrame()
 

@@ -23,9 +23,6 @@ describe("middleware", () => {
             }
           }
         },
-      }),
-      `<button :onkeydown="keydown">hi!</button>`,
-      {
         middleware: [
           (action, next) => {
             switch (action.type) {
@@ -45,7 +42,8 @@ describe("middleware", () => {
             }
           },
         ],
-      }
+      }),
+      `<button :onkeydown="keydown">hi!</button>`
     )
 
     mount(html`<${name}></${name}>`)
@@ -89,9 +87,6 @@ describe("middleware", () => {
               return state
           }
         },
-      }),
-      `<button :onclick="toggle">toggle</button><input :hidden>`,
-      {
         middleware: [
           (action, next, { getState, afterNextRender }) => {
             switch (action.type) {
@@ -105,7 +100,8 @@ describe("middleware", () => {
             return next(action)
           },
         ],
-      }
+      }),
+      `<button :onclick="toggle">toggle</button><input :hidden>`
     )
     mount(`<${name}></${name}>`)
   })
@@ -131,9 +127,6 @@ describe("middleware", () => {
             }
           }
         },
-      }),
-      `<button :onclick="fire">fire!</button>`,
-      {
         middleware: [
           (action, next) => {
             next({ ...action, foo: "bar" })
@@ -142,7 +135,8 @@ describe("middleware", () => {
             next({ ...action, moo: "baa" })
           },
         ],
-      }
+      }),
+      `<button :onclick="fire">fire!</button>`
     )
     mount(`<${name}></${name}>`)
     $(`button`).click()

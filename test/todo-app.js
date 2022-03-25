@@ -1,25 +1,11 @@
 import { define } from "../src/index.js"
-import {
-  update,
-  markup,
-  storage,
-  middleware,
-  derivations,
-  subscribe,
-} from "../examples/todo-app/atalanta.js"
+import { markup, storage, factory } from "../examples/todo-app/atalanta.js"
 
 describe("Todo List", () => {
   beforeEach(() => {
     let name = createName()
 
-    define(
-      name,
-      () => ({
-        update,
-      }),
-      markup,
-      { derivations, middleware, subscribe }
-    )
+    define(name, factory, markup)
     mount(`<${name}></${name}>`)
   })
 

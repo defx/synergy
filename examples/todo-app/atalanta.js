@@ -238,3 +238,10 @@ export const markup = html`
     </button>
   </footer>
 `
+
+export const factory = () => ({
+  update,
+  middleware,
+  derivations,
+  subscribe,
+})

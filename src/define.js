@@ -39,12 +39,15 @@ export const define = (name, factory, template, options = {}) =>
 
           if (config instanceof Promise) config = await config
 
-          const { update } = config
+          const { update, middleware, derivations, subscribe, shadow } = config
+
+          this.connectedCallback = config.connectedCallback
+          this.disconnectedCallback = config.disconnectedCallback
 
           const { dispatch, getState, onUpdate, flush } = configure(
             update,
-            options.middleware,
-            options.derivations
+            middleware,
+            derivations
           )
 
           dispatch({
@@ -66,7 +69,6 @@ export const define = (name, factory, template, options = {}) =>
           this.setAttribute = (k, v) => {
             if (observedAttributes.includes(k)) {
               let { name, value } = attributeToProp(k, v)
-              // this.$viewmodel["$" + name] = value
               dispatch({
                 type: "SET",
                 payload: { name: "$" + name, value },
@@ -106,9 +108,9 @@ export const define = (name, factory, template, options = {}) =>
 
           let beforeMountCallback
 
-          if (options.shadow) {
+          if (shadow) {
             this.attachShadow({
-              mode: options.shadow,
+              mode: shadow,
             })
           } else {
             beforeMountCallback = (frag) => mergeSlots(this, frag)
@@ -126,7 +128,7 @@ export const define = (name, factory, template, options = {}) =>
                   let v = getState()[k]
                   if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
                 })
-                options.subscribe?.(getState())
+                subscribe?.(getState())
                 flush()
               },
               beforeMountCallback
@@ -134,10 +136,10 @@ export const define = (name, factory, template, options = {}) =>
           )
           this.initialised = true
         }
-        // this.$viewmodel.connectedCallback?.()
+        this.connectedCallback?.()
       }
       disconnectedCallback() {
-        // this.$viewmodel?.disconnectedCallback?.()
+        this.disconnectedCallback?.()
       }
     }
   )
