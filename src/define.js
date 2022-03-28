@@ -29,13 +29,20 @@ function deserialise(node) {
   return JSON.parse(getDataScript(node)?.innerText || "{}")
 }
 
-export const define = (name, factory, template, options = {}) =>
+let count = 0
+
+function nextId() {
+  return count++
+}
+
+export const define = (name, factory, template) =>
   customElements.define(
     name,
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
           let config = factory(this)
+          const slice = `name.${nextId()}`
 
           if (config instanceof Promise) config = await config
 
@@ -47,7 +54,8 @@ export const define = (name, factory, template, options = {}) =>
           const { dispatch, getState, onUpdate, flush } = configure(
             update,
             middleware,
-            derivations
+            derivations,
+            slice
           )
 
           dispatch({
