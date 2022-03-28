@@ -23,7 +23,6 @@ const initialState = {
   filters: Object.keys(filters),
   todos: [],
   activeFilter: "all",
-  // filteredTodos: [],
 }
 
 export const middleware = [
@@ -198,7 +197,7 @@ export const markup = html`
       :onkeydown="todoInput"
     />
   </header>
-  <main :hidden="{{ !todos.length }}">
+  <main :hidden="!todos.length">
     <label for="allDone">Mark all as complete</label>
     <input id="allDone" type="checkbox" :name="allDone" :onchange="toggleAll" />
     <ul>
@@ -221,7 +220,7 @@ export const markup = html`
       </li>
     </ul>
   </main>
-  <footer :hidden="{{ !todos.length }}">
+  <footer :hidden="!todos.length">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
       <li each="filter in filters">
@@ -231,7 +230,7 @@ export const markup = html`
     </ul>
     <button
       id="clearCompleted"
-      :hidden="{{ !numCompleted }}"
+      :hidden="!numCompleted"
       :onclick="removeCompleted"
     >
       clear completed ({{ numCompleted }})
