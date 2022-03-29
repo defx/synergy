@@ -23,21 +23,6 @@ const transformBrackets = (str = "") => {
   }, "")
 }
 
-export const realPath = (path, target) => {
-  let parts = transformBrackets(path)
-    .split(".")
-    .map((k) => {
-      if (k.charAt(0) === "[") {
-        let p = k.slice(1, -1).replace(/:/g, ".")
-        return getValueAtPath(p, target)
-      } else {
-        return k
-      }
-    })
-
-  return parts.join(".")
-}
-
 const getTarget = (path, target) => {
   let parts = transformBrackets(path)
     .split(".")
@@ -64,11 +49,6 @@ export const getValueAtPath = (path, target) => {
   return v
 }
 
-export const setValueAtPath = (path, value, target) => {
-  let [a, b] = getTarget(path, target)
-  return (a[b] = value)
-}
-
 export const fragmentFromTemplate = (v) => {
   if (typeof v === "string") {
     let tpl = document.createElement("template")
@@ -78,25 +58,6 @@ export const fragmentFromTemplate = (v) => {
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content
   if (v.nodeName === "defs") return v.firstElementChild.cloneNode(true)
 }
-
-/*
-
-this version of debounce will call the function immediately on first invocation within a single frame. any subsequent invocations within the same frame will be dropped.
-
-@todo: trailing -> leading
-
-*/
-
-// export const debounce = (fn) => {
-//   let t
-//   return function (...args) {
-//     if (t) return
-//     t = requestAnimationFrame(() => {
-//       fn(...args)
-//       t = null
-//     })
-//   }
-// }
 
 export const debounce = (fn) => {
   let wait = false
