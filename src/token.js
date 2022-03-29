@@ -6,23 +6,7 @@ const FUNCTION = 3
 
 export const hasMustache = (v) => v.match(/({{[^{}]+}})/)
 
-export const parseEventHandler = (value) => {
-  let m = value.match(/(?:(\w+) => )?([^\(]+)(?:\(([^\)]*)\))/)
-
-  if (!m) return
-
-  let event = m[1],
-    method = m[2],
-    args = m[3] ? m[3].split(",").map((v) => v.trim()) : []
-
-  return {
-    event,
-    method,
-    args,
-  }
-}
-
-export const getParts = (value, context) =>
+export const getParts = (value) =>
   value
     .trim()
     .split(/({{[^{}]+}})/)
@@ -41,19 +25,11 @@ export const getParts = (value, context) =>
       let negated = value.charAt(0) === "!"
       if (negated) value = value.slice(1)
 
-      let fn = parseEventHandler(value, context)
-
-      return fn
-        ? {
-            type: FUNCTION,
-            negated,
-            ...fn,
-          }
-        : {
-            type: KEY,
-            value,
-            negated,
-          }
+      return {
+        type: KEY,
+        value,
+        negated,
+      }
     })
 
 export const getValueFromParts = (target, parts) => {
