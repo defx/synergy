@@ -59,10 +59,8 @@ export const define = (name, factory, template) =>
           this.disconnectedCallback = config.disconnectedCallback
 
           const { dispatch, getState, onUpdate, flush } = configure(
-            update,
-            middleware,
-            derivations,
-            initialState
+            config,
+            this
           )
 
           dispatch({

@@ -30,14 +30,12 @@ Notes
 */
 
 export function configure(
-  userReducer,
-  middleware = [],
-  derivations = {},
-  initialState
+  { update = {}, middleware = [], derivations = {}, initialState = {} },
+  node
 ) {
   let subscribers = []
   let state
-  let update = () => {}
+  let updatedCallback = () => {}
 
   function updateState(o) {
     state = { ...o }
@@ -62,7 +60,7 @@ export function configure(
   }
 
   function onUpdate(fn) {
-    update = fn
+    updatedCallback = fn
   }
 
   function dispatch(action) {
@@ -71,11 +69,11 @@ export function configure(
       updateState(systemReducer(getState(), action))
     } else {
       if (middleware.length) {
-        let fns = middleware.slice()
+        let mw = middleware.slice()
 
         let next = (action) => {
-          if (fns.length) {
-            let x = fns.shift()
+          if (mw.length) {
+            let x = mw.shift()
 
             if (action.type in x) {
               x[action.type](action, next, {
@@ -86,12 +84,12 @@ export function configure(
             } else {
               next(action)
             }
-          } else if (action.type in userReducer) {
-            updateState(userReducer[action.type](getState(), action))
+          } else if (action.type in update) {
+            updateState(update[action.type](getState(), action))
           }
         }
 
-        let x = fns.shift()
+        let x = mw.shift()
 
         if (type in x) {
           x[type](action, next, {
@@ -102,11 +100,17 @@ export function configure(
         } else {
           next(action)
         }
-      } else if (type in userReducer) {
-        updateState(userReducer[type](getState(), action))
+      } else if (type in update) {
+        updateState(update[type](getState(), action))
       }
     }
-    update()
+    updatedCallback()
+  }
+
+  for (let actionName in update) {
+    if (actionName.startsWith("$")) {
+      node.addEventListener(actionName, ({ detail }) => dispatch(detail))
+    }
   }
 
   return {

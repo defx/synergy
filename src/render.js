@@ -98,13 +98,37 @@ export const render = (
         },
       }
     },
-    [EVENT]: ({ node, eventType, action, context }, { dispatch, getState }) => {
+    [EVENT]: (
+      { node, eventType, actionType, context },
+      { dispatch, getState }
+    ) => {
+      /* 
+      
+      NB that context is only passed for local actions not prefixed with "$"
+
+      */
+
       node.addEventListener(eventType, (event) => {
-        dispatch({
-          type: action,
-          context: context ? context.wrap(getState()) : getState(),
+        let isGlobal = actionType.startsWith("$")
+
+        let action = {
+          type: actionType,
           event,
-        })
+        }
+
+        if (!isGlobal)
+          action.context = context ? context.wrap(getState()) : getState()
+
+        dispatch(action)
+
+        if (isGlobal) {
+          node.dispatchEvent(
+            new CustomEvent(actionType, {
+              detail: action,
+              bubbles: true,
+            })
+          )
+        }
       })
       return {
         handler: () => {},
@@ -298,7 +322,7 @@ export const render = (
               x.push({
                 type: EVENT,
                 eventType,
-                action: value,
+                actionType: value,
               })
             } else if (name.startsWith(":")) {
               let prop = name.slice(1)
