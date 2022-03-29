@@ -1,6 +1,6 @@
 import { define } from "../src/index.js"
 
-describe("events", () => {
+describe("actions", () => {
   it("dispatches the action", () => {
     let stack = []
 
@@ -28,16 +28,13 @@ describe("events", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "foo": {
-              stack.push("foo")
-              return state
-            }
-            default:
-              return state
-          }
+        update: {
+          foo: (state) => {
+            stack.push("foo")
+            return state
+          },
         },
+        initialState,
       }),
       html`
         <article each="artist in artists">
@@ -84,16 +81,13 @@ describe("events", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "foo": {
-              stack.push(action.context)
-              return state
-            }
-            default:
-              return state
-          }
+        update: {
+          foo: (state, { context }) => {
+            stack.push(context)
+            return state
+          },
         },
+        initialState,
       }),
       html`
         <article each="artist in artists">
@@ -142,16 +136,13 @@ describe("events", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "foo": {
-              stack.push(action.event)
-              return state
-            }
-            default:
-              return state
-          }
+        update: {
+          foo: (state, { event }) => {
+            stack.push(event)
+            return state
+          },
         },
+        initialState,
       }),
       html`
         <article each="artist in artists">

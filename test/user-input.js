@@ -4,14 +4,14 @@ describe("user input", () => {
   it("should bind the value to the named property", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       message: "?",
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`<input name="message" /> the message is:
         <span class="message">{{message}}</span>`
@@ -25,7 +25,7 @@ describe("user input", () => {
   it("should bind the value to the named property (nested)", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       nested: {
         message: "??",
       },
@@ -34,7 +34,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <input :name="nested.message" />
@@ -51,7 +51,7 @@ describe("user input", () => {
   it("should bind the value to the named + scoped property", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "feed the cat",
@@ -66,7 +66,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <ul>
@@ -94,9 +94,9 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           filter: "active",
-        }),
+        },
       }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
@@ -122,12 +122,12 @@ describe("user input", () => {
   it("should check the correct radio button", () => {
     let name = createName()
 
-    let view = {}
+    let initialState = {}
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
@@ -153,14 +153,14 @@ describe("user input", () => {
   it("should reflect the correct radio button", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       filter: "active",
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
@@ -189,14 +189,14 @@ describe("user input", () => {
   it("should select the correct option", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       $pets: "hamster",
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -226,7 +226,7 @@ describe("user input", () => {
   it("should select the correct option (each option)", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       $pets: "Hamster",
       options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
     }
@@ -234,7 +234,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -259,14 +259,14 @@ describe("user input", () => {
   it("should select multiple", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       pets: ["dog", "hamster"],
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -296,9 +296,9 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           $pets: ["hamster"],
-        }),
+        },
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -332,14 +332,14 @@ describe("user input", () => {
   it("should bind the named textarea", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       text: "ok",
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html` <textarea :name="text"></textarea> `
     )

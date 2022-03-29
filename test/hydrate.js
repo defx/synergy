@@ -8,13 +8,11 @@ describe("hydrate", () => {
     define(
       name,
       () => ({
-        update: (state, action) => {
-          switch (action.type) {
-            case "foo": {
-              stack.push("foo!")
-            }
-          }
-          return state
+        update: {
+          foo: (state) => {
+            stack.push("foo!")
+            return state
+          },
         },
       }),
       html`
@@ -54,14 +52,13 @@ describe("hydrate", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "click": {
-              stack.push(action.context.todo.title)
-            }
-          }
-          return state
+        update: {
+          click: (state, { context }) => {
+            stack.push(context.todo.title)
+            return state
+          },
         },
+        initialState,
       }),
       `
       <ul>
@@ -107,14 +104,13 @@ describe("hydrate", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "click": {
-              stack.push(action.context.todo.title)
-            }
-          }
-          return state
+        update: {
+          click: (state, { context }) => {
+            stack.push(context.todo.title)
+            return state
+          },
         },
+        initialState,
       }),
       `
       <ul>

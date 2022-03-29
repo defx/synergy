@@ -24,15 +24,7 @@ describe("derivations", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            default: {
-              return {
-                ...state,
-              }
-            }
-          }
-        },
+        initialState,
         derivations: {
           numCompleted: ({ todos }) =>
             todos.filter(({ completed }) => completed).length,
@@ -44,5 +36,36 @@ describe("derivations", () => {
     mount(`<${name}></${name}>`)
 
     assert.equal($(`p`).innerText, 2)
+  })
+
+  it("should support same name decorations", () => {
+    let name = createName()
+
+    define(
+      name,
+      () => ({
+        initialState: {
+          items: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        },
+        derivations: {
+          items: ({ items }) =>
+            items.map((item, i) => ({
+              ...item,
+              isSecond: i === 1 ? "page" : null,
+            })),
+        },
+      }),
+      html`
+        <ul>
+          <li each="item in items">
+            <a :aria-current="isSecond">{{ id }}</a>
+          </li>
+        </ul>
+      `
+    )
+
+    mount(html`<${name}></${name}>`)
+
+    assert.equal($$('a[aria-current="page"]').length, 1)
   })
 })

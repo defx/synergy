@@ -33,9 +33,10 @@ describe("define", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        update: {},
+        initialState: {
           $title: "",
-        }),
+        },
       }),
       template
     )
@@ -50,7 +51,7 @@ describe("define", () => {
     let name = createName()
     define(
       name,
-      () => ({ update: () => ({ $title: "" }) }),
+      () => ({ initialState: { $title: "" } }),
       "<p>{{ $title }}</p>"
     )
     mount(`
@@ -139,16 +140,10 @@ describe("define", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "toggle": {
-              return { ...state, $fooBar: !state.$fooBar }
-            }
-            default: {
-              return { ...state }
-            }
-          }
+        update: {
+          toggle: (state) => ({ ...state, $fooBar: !state.$fooBar }),
         },
+        initialState,
       }),
       html`<button :onclick="toggle">ok</button>`
     )
@@ -174,19 +169,13 @@ describe("define", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "toggle": {
-              return {
-                ...state,
-                $ariaHidden: !state.$ariaHidden,
-              }
-            }
-            default: {
-              return { ...state }
-            }
-          }
+        update: {
+          toggle: (state) => ({
+            ...state,
+            $ariaHidden: !state.$ariaHidden,
+          }),
         },
+        initialState,
       }),
       html`<button :onclick="toggle">ok</button>`
     )
@@ -299,19 +288,13 @@ describe("define", () => {
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
-          switch (action.type) {
-            case "updateFoo": {
-              return {
-                ...state,
-                $foo: "baz",
-              }
-            }
-            default: {
-              return { ...state }
-            }
-          }
+        update: {
+          updateFoo: (state) => ({
+            ...state,
+            $foo: "baz",
+          }),
         },
+        initialState,
       }),
       html` <p :onclick="updateFoo" foo="bar">{{ $foo }}</p> `
     )
@@ -332,9 +315,9 @@ describe("define", () => {
       name,
       () =>
         Promise.resolve({
-          update: () => ({
+          initialState: {
             foo: "bar",
-          }),
+          },
         }),
       html` <p>{{ foo }}</p> `
     )

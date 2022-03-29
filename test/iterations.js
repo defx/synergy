@@ -4,7 +4,7 @@ describe("iterations", () => {
   it("should iterate over Array", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "walk the cat",
@@ -22,7 +22,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <ul>
@@ -37,7 +37,7 @@ describe("iterations", () => {
 
     mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos)
+    let todos = Array.from(initialState.todos)
 
     assert.equal($$("li").length, "2")
 
@@ -49,14 +49,14 @@ describe("iterations", () => {
   it("should iterate over Array keys", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: ["gold", "tomato"],
     }
 
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <ul>
@@ -82,7 +82,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           $colours: [
             {
               name: "red",
@@ -94,7 +94,7 @@ describe("iterations", () => {
               name: "gold",
             },
           ],
-        }),
+        },
       }),
       html`
         <template each="colour in $colours">
@@ -134,7 +134,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           $colours: [
             {
               name: "red",
@@ -149,7 +149,7 @@ describe("iterations", () => {
               foo: 3,
             },
           ],
-        }),
+        },
       }),
       html`
         <template each="colour in $colours" key="foo">
@@ -189,7 +189,7 @@ describe("iterations", () => {
   it("should support multiple top-level nodes", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: [
         {
           name: "red",
@@ -209,7 +209,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <div>
@@ -232,7 +232,7 @@ describe("iterations", () => {
   it("should support negations within repeated block", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: [
         {
           name: "red",
@@ -255,7 +255,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <div>
@@ -281,7 +281,7 @@ describe("iterations", () => {
   it("should work without templates", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "walk the cat",
@@ -299,7 +299,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <ul>
@@ -312,7 +312,7 @@ describe("iterations", () => {
 
     mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos)
+    let todos = Array.from(initialState.todos)
 
     let listItems = $$("li")
 
@@ -326,7 +326,7 @@ describe("iterations", () => {
   it("works with Objects too", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       foo: {
         0: 25,
         1: 38,
@@ -340,7 +340,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
     )
@@ -349,9 +349,9 @@ describe("iterations", () => {
 
     let nodes = $$("p")
 
-    assert.equal(nodes.length, Object.keys(view.foo).length)
+    assert.equal(nodes.length, Object.keys(initialState.foo).length)
 
-    Object.entries(view.foo).forEach(([k, v], i) => {
+    Object.entries(initialState.foo).forEach(([k, v], i) => {
       assert.equal(nodes[i].textContent, `${k} : ${v}`)
     })
   })
@@ -359,7 +359,7 @@ describe("iterations", () => {
   it("works with SVG", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       items: [
         {
           x: 0,
@@ -388,7 +388,7 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <svg
@@ -414,9 +414,9 @@ describe("iterations", () => {
 
     let nodes = $$(".foo").slice(1)
 
-    assert.equal(nodes.length, view.items.length)
+    assert.equal(nodes.length, initialState.items.length)
 
-    view.items.forEach(({ width, height, x, y }, i) => {
+    initialState.items.forEach(({ width, height, x, y }, i) => {
       let box = nodes[i].getBBox()
       assert.equal(box.x, x)
       assert.equal(box.y, y)
@@ -431,10 +431,10 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           $colours1: ["gold", "tomato"],
           $colours2: ["green", "orange"],
-        }),
+        },
       }),
       html`
         <ul>

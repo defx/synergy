@@ -7,14 +7,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           boolean: false,
           undefined: undefined,
           null: null,
           number: 0,
           string: "string",
           foo: "bar",
-        }),
+        },
       }),
       html`
         <ul>
@@ -42,10 +42,10 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           c1: "red",
           c2: "green",
-        }),
+        },
       }),
       html` <p>{{c1}} + {{c2}}</p> `
     )
@@ -61,9 +61,9 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           classes: ["one", "two", "three"],
-        }),
+        },
       }),
       html`<section :class="{{classes}}"></section>`
     )
@@ -79,7 +79,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           classes: {
             one: true,
             two: false,
@@ -88,7 +88,7 @@ describe("interpolation", () => {
             five: "",
             six: "ok",
           },
-        }),
+        },
       }),
       html` <section :class="{{classes}}"></section> `
     )
@@ -104,14 +104,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           foo: `
             background-color: gold;
             color: tomato;
             width: 100px;
             height: 100px;
           `,
-        }),
+        },
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -130,14 +130,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           $foo: `
           background-color: gold;
           color: tomato;
           width: 100px;
           height: 100px;
           `,
-        }),
+        },
       }),
       html` <section :style="{{ $foo }}"></section> `
     )
@@ -172,14 +172,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           foo: {
             "background-color": "gold",
             color: "tomato",
             width: "100px",
             height: "100px",
           },
-        }),
+        },
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -198,14 +198,14 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           foo: {
             backgroundColor: "gold",
             color: "tomato",
             width: "100px",
             height: "100px",
           },
-        }),
+        },
       }),
       html` <section :style="{{foo}}"></section> `
     )
@@ -224,10 +224,10 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           c1: "red",
           c2: "green",
-        }),
+        },
       }),
       html` <p :name="{{ c1 }}">{{ c2 }}</p> `
     )
@@ -244,7 +244,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({ $foo: true }),
+        initialState: { $foo: true },
       }),
       html` <p :hidden="{{ !$foo }}">boo!</p>`
     )
@@ -266,7 +266,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => ({
+        initialState: {
           columns: ["one", "two", "three"],
           rows: [
             {
@@ -285,7 +285,7 @@ describe("interpolation", () => {
               three: 2,
             },
           ],
-        }),
+        },
       }),
       html`
         <table>
@@ -309,68 +309,10 @@ describe("interpolation", () => {
     )
   })
 
-  it("should support function invocation", () => {
-    let name = createName()
-
-    define(
-      name,
-      () => ({
-        update: () => ({
-          items: [1, 2, 3],
-          isSecond(item) {
-            return item === this.items[1] ? "page" : null
-          },
-        }),
-      }),
-      html`
-        <ul>
-          <li each="item in items">
-            <a :aria-current="{{ isSecond(item) }}"></a>
-          </li>
-        </ul>
-      `
-    )
-
-    mount(html`<${name}></${name}>`)
-
-    assert.equal($$('a[aria-current="page"]').length, 1)
-  })
-
-  it("should support nested function invocation", () => {
-    let name = createName()
-
-    let view = {
-      foo: {
-        items: [1, 2, 3],
-        isSecond(item) {
-          return item === this.items[1] ? "page" : null
-        },
-      },
-    }
-
-    define(
-      name,
-      () => ({
-        update: () => view,
-      }),
-      html`
-        <ul>
-          <li each="item in foo.items">
-            <a :aria-current="{{ foo.isSecond(item) }}"></a>
-          </li>
-        </ul>
-      `
-    )
-
-    mount(html`<${name}></${name}>`)
-
-    assert.equal($$('a[aria-current="page"]').length, 1)
-  })
-
   it("resolves properties from the current item first", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       foo: "bar",
       items: [
         {
@@ -388,7 +330,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html`
         <div
@@ -404,19 +346,19 @@ describe("interpolation", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length)
+    assert.equal(nodes.length, initialState.items.length)
 
-    view.items.forEach(({ x }, i) => {
+    initialState.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), view.foo)
+      assert.equal(node.getAttribute("foo"), initialState.foo)
     })
   })
 
   it("supports simple each (just the collection property)", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       foo: "bar",
       items: [
         {
@@ -434,7 +376,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html` <div class="foo" each="items" :x="{{ x }}" :foo="{{ foo }}"></div> `
     )
@@ -443,19 +385,19 @@ describe("interpolation", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length)
+    assert.equal(nodes.length, initialState.items.length)
 
-    view.items.forEach(({ x }, i) => {
+    initialState.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), view.foo)
+      assert.equal(node.getAttribute("foo"), initialState.foo)
     })
   })
 
   it("supports shorthand attributes (when attribute name matches property name)", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       foo: "bar",
       items: [
         {
@@ -473,7 +415,7 @@ describe("interpolation", () => {
     define(
       name,
       () => ({
-        update: () => view,
+        initialState,
       }),
       html` <div class="foo" each="items" :x :foo></div> `
     )
@@ -482,12 +424,12 @@ describe("interpolation", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, view.items.length)
+    assert.equal(nodes.length, initialState.items.length)
 
-    view.items.forEach(({ x }, i) => {
+    initialState.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), view.foo)
+      assert.equal(node.getAttribute("foo"), initialState.foo)
     })
   })
 })

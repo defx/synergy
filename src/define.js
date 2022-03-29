@@ -46,7 +46,14 @@ export const define = (name, factory, template) =>
 
           if (config instanceof Promise) config = await config
 
-          const { update, middleware, derivations, subscribe, shadow } = config
+          let {
+            update,
+            middleware,
+            derivations,
+            subscribe,
+            shadow,
+            initialState = {},
+          } = config
 
           this.connectedCallback = config.connectedCallback
           this.disconnectedCallback = config.disconnectedCallback
@@ -55,7 +62,7 @@ export const define = (name, factory, template) =>
             update,
             middleware,
             derivations,
-            slice
+            initialState
           )
 
           dispatch({
@@ -63,7 +70,7 @@ export const define = (name, factory, template) =>
             payload: deserialise(this),
           })
 
-          let initialState = getState()
+          initialState = getState()
 
           let observedProps = Object.keys(initialState).filter(
             (v) => v.charAt(0) === "$"

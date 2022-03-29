@@ -11,35 +11,31 @@ describe("middleware", () => {
     define(
       name,
       () => ({
-        update: (_, action) => {
-          switch (action.type) {
-            case "saveEdit": {
-              stack.push(action)
-              break
-            }
-            case "cancelEdit": {
-              stack.push(action)
-              break
-            }
-          }
+        update: {
+          saveEdit: (state, action) => {
+            stack.push(action)
+            return state
+          },
+          cancelEdit: (state, action) => {
+            stack.push(action)
+            return state
+          },
         },
         middleware: [
-          (action, next) => {
-            switch (action.type) {
-              case "keydown": {
-                const { keyCode } = action.event
-                switch (keyCode) {
-                  case KEYS.ESCAPE: {
-                    next({ ...action, type: "cancelEdit" })
-                    break
-                  }
-                  case KEYS.RETURN: {
-                    next({ ...action, type: "saveEdit" })
-                    break
-                  }
+          {
+            keydown: (action, next) => {
+              let { keyCode } = action.event
+              switch (keyCode) {
+                case KEYS.ESCAPE: {
+                  next({ ...action, type: "cancelEdit" })
+                  break
+                }
+                case KEYS.RETURN: {
+                  next({ ...action, type: "saveEdit" })
+                  break
                 }
               }
-            }
+            },
           },
         ],
       }),
@@ -112,27 +108,22 @@ describe("middleware", () => {
     define(
       name,
       () => ({
-        update: (state = {}, action) => {
-          switch (action.type) {
-            case "fire": {
-              stack.push(action)
-              return {
-                ...state,
-              }
-            }
-            default: {
-              return {
-                ...state,
-              }
-            }
-          }
+        update: {
+          fire: (state, action) => {
+            stack.push(action)
+            return state
+          },
         },
         middleware: [
-          (action, next) => {
-            next({ ...action, foo: "bar" })
+          {
+            fire: (action, next) => {
+              next({ ...action, foo: "bar" })
+            },
           },
-          (action, next) => {
-            next({ ...action, moo: "baa" })
+          {
+            fire: (action, next) => {
+              next({ ...action, moo: "baa" })
+            },
           },
         ],
       }),

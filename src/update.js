@@ -29,7 +29,12 @@ Notes
 
 */
 
-export function configure(userReducer, middleware = [], derivations = {}) {
+export function configure(
+  userReducer,
+  middleware = [],
+  derivations = {},
+  initialState
+) {
   let subscribers = []
   let state
   let update = () => {}
@@ -41,7 +46,7 @@ export function configure(userReducer, middleware = [], derivations = {}) {
     }
   }
 
-  updateState(userReducer(undefined, {}))
+  updateState(initialState)
 
   function getState() {
     return { ...state }
@@ -61,7 +66,8 @@ export function configure(userReducer, middleware = [], derivations = {}) {
   }
 
   function dispatch(action) {
-    if (action.type === "SET" || action.type === "MERGE") {
+    const { type } = action
+    if (type === "SET" || type === "MERGE") {
       updateState(systemReducer(getState(), action))
     } else {
       if (middleware.length) {
@@ -69,19 +75,35 @@ export function configure(userReducer, middleware = [], derivations = {}) {
 
         let next = (action) => {
           if (fns.length) {
-            fns.shift()(action, next, {
-              getState,
-              dispatch,
-              afterNextRender: subscribe,
-            })
-          } else {
-            updateState(userReducer(getState(), action))
+            let x = fns.shift()
+
+            if (action.type in x) {
+              x[action.type](action, next, {
+                getState,
+                dispatch,
+                afterNextRender: subscribe,
+              })
+            } else {
+              next(action)
+            }
+          } else if (action.type in userReducer) {
+            updateState(userReducer[action.type](getState(), action))
           }
         }
 
-        fns.shift()(action, next)
-      } else {
-        updateState(userReducer(getState(), action))
+        let x = fns.shift()
+
+        if (type in x) {
+          x[type](action, next, {
+            getState,
+            dispatch,
+            afterNextRender: subscribe,
+          })
+        } else {
+          next(action)
+        }
+      } else if (type in userReducer) {
+        updateState(userReducer[type](getState(), action))
       }
     }
     update()
