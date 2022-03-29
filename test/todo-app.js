@@ -1,5 +1,5 @@
 import { define } from "../src/index.js"
-import { markup, storage, factory } from "../examples/todo-app/atalanta.js"
+import { markup, storage, factory } from "../examples/todo-app/index.js"
 
 describe("Todo List", () => {
   beforeEach(() => {

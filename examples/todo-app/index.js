@@ -19,47 +19,39 @@ const KEYS = {
   ESCAPE: 27,
 }
 
-const initialState = {
+export const initialState = {
   filters: Object.keys(filters),
   todos: [],
   activeFilter: "all",
 }
 
 export const middleware = [
-  (action, next) => {
-    switch (action.type) {
-      case "keydown": {
-        const { keyCode } = action.event
-        switch (keyCode) {
-          case KEYS.ESCAPE: {
-            next({ ...action, type: "cancelEdit" })
-            break
-          }
-          case KEYS.RETURN: {
-            next({ ...action, type: "saveEdit" })
-            break
-          }
+  {
+    keydown: (action, next) => {
+      const { keyCode } = action.event
+
+      switch (keyCode) {
+        case KEYS.ESCAPE: {
+          next({ ...action, type: "cancelEdit" })
+          break
+        }
+        case KEYS.RETURN: {
+          next({ ...action, type: "saveEdit" })
+          break
+        }
+        default: {
+          next(action)
         }
       }
-      default: {
-        next(action)
-        break
-      }
-    }
+    },
   },
-  (action, next, { afterNextRender }) => {
-    switch (action.type) {
-      case "startEdit": {
-        afterNextRender(() =>
-          action.event.target.parentNode.querySelector(".edit").focus()
-        )
-        next(action)
-        break
-      }
-      default: {
-        next(action)
-      }
-    }
+  {
+    startEdit: (action, next, { afterNextRender }) => {
+      afterNextRender(() =>
+        action.event.target.parentNode.querySelector(".edit").focus()
+      )
+      next(action)
+    },
   },
 ]
 
@@ -78,94 +70,76 @@ export const derivations = {
   },
 }
 
-export const update = (state = initialState, action) => {
-  const { context, event } = action
-
-  switch (action.type) {
-    case "toggleAll": {
-      let allDone = event.target.checked
+export const update = {
+  toggleAll: (state, { event }) => {
+    let allDone = event.target.checked
+    return {
+      ...state,
+      allDone,
+      todos: state.todos.map((todo) => ({ ...todo, completed: allDone })),
+    }
+  },
+  todoInput: (state, { event }) => {
+    if (event.keyCode === KEYS.RETURN) {
       return {
         ...state,
-        allDone,
-        todos: state.todos.map((todo) => ({ ...todo, completed: allDone })),
+        todos: state.todos.concat({
+          title: state.newTodo,
+          id: Date.now(),
+          completed: false,
+        }),
+        newTodo: null,
       }
-    }
-    case "todoInput": {
-      if (event.keyCode === KEYS.RETURN) {
-        return {
-          ...state,
-          todos: state.todos.concat({
-            title: state.newTodo,
-            id: Date.now(),
-            completed: false,
-          }),
-          newTodo: null,
-        }
-      } else {
-        return {
-          ...state,
-          newTodo: title,
-        }
-      }
-    }
-    case "startEdit": {
-      const todos = state.todos.map((todo) => ({
-        ...todo,
-        editing: todo.id === context.todo.id,
-      }))
-      const titleEdit = todos.find((todo) => todo.editing)?.title
+    } else {
       return {
         ...state,
-        titleEdit,
-        todos,
+        newTodo: title,
       }
     }
-    case "deleteTodo": {
-      return {
-        ...state,
-        todos: state.todos.filter((todo) => todo.id !== context.todo.id),
-      }
+  },
+  startEdit: (state, { context }) => {
+    const todos = state.todos.map((todo) => ({
+      ...todo,
+      editing: todo.id === context.todo.id,
+    }))
+    const titleEdit = todos.find((todo) => todo.editing)?.title
+    return {
+      ...state,
+      titleEdit,
+      todos,
     }
-    case "removeCompleted": {
-      return {
-        ...state,
-        todos: state.todos.filter(({ completed }) => !completed),
-      }
+  },
+  deleteTodo: (state, { context }) => ({
+    ...state,
+    todos: state.todos.filter((todo) => todo.id !== context.todo.id),
+  }),
+  removeCompleted: (state) => ({
+    ...state,
+    todos: state.todos.filter(({ completed }) => !completed),
+  }),
+  cancelEdit: (state) => ({
+    ...state,
+    titleEdit: "",
+    todos: state.todos.map((todo) => ({
+      ...todo,
+      editing: false,
+    })),
+  }),
+  saveEdit: (state) => {
+    let titleEdit = state.titleEdit.trim()
+    return {
+      ...state,
+      todos: titleEdit
+        ? state.todos.map((todo) => {
+            return {
+              ...todo,
+              title: todo.editing ? state.titleEdit : todo.title,
+              editing: false,
+            }
+          })
+        : state.todos.filter(({ editing }) => !editing),
     }
-    case "cancelEdit": {
-      return {
-        ...state,
-        titleEdit: "",
-        todos: state.todos.map((todo) => ({
-          ...todo,
-          editing: false,
-        })),
-      }
-    }
-    case "saveEdit": {
-      let titleEdit = state.titleEdit.trim()
-      let todos
-
-      if (titleEdit) {
-        todos = state.todos.map((todo) => {
-          return {
-            ...todo,
-            title: todo.editing ? state.titleEdit : todo.title,
-            editing: false,
-          }
-        })
-      } else {
-        todos = state.todos.filter(({ editing }) => !editing)
-      }
-
-      return {
-        ...state,
-        todos,
-      }
-    }
-    default:
-      return { ...state }
-  }
+  },
 }
 
 export const markup = html`
@@ -243,4 +217,5 @@ export const factory = () => ({
   middleware,
   derivations,
   subscribe,
+  initialState,
 })
