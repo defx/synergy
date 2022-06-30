@@ -29,8 +29,8 @@ export const updateFormControl = (node, value) => {
       }
       break
     default:
-      if (node.value === value) break
-      node.setAttribute("value", (node.value = value || ""))
+      if (node.value !== value)
+        node.setAttribute("value", (node.value = value ?? ""))
       break
   }
 }

@@ -9,7 +9,7 @@ describe("scope", () => {
   it("should observe context", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todo: "feed the dog",
       message: "Hej!",
       todos: [
@@ -28,9 +28,9 @@ describe("scope", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html` <h1 first>{{todo}}</h1>
         <ul>
           <template each="todo in todos">
@@ -54,7 +54,7 @@ describe("scope", () => {
   it("should support nested scopes", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       artists: [
         {
           name: "pablo picasso",
@@ -75,9 +75,9 @@ describe("scope", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <template each="(i, artist) in artists">
           <article>
@@ -94,14 +94,14 @@ describe("scope", () => {
 
     mount(html`<${name}></${name}>`)
 
-    assert.equal($("h4").textContent, view.artists[0].name)
+    assert.equal($("h4").textContent, initialState.artists[0].name)
     assert.equal(
       $$("article:nth-of-type(1) li").length,
-      view.artists[0].tags.length
+      initialState.artists[0].tags.length
     )
     assert.equal(
       $$("article:nth-of-type(2) li").length,
-      view.artists[1].tags.length
+      initialState.artists[1].tags.length
     )
     assert.equal($("article:nth-of-type(1) li").textContent, "painter 0:0")
     assert.equal($("article:nth-of-type(2) li").textContent, "painter 1:0")

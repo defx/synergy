@@ -14,7 +14,7 @@ describe("define", () => {
       name,
       (node) => {
         el = node
-        return {}
+        return { update: () => {} }
       },
       "<p></p>"
     )
@@ -33,7 +33,9 @@ describe("define", () => {
     define(
       name,
       () => ({
-        $title: "",
+        initialState: {
+          $title: "",
+        },
       }),
       template
     )
@@ -46,9 +48,11 @@ describe("define", () => {
 
   it("reflects attribute changes on to viewmodel", async () => {
     let name = createName()
-    define(name, () => ({ $title: "" }), "<p>{{ $title }}</p>", {
-      observe: ["title"],
-    })
+    define(
+      name,
+      () => ({ initialState: { $title: "" } }),
+      "<p>{{ $title }}</p>"
+    )
     mount(`
       <${name} title="ok!"></${name}>
       `)
@@ -56,18 +60,30 @@ describe("define", () => {
     await nextFrame()
     assert.equal($(`${name} p`).textContent, "foo!")
   })
+
   it("reflects viewmodel changes back on to attributes", async () => {
     let name = createName()
-
+    let initialState = {
+      show: true,
+    }
     define(
       name,
       () => ({
-        show: true,
-        toggle() {
-          this.show = !this.show
+        update: (state = initialState, action) => {
+          switch (action.type) {
+            case "toggle": {
+              return {
+                ...state,
+                show: !state.show,
+              }
+            }
+            default: {
+              return { ...state }
+            }
+          }
         },
       }),
-      '<p :hidden="{{ !show }}">hello world!</p><button :onclick="toggle()">toggle</button>'
+      '<p :hidden="{{ !show }}">hello world!</p><button :onclick="toggle">toggle</button>'
     )
     mount(`
       <${name}></${name}>
@@ -82,7 +98,9 @@ describe("define", () => {
     let name = createName()
     define(
       name,
-      () => ({}),
+      () => ({
+        update: () => ({}),
+      }),
       html`<p>hello <slot></slot>!</p>
         !`
     )
@@ -97,7 +115,9 @@ describe("define", () => {
     let name = createName()
     define(
       name,
-      () => ({}),
+      () => ({
+        update: () => ({}),
+      }),
       html`<p>
         <slot name="foo"></slot><slot name="bar"></slot><slot>hello</slot>
       </p>`
@@ -111,15 +131,20 @@ describe("define", () => {
 
   it("converts between kebab and pascal casing", async () => {
     let name = createName()
+
+    let initialState = {
+      $fooBar: false,
+    }
+
     define(
       name,
       () => ({
-        $fooBar: false,
-        toggle() {
-          this.$fooBar = !this.$fooBar
+        update: {
+          toggle: (state) => ({ ...state, $fooBar: !state.$fooBar }),
         },
+        initialState,
       }),
-      html`<button :onclick="toggle()">ok</button>`
+      html`<button :onclick="toggle">ok</button>`
     )
     mount(`
     <${name} foo-bar></${name}>
@@ -136,15 +161,24 @@ describe("define", () => {
   it("correctly handles aria string booleans", async () => {
     let name = createName()
 
+    let initialState = {
+      $ariaHidden: true,
+    }
+
     define(
       name,
       () => ({
-        $ariaHidden: true,
-        toggle() {
-          this.$ariaHidden = !this.$ariaHidden
+        update: {
+          toggle: (state) => {
+            return {
+              ...state,
+              $ariaHidden: !state.ariaHidden,
+            }
+          },
         },
+        initialState,
       }),
-      html`<button :onclick="toggle()">ok</button>`
+      html`<button :onclick="toggle">ok</button>`
     )
     mount(`
     <${name} aria-hidden="false"></${name}>
@@ -162,6 +196,9 @@ describe("define", () => {
     let disconnected = false
     let factory = () => {
       return {
+        update(state = {}, action) {
+          return state
+        },
         connectedCallback() {
           connected = true
         },
@@ -181,7 +218,7 @@ describe("define", () => {
   })
 
   it("optionally supports shadow root", () => {
-    let factory = () => ({})
+    let factory = () => ({ update: () => ({}), shadow: "open" })
 
     let template = html`
       <style>
@@ -194,9 +231,7 @@ describe("define", () => {
       <slot></slot>
     `
 
-    define("x-shadow", factory, template, {
-      shadow: "open",
-    })
+    define("x-shadow", factory, template)
 
     mount(html`<x-shadow>hello shadow</x-shadow>`)
 
@@ -207,8 +242,10 @@ describe("define", () => {
 
   it("accepts rich data as properties", () => {
     let factory = () => ({
-      arr: [],
-      obj: {},
+      update: () => ({
+        arr: [],
+        obj: {},
+      }),
     })
 
     let template = `
@@ -217,9 +254,7 @@ describe("define", () => {
     <p each="item in arr">{{ item }}</p>
     `
 
-    define("rich-props", factory, template, {
-      observe: ["arr", "obj"],
-    })
+    define("rich-props", factory, template)
 
     let name = createName()
 
@@ -227,10 +262,9 @@ describe("define", () => {
       name,
       () => {
         return {
-          letters: "synergy".split(""),
+          letters: "mosaic".split(""),
           library: {
-            org: "synergyjs",
-            repo: "defx/synergy",
+            repo: "defx/mosaic",
           },
         }
       },
@@ -240,25 +274,34 @@ describe("define", () => {
     )
 
     mount(html`<${name}></${name}>`)
+
+    //@todo ...assert or delete?
   })
 
   it("reflects observed properties from viewmodel to element", async () => {
     let name = createName()
 
+    let initialState = {
+      $foo: "",
+    }
+
     define(
       name,
       () => ({
-        $foo: "",
-        updateFoo() {
-          this.$foo = "baz"
+        update: {
+          updateFoo: (state) => ({
+            ...state,
+            $foo: "baz",
+          }),
         },
+        initialState,
       }),
-      html` <p :onclick="updateFoo()" foo="bar">{{ $foo }}</p> `
+      html` <p :onclick="updateFoo" foo="bar">{{ $foo }}</p> `
     )
 
     mount(`<${name}></${name}>`)
 
-    $(`${name} p`).click()
+    $(`p`).click()
 
     await nextFrame()
 
@@ -272,7 +315,9 @@ describe("define", () => {
       name,
       () =>
         Promise.resolve({
-          foo: "bar",
+          initialState: {
+            foo: "bar",
+          },
         }),
       html` <p>{{ foo }}</p> `
     )

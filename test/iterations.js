@@ -4,7 +4,7 @@ describe("iterations", () => {
   it("should iterate over Array", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "walk the cat",
@@ -21,9 +21,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <ul>
           <template each="todo in todos">
@@ -37,9 +37,11 @@ describe("iterations", () => {
 
     mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos)
+    let todos = Array.from(initialState.todos)
 
-    $$("#container li").forEach((li, i) => {
+    assert.equal($$("li").length, "2")
+
+    $$("li").forEach((li, i) => {
       assert.equal(li.querySelector("p").textContent, todos[i].title)
     })
   })
@@ -47,15 +49,15 @@ describe("iterations", () => {
   it("should iterate over Array keys", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: ["gold", "tomato"],
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <ul>
           <li each="(index, colour) in colours" :data-index="{{ index }}">
@@ -80,17 +82,19 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        $colours: [
-          {
-            name: "red",
-          },
-          {
-            name: "green",
-          },
-          {
-            name: "gold",
-          },
-        ],
+        initialState: {
+          $colours: [
+            {
+              name: "red",
+            },
+            {
+              name: "green",
+            },
+            {
+              name: "gold",
+            },
+          ],
+        },
       }),
       html`
         <template each="colour in $colours">
@@ -130,20 +134,22 @@ describe("iterations", () => {
     define(
       name,
       () => ({
-        $colours: [
-          {
-            name: "red",
-            foo: 1,
-          },
-          {
-            name: "green",
-            foo: 2,
-          },
-          {
-            name: "gold",
-            foo: 3,
-          },
-        ],
+        initialState: {
+          $colours: [
+            {
+              name: "red",
+              foo: 1,
+            },
+            {
+              name: "green",
+              foo: 2,
+            },
+            {
+              name: "gold",
+              foo: 3,
+            },
+          ],
+        },
       }),
       html`
         <template each="colour in $colours" key="foo">
@@ -183,7 +189,7 @@ describe("iterations", () => {
   it("should support multiple top-level nodes", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: [
         {
           name: "red",
@@ -202,9 +208,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <div>
           <template each="colour in colours">
@@ -226,7 +232,7 @@ describe("iterations", () => {
   it("should support negations within repeated block", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       colours: [
         {
           name: "red",
@@ -248,9 +254,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <div>
           <div
@@ -275,7 +281,7 @@ describe("iterations", () => {
   it("should work without templates", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "walk the cat",
@@ -292,9 +298,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <ul>
           <li each="todo in todos" style="background-color: {{todo.colour}}">
@@ -306,7 +312,7 @@ describe("iterations", () => {
 
     mount(html`<${name}></${name}>`)
 
-    let todos = Array.from(view.todos)
+    let todos = Array.from(initialState.todos)
 
     let listItems = $$("li")
 
@@ -320,7 +326,7 @@ describe("iterations", () => {
   it("works with Objects too", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       foo: {
         0: 25,
         1: 38,
@@ -333,9 +339,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
     )
 
@@ -343,9 +349,9 @@ describe("iterations", () => {
 
     let nodes = $$("p")
 
-    assert.equal(nodes.length, Object.keys(view.foo).length)
+    assert.equal(nodes.length, Object.keys(initialState.foo).length)
 
-    Object.entries(view.foo).forEach(([k, v], i) => {
+    Object.entries(initialState.foo).forEach(([k, v], i) => {
       assert.equal(nodes[i].textContent, `${k} : ${v}`)
     })
   })
@@ -353,7 +359,7 @@ describe("iterations", () => {
   it("works with SVG", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       items: [
         {
           x: 0,
@@ -381,9 +387,9 @@ describe("iterations", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <svg
           version="1.1"
@@ -408,148 +414,14 @@ describe("iterations", () => {
 
     let nodes = $$(".foo").slice(1)
 
-    assert.equal(nodes.length, view.items.length)
+    assert.equal(nodes.length, initialState.items.length)
 
-    view.items.forEach(({ width, height, x, y }, i) => {
+    initialState.items.forEach(({ width, height, x, y }, i) => {
       let box = nodes[i].getBBox()
       assert.equal(box.x, x)
       assert.equal(box.y, y)
       assert.equal(box.width, width)
       assert.equal(box.height, height)
     })
-  })
-
-  it("should render two lists", () => {
-    let name = createName()
-
-    define(
-      name,
-      () => ({
-        $colours1: ["gold", "tomato"],
-        $colours2: ["green", "orange"],
-      }),
-      html`
-        <ul>
-          <li each="(index, colour) in $colours1" :data-index="{{ index }}">
-            <p>{{ index }}</p>
-            <p>{{ colour }}</p>
-          </li>
-          <li each="(index, colour) in $colours2" :data-index="{{ index }}">
-            <p>{{ index }}</p>
-            <p>{{ colour }}</p>
-          </li>
-        </ul>
-      `
-    )
-
-    mount(html`<${name}></${name}>`)
-
-    $(name).colours1.push("black")
-    $(name).colours2.unshift("white")
-
-    // @TODO
-  })
-
-  it("works with SVG", () => {
-    let name = createName()
-
-    define(
-      name,
-      () => ({
-        circles: [
-          {
-            r: 16,
-            cx: 64,
-            cy: 16,
-            fill: "green",
-          },
-          {
-            r: 16,
-            cx: 64,
-            cy: 64,
-            fill: "olive",
-          },
-          ,
-        ],
-        $rects: [
-          {
-            x: 0,
-            y: 0,
-            fill: "red",
-            width: 16,
-            height: 16,
-          },
-          {
-            x: 0,
-            y: 16,
-            fill: "green",
-            width: 64,
-            height: 16,
-          },
-          {
-            x: 0,
-            y: 32,
-            fill: "gold",
-            width: 32,
-            height: 16,
-          },
-        ],
-      }),
-      html`
-        <svg
-          version="1.1"
-          width="300"
-          height="260"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect
-            class="foo"
-            each="item in $rects"
-            :x="{{ item.x }}"
-            :y="{{ item.y }}"
-            :fill="{{ item.fill }}"
-            :width="{{ item.width }}"
-            :height="{{ item.height }}"
-          ></rect>
-          <text x="0" y="128">hello SVG</text>
-          <circle
-            class="foo"
-            each="item in circles"
-            :cx="{{ item.cx }}"
-            :cy="{{ item.cy }}"
-            :fill="{{ item.fill }}"
-            :r="{{ item.r }}"
-          ></circle>
-        </svg>
-      `
-    )
-
-    mount(html`<${name}></${name}>`)
-
-    $(name).rects.push({
-      x: 0,
-      y: 48,
-      fill: "aqua",
-      width: 96,
-      height: 16,
-    })
-
-    $(name).rects.unshift({
-      x: 0,
-      y: 64,
-      fill: "olive",
-      width: 64,
-      height: 16,
-    })
-
-    // assert.equal(nodes.length, view.items.length);
-
-    // view.items.forEach(({ width, height, x, y }, i) => {
-    //   let box = nodes[i].getBBox();
-    //   assert.equal(box.x, x);
-    //   assert.equal(box.y, y);
-    //   assert.equal(box.width, width);
-    //   assert.equal(box.height, height);
-    // });
   })
 })

@@ -1,23 +1,18 @@
 import { define } from "../src/index.js"
 
 describe("user input", () => {
-  let rootNode
-  beforeEach(() => {
-    rootNode = mount(html`<div id="container"></div>`)
-  })
-
   it("should bind the value to the named property", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       message: "?",
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`<input name="message" /> the message is:
         <span class="message">{{message}}</span>`
     )
@@ -30,7 +25,7 @@ describe("user input", () => {
   it("should bind the value to the named property (nested)", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       nested: {
         message: "??",
       },
@@ -38,9 +33,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <input :name="nested.message" />
         the message is:
@@ -56,7 +51,7 @@ describe("user input", () => {
   it("should bind the value to the named + scoped property", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       todos: [
         {
           title: "feed the cat",
@@ -70,9 +65,9 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <ul>
           <template each="todo in todos">
@@ -98,11 +93,11 @@ describe("user input", () => {
 
     define(
       name,
-      () => {
-        return {
+      () => ({
+        initialState: {
           filter: "active",
-        }
-      },
+        },
+      }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -127,13 +122,13 @@ describe("user input", () => {
   it("should check the correct radio button", () => {
     let name = createName()
 
-    let view = {}
+    let initialState = {}
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -158,15 +153,15 @@ describe("user input", () => {
   it("should reflect the correct radio button", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       filter: "active",
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
         <label for="filter.all">all</label>
@@ -184,23 +179,25 @@ describe("user input", () => {
 
     mount(html`<${name}></${name}>`)
 
-    $(`input[type="radio"][value="complete"]`).click()
+    $(`input[value="complete"]`).click()
+
     await nextFrame()
-    assert.equal(view.filter, "complete")
+
+    assert.equal($(`input:checked`).value, "complete")
   })
 
   it("should select the correct option", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       $pets: "hamster",
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="$pets" id="pet-select">
@@ -229,16 +226,16 @@ describe("user input", () => {
   it("should select the correct option (each option)", async () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       $pets: "Hamster",
       options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="$pets" id="pet-select">
@@ -262,15 +259,15 @@ describe("user input", () => {
   it("should select multiple", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       pets: ["dog", "hamster"],
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html`
         <label for="pet-select">Choose a pet:</label>
         <select :name="pets" id="pet-select" multiple>
@@ -299,7 +296,9 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        $pets: ["hamster"],
+        initialState: {
+          $pets: ["hamster"],
+        },
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -333,15 +332,15 @@ describe("user input", () => {
   it("should bind the named textarea", () => {
     let name = createName()
 
-    let view = {
+    let initialState = {
       text: "ok",
     }
 
     define(
       name,
-      () => {
-        return view
-      },
+      () => ({
+        initialState,
+      }),
       html` <textarea :name="text"></textarea> `
     )
 

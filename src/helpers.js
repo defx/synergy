@@ -1,3 +1,9 @@
+export const wrapToken = (v) => {
+  v = v.trim()
+  if (v.startsWith("{{")) return v
+  return `{{${v}}}`
+}
+
 export const last = (v = []) => v[v.length - 1]
 
 export const isWhitespace = (node) => {
@@ -42,14 +48,9 @@ const getTarget = (path, target) => {
   return [t, last(parts)]
 }
 
-export const callFunctionAtPath = (path, target, args) => {
-  let [a, b] = getTarget(path, target)
-  return a[b]?.apply?.(a, args)
-}
-
 export const getValueAtPath = (path, target) => {
   let [a, b] = getTarget(path, target)
-  let v = a[b]
+  let v = a?.[b]
   if (typeof v === "function") return v.bind(a)
   return v
 }
@@ -57,12 +58,6 @@ export const getValueAtPath = (path, target) => {
 export const setValueAtPath = (path, value, target) => {
   let [a, b] = getTarget(path, target)
   return (a[b] = value)
-}
-
-function cloneAttributes(target, source) {
-  ;[...source.attributes].forEach(({ nodeName, nodeValue }) => {
-    target.setAttribute(nodeName, nodeValue)
-  })
 }
 
 export const fragmentFromTemplate = (v) => {
@@ -76,13 +71,19 @@ export const fragmentFromTemplate = (v) => {
 }
 
 export const debounce = (fn) => {
-  let t
-  return function (...args) {
-    if (t) return
-    t = requestAnimationFrame(() => {
-      fn(...args)
-      t = null
-    })
+  let wait = false
+  let invoke = false
+  return () => {
+    if (wait) {
+      invoke = true
+    } else {
+      wait = true
+      fn()
+      requestAnimationFrame(() => {
+        if (invoke) fn()
+        wait = false
+      })
+    }
   }
 }
 
@@ -130,4 +131,8 @@ export const attributeToProp = (k, v) => {
     name,
     value: v,
   }
+}
+
+export function getDataScript(node) {
+  return node.querySelector(`script[type="application/synergy"]`)
 }

@@ -1,20 +1,20 @@
 import { define } from "../src/index.js"
 
 describe("hydrate", () => {
-  it("rehydrates event listeners", () => {
+  it("rehydrates event listeners", async () => {
     let name = createName()
     let stack = []
 
     define(
       name,
       () => ({
-        foo() {
-          stack.push("foo!")
+        update: {
+          foo: () => stack.push("foo!"),
         },
       }),
       html`
         <div>
-          <a href="#" id="foo" :onclick="foo()"><slot></slot></a>
+          <a href="#" id="foo" :onclick="foo"><slot></slot></a>
         </div>
       `
     )
@@ -28,6 +28,8 @@ describe("hydrate", () => {
 
     mount(outerHTML)
 
+    assert.deepEqual(stack, [])
+
     $("#foo").click()
 
     assert.deepEqual(stack, ["foo!"])
@@ -40,22 +42,27 @@ describe("hydrate", () => {
       name,
       () => {
         return {
-          $todos: [
-            {
-              title: "feed the duck",
+          initialState: {
+            $todos: [
+              {
+                title: "feed the duck",
+              },
+              {
+                title: "walk the cat",
+              },
+            ],
+          },
+          update: {
+            click: (state, action) => {
+              stack.push(action.context.todo.title)
+              return state
             },
-            {
-              title: "walk the cat",
-            },
-          ],
-          click(todo) {
-            stack.push(todo.title)
           },
         }
       },
       `
       <ul>
-        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+        <li each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
@@ -68,13 +75,19 @@ describe("hydrate", () => {
 
     mount(html)
 
-    $(name).todos.push({
+    const { todos } = $(name)
+
+    $(name).todos = todos.concat({
       title: "eat the frog",
     })
 
+    // $(name).todos.push({
+    //   title: "eat the frog",
+    // })
+
     await nextFrame()
 
-    $("li:nth-of-type(3)").click()
+    $$(`li`)[2].click()
 
     assert.deepEqual(stack, ["eat the frog"])
   })
@@ -87,29 +100,36 @@ describe("hydrate", () => {
       name,
       () => {
         return {
-          $todos: [
-            {
-              title: "feed the duck",
+          initialState: {
+            $todos: [
+              {
+                title: "feed the duck",
+              },
+              {
+                title: "walk the cat",
+              },
+            ],
+          },
+          update: {
+            click: (state, { context: { todo } }) => {
+              stack.push(todo.title)
+              return state
             },
-            {
-              title: "walk the cat",
-            },
-          ],
-          click(todo) {
-            stack.push(todo.title)
           },
         }
       },
       `
       <ul>
-        <li each="todo in $todos" :onclick="click(todo)">{{ title }}</li>
+        <li each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
 
     mount(`<${name}></${name}>`)
 
-    $(name).todos.push({
+    const { todos } = $(name)
+
+    $(name).todos = todos.concat({
       title: "eat the frog",
     })
 

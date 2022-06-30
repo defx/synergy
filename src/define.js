@@ -1,3 +1,4 @@
+import { configure } from "./update.js"
 import { render } from "./render.js"
 import { mergeSlots } from "./mergeSlots.js"
 import {
@@ -5,11 +6,8 @@ import {
   attributeToProp,
   isPrimitive,
   pascalToKebab,
+  getDataScript,
 } from "./helpers.js"
-
-function getDataScript(node) {
-  return node.querySelector(`script[type="application/synergy"]`)
-}
 
 function createDataScript(node) {
   let ds = document.createElement("script")
@@ -18,33 +16,44 @@ function createDataScript(node) {
   return ds
 }
 
-function serialise(node) {
+function serialise(node, state) {
+  console.log("serialise...")
   let ds = getDataScript(node) || createDataScript(node)
-  ds.innerText = JSON.stringify(node.$viewmodel)
+  ds.innerText = JSON.stringify(state)
 }
 
-function deserialise(node) {
-  return JSON.parse(getDataScript(node)?.innerText || "{}")
-}
-
-export const define = (name, factory, template, options = {}) =>
+export const define = (name, factory, template) =>
   customElements.define(
     name,
     class extends HTMLElement {
       async connectedCallback() {
         if (!this.initialised) {
-          this.$viewmodel = factory(this)
+          let config = factory(this)
 
-          if (this.$viewmodel instanceof Promise)
-            this.$viewmodel = await this.$viewmodel
+          if (config instanceof Promise) config = await config
 
-          Object.assign(this.$viewmodel, deserialise(this))
+          let { subscribe, shadow } = config
 
-          let observedProps = Object.keys(this.$viewmodel).filter(
+          this.connectedCallback = config.connectedCallback
+          this.disconnectedCallback = config.disconnectedCallback
+
+          const ds = getDataScript(this)
+
+          const { dispatch, getState, onUpdate, flush } = configure(
+            {
+              ...config,
+              initialState: ds ? JSON.parse(ds.innerText) : config.initialState,
+            },
+            this
+          )
+
+          let initialState = getState()
+
+          let observe = Object.keys(initialState).filter(
             (v) => v.charAt(0) === "$"
           )
 
-          let observedAttributes = observedProps
+          let observedAttributes = observe
             .map((v) => v.slice(1))
             .map(pascalToKebab)
 
@@ -52,28 +61,45 @@ export const define = (name, factory, template, options = {}) =>
           this.setAttribute = (k, v) => {
             if (observedAttributes.includes(k)) {
               let { name, value } = attributeToProp(k, v)
-              this.$viewmodel["$" + name] = value
+
+              dispatch({
+                type: "SET",
+                payload: { name: "$" + name, value },
+              })
             }
             sa.apply(this, [k, v])
+          }
+          let ra = this.removeAttribute
+          this.removeAttribute = (k) => {
+            if (observedAttributes.includes(k)) {
+              let { name, value } = attributeToProp(k, null)
+              dispatch({
+                type: "SET",
+                payload: { name, value },
+              })
+            }
+            ra.apply(this, [k])
           }
 
           observedAttributes.forEach((name) => {
             let property = attributeToProp(name).name
-
             let value
 
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name)
             } else {
-              value = this[property] || this.$viewmodel["$" + property]
+              value = this[property] || initialState["$" + property]
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return this.$viewmodel["$" + property]
+                return getState()["$" + property]
               },
               set(v) {
-                this.$viewmodel["$" + property] = v
+                dispatch({
+                  type: "SET",
+                  payload: { name: "$" + property, value: v },
+                })
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v)
                 }
@@ -85,34 +111,42 @@ export const define = (name, factory, template, options = {}) =>
 
           let beforeMountCallback
 
-          if (options.shadow) {
+          if (shadow) {
             this.attachShadow({
-              mode: options.shadow,
+              mode: shadow,
             })
           } else {
             beforeMountCallback = (frag) => mergeSlots(this, frag)
           }
 
-          this.$viewmodel = render(
-            this.shadowRoot || this,
-            this.$viewmodel,
-            template,
-            () => {
-              serialise(this)
+          onUpdate(
+            render(
+              this.shadowRoot || this,
+              { getState, dispatch },
+              template,
+              () => {
+                const state = getState()
 
-              observedProps.forEach((k) => {
-                let v = this.$viewmodel[k]
-                if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
-              })
-            },
-            beforeMountCallback
+                serialise(this, state)
+                observe.forEach((k) => {
+                  let v = state[k]
+                  if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
+                })
+                subscribe?.(getState())
+                flush()
+              },
+              beforeMountCallback
+            )
           )
           this.initialised = true
+
+          if (!ds) serialise(this, getState())
+
+          this.connectedCallback?.({ dispatch, getState })
         }
-        this.$viewmodel.connectedCallback?.()
       }
       disconnectedCallback() {
-        this.$viewmodel?.disconnectedCallback?.()
+        this.disconnectedCallback?.()
       }
     }
   )

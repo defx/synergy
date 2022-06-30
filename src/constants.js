@@ -3,3 +3,4 @@ export const ATTRIBUTE = 2
 export const INPUT = 3
 export const EVENT = 4
 export const REPEAT = 5
+export const CONDITIONAL = 6

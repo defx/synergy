@@ -82,7 +82,12 @@ function lastChild(v) {
 }
 
 export const updateList = (template, delta, entries, createListItem) => {
-  let n = template.getAttribute("length") || 0
+  let n = +(template.getAttribute("length") || 0)
+
+  const unchanged = delta.length === n && delta.every((a, b) => a == b)
+
+  if (unchanged) return
+
   let blocks = getBlockFragments(template, n)
   let t = template
 

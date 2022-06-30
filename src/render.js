@@ -1,29 +1,31 @@
-import { TEXT, ATTRIBUTE, INPUT, EVENT, REPEAT } from "./constants.js"
+import {
+  TEXT,
+  ATTRIBUTE,
+  INPUT,
+  EVENT,
+  REPEAT,
+  CONDITIONAL,
+} from "./constants.js"
 import { updateFormControl } from "./formControl.js"
 import {
-  callFunctionAtPath,
   debounce,
   fragmentFromTemplate,
   getValueAtPath,
-  last,
   setValueAtPath,
+  last,
   walk,
+  wrapToken,
+  getDataScript,
 } from "./helpers.js"
 import { compareKeyedLists, getBlocks, parseEach, updateList } from "./list.js"
-import { proxy } from "./proxy.js"
-import {
-  getParts,
-  getValueFromParts,
-  hasMustache,
-  parseEventHandler,
-} from "./token.js"
+import { getParts, getValueFromParts, hasMustache } from "./token.js"
 import { applyAttribute } from "./attribute.js"
-
-const HYDRATE_ATTR = "synergy-hydrate"
+import { createContext } from "./context.js"
+import { convertToTemplate } from "./template.js"
 
 export const render = (
   target,
-  model,
+  { getState, dispatch },
   template,
   updatedCallback,
   beforeMountCallback
@@ -46,126 +48,141 @@ export const render = (
   const _ = (a, b) => (a === undefined ? b : a)
 
   const createSubscription = {
-    [TEXT]: ({ value, node, model }) => {
+    [TEXT]: ({ value, node, context }, { getState }) => {
       return {
         handler: () => {
+          let state = context ? context.wrap(getState()) : getState()
           let a = node.textContent
-          let b = getValueFromParts(model, getParts(value))
+          let b = getValueFromParts(state, getParts(value))
           if (a !== b) node.textContent = b
         },
       }
     },
-    [ATTRIBUTE]: ({ value, node, model, name }) => {
+    [ATTRIBUTE]: ({ value, node, name, context }, { getState }) => {
       return {
         handler: () => {
-          let b = getValueFromParts(model, getParts(value))
+          let state = context ? context.wrap(getState()) : getState()
+          let b = getValueFromParts(state, getParts(value))
+
           applyAttribute(node, name, b)
 
           if (node.nodeName === "OPTION") {
             let path = node.parentNode.getAttribute("name")
-            let selected = getValueAtPath(path, model)
+            let selected = getValueAtPath(path, state)
             node.selected = selected === b
           }
         },
       }
     },
-    [INPUT]: ({ node, model, path }) => {
-      node.addEventListener("input", () => {
+    [INPUT]: ({ node, path, context }, { getState, dispatch }) => {
+      let eventType = ["radio", "checkbox"].includes(node.type)
+        ? "click"
+        : "input"
+
+      node.addEventListener(eventType, () => {
         let value =
           node.getAttribute("type") === "checkbox" ? node.checked : node.value
 
         if (value.trim?.().length && !isNaN(value)) value = +value
 
-        setValueAtPath(path, value, model)
+        if (context) {
+          let state = context.wrap(getState())
+          setValueAtPath(path, value, state)
+          dispatch({
+            type: "MERGE",
+            payload: state,
+          })
+        } else {
+          dispatch({
+            type: "SET",
+            payload: {
+              name: path,
+              value,
+              context,
+            },
+          })
+        }
       })
 
       return {
         handler: () => {
-          let b = getValueAtPath(path, model)
-          updateFormControl(node, b)
+          let state = context ? context.wrap(getState()) : getState()
+          updateFormControl(node, getValueAtPath(path, state))
         },
       }
     },
-    [EVENT]: ({ node, model, eventType, event, method, args }) => {
-      node.addEventListener(eventType, (e) => {
-        let x = args
-          ? args.map((v) => (v === event ? e : _(getValueAtPath(v, model), v)))
-          : []
-
-        let fn = callFunctionAtPath(method, model, x)
-
-        if (fn) {
-          requestAnimationFrame(fn)
+    [EVENT]: (
+      { node, eventType, actionType, context },
+      { dispatch, getState }
+    ) => {
+      node.addEventListener(eventType, (event) => {
+        let action = {
+          type: actionType,
+          event,
+          context: context ? context.wrap(getState()) : getState(),
         }
+
+        dispatch(action)
       })
       return {
         handler: () => {},
       }
     },
-    [REPEAT]: ({
-      node,
-      model,
-      map,
-      path,
-      identifier,
-      index,
-      key,
-      blockIndex,
-      hydrate,
-      pickupNode,
-    }) => {
+    [CONDITIONAL]: ({ node, expression, context, map }, { getState }) => {
+      return {
+        handler: () => {
+          let state = context ? context.wrap(getState()) : getState()
+          let shouldMount = getValueFromParts(
+            state,
+            getParts(wrapToken(expression))
+          )
+          let isMounted = node.getAttribute("m") === "1"
+
+          if (shouldMount && !isMounted) {
+            // MOUNT
+            let frag = fragmentFromTemplate(node)
+            walk(frag.firstChild, bindAll(map, null, context))
+            node.after(frag)
+            node.setAttribute("m", "1")
+          } else if (!shouldMount && isMounted) {
+            // UNMOUNT
+            node.nextSibling.remove()
+            node.removeAttribute("m")
+          }
+        },
+        // pickupNode,
+      }
+    },
+    [REPEAT]: (
+      { node, context, map, path, identifier, index, key, blockIndex, hydrate },
+      { getState }
+    ) => {
       let oldValue
       node.$t = blockIndex - 1
 
+      let pickupNode = node.nextSibling
+
       const initialiseBlock = (rootNode, i, k, exitNode) => {
-        let wrapper = new Proxy(model, {
-          get(_, property) {
-            let x = getValueAtPath(path, model)
-
-            if (property === identifier) {
-              for (let n in x) {
-                let v = x[n]
-                if (key) {
-                  if (v[key] === k) return v
-                } else {
-                  if (n == i) return v
-                }
-              }
-            }
-
-            if (property === index) {
-              for (let n in x) {
-                let v = x[n]
-                if (key) {
-                  if (v[key] === k) return n
-                } else {
-                  if (n == i) return n
-                }
-              }
-            }
-
-            if (x[i]?.hasOwnProperty?.(property)) return x[i][property]
-
-            return Reflect.get(...arguments)
-          },
-          set(_, property, value) {
-            let x = getValueAtPath(path, model)
-
-            if (x[i]?.hasOwnProperty?.(property)) {
-              return (x[i][property] = value)
-            }
-
-            return Reflect.set(...arguments)
-          },
-        })
-
         walk(
           rootNode,
           multi(
             (node) => {
               if (node === exitNode) return false
             },
-            bindAll(wrapper, map, hydrate),
+            bindAll(
+              map,
+              hydrate,
+              createContext(
+                (context?.get() || []).concat({
+                  path,
+                  identifier,
+                  key,
+                  index,
+                  i,
+                  k,
+                })
+              )
+            ),
             (child) => (child.$t = blockIndex)
           )
         )
@@ -178,12 +195,13 @@ export const render = (
       const createListItem = (datum, i) => {
         let k = datum[key]
         let frag = fragmentFromTemplate(node)
+
         initialiseBlock(firstChild(frag), i, k)
         return frag
       }
 
       if (hydrate) {
-        let x = getValueAtPath(path, model)
+        let x = getValueAtPath(path, getState())
         let blocks = getBlocks(node)
 
         blocks.forEach((block, i) => {
@@ -197,7 +215,9 @@ export const render = (
 
       return {
         handler: () => {
-          const newValue = Object.entries(getValueAtPath(path, model) || [])
+          let state = context ? context.wrap(getState()) : getState()
+
+          const newValue = Object.entries(getValueAtPath(path, state) || [])
           const delta = compareKeyedLists(key, oldValue, newValue)
 
           if (delta) {
@@ -214,20 +234,18 @@ export const render = (
     const o = observer()
     return {
       bind(v) {
-        let s = createSubscription[v.type](v)
+        let s = createSubscription[v.type](v, { getState, dispatch })
         o.subscribe(s.handler)
         return s
       },
-      scheduleUpdate: debounce((cb) => {
-        return o.publish(cb)
-      }),
+
       update(cb) {
         return o.publish(cb)
       },
     }
   }
 
-  const { bind, update, scheduleUpdate } = mediator()
+  const { bind, update } = mediator()
 
   let blockCount = 0
 
@@ -238,6 +256,7 @@ export const render = (
     walk(frag, (node) => {
       let x = []
       let pickupNode
+
       switch (node.nodeType) {
         case node.TEXT_NODE: {
           let value = node.textContent
@@ -256,22 +275,12 @@ export const render = (
             let ns = node.namespaceURI
             let m
 
+            node.removeAttribute("each")
+            node = convertToTemplate(node)
+
             if (ns.endsWith("/svg")) {
-              node.removeAttribute("each")
-              let tpl = document.createElementNS(ns, "defs")
-              tpl.innerHTML = node.outerHTML
-              node.parentNode.replaceChild(tpl, node)
-              node = tpl
               m = parse(node.firstChild)
             } else {
-              if (node.nodeName !== "TEMPLATE") {
-                node.removeAttribute("each")
-                let tpl = document.createElement("template")
-
-                tpl.innerHTML = node.outerHTML
-                node.parentNode.replaceChild(tpl, node)
-                node = tpl
-              }
               m = parse(node.content.firstChild)
             }
 
@@ -282,7 +291,6 @@ export const render = (
               map: m,
               blockIndex: blockCount++,
               ...each,
-              pickupNode,
             })
 
             break
@@ -307,13 +315,23 @@ export const render = (
 
               node.removeAttribute(name)
               node.setAttribute("name", value)
+            } else if (name === ":if") {
+              node.removeAttribute(name)
+              node = convertToTemplate(node)
+              pickupNode = node.nextSibling
+
+              x.push({
+                type: CONDITIONAL,
+                expression: value,
+                map: parse(node.content?.firstChild || node.firstChild),
+              })
             } else if (name.startsWith(":on")) {
               node.removeAttribute(name)
               let eventType = name.split(":on")[1]
               x.push({
                 type: EVENT,
                 eventType,
-                ...parseEventHandler(value),
+                actionType: value,
               })
             } else if (name.startsWith(":")) {
               let prop = name.slice(1)
@@ -349,7 +367,7 @@ export const render = (
       }
     }
 
-  const bindAll = (model, bMap, hydrate) => {
+  const bindAll = (bMap, hydrate = 0, context) => {
     let index = 0
     return (node) => {
       let k = index
@@ -359,38 +377,31 @@ export const render = (
           let x = bind({
             ...v,
             node,
-            model,
+            context,
             hydrate,
           })
           p = x.pickupNode
         })
         node.$i = index
       }
+
       index++
       return p
     }
   }
 
-  let prevState = Object.assign({}, model)
-  let p = proxy(model, () =>
-    scheduleUpdate(() => {
-      updatedCallback?.()
-      p.updatedCallback?.(prevState)
-      prevState = Object.assign({}, model)
-    })
-  )
   let frag = fragmentFromTemplate(template)
   let map = parse(frag)
-  let hydrate = target.hasAttribute?.(HYDRATE_ATTR)
-  if (hydrate) {
-    walk(target, bindAll(p, map, 1))
+  let ds = getDataScript(target)
+
+  if (ds) {
+    walk(target, bindAll(map, 1))
   } else {
-    walk(frag, bindAll(p, map))
+    walk(frag, bindAll(map))
     beforeMountCallback?.(frag)
     target.prepend(frag)
     update()
-    target.setAttribute?.(HYDRATE_ATTR, 1)
   }
 
-  return p
+  return debounce(() => update(updatedCallback))
 }

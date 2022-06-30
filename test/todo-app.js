@@ -1,11 +1,11 @@
 import { define } from "../src/index.js"
-import { TodoApp, markup, storage } from "../examples/todo-app/index.js"
+import { markup, storage, factory } from "../examples/todo-app/index.js"
 
 describe("Todo List", () => {
   beforeEach(() => {
     let name = createName()
 
-    define(name, TodoApp, markup)
+    define(name, factory, markup)
     mount(`<${name}></${name}>`)
   })
 
@@ -85,7 +85,7 @@ describe("Todo List", () => {
 
     input.dispatchEvent(
       new KeyboardEvent("keydown", {
-        key: "Enter",
+        keyCode: 13,
         bubbles: true,
       })
     )
@@ -145,15 +145,18 @@ describe("Todo List", () => {
       await addTodo("feed the cat")
       app.allDoneCheckbox.click()
       app.allDoneCheckbox.click()
-      await nextFrame()
       assert.equal(app.allDoneCheckbox.checked, false)
       assert.ok(app.todoCheckboxes.every((node) => !node.checked))
       assert.ok(storage.get("todos").every((todo) => !todo.completed))
     })
+
     it("complete all checkbox should update state when items are completed", async () => {
       await addTodo("walk the dog")
       await addTodo("feed the cat")
-      app.todoCheckboxes.forEach((node) => node.click())
+      await nextFrame()
+
+      app.todoCheckboxes[0].click()
+      app.todoCheckboxes[1].click()
       await nextFrame()
       assert.ok(app.allDoneCheckbox.checked)
     })
@@ -162,7 +165,8 @@ describe("Todo List", () => {
     it("should allow me to mark items as complete", async () => {
       await addTodo("walk the dog")
       await addTodo("feed the cat")
-      app.todoCheckboxes.forEach((node) => node.click())
+      app.todoCheckboxes[0].click()
+      app.todoCheckboxes[1].click()
       await nextFrame()
       assert.ok(storage.get("todos").every((todo) => todo.completed))
     })
@@ -277,6 +281,7 @@ describe("Todo List", () => {
       )
 
       await nextFrame()
+
       assert.equal(app.todos.length, 0)
     })
 
@@ -374,7 +379,6 @@ describe("Todo List", () => {
       app.todoCheckboxes[0].click()
       app.getFilterByValue("active").click()
       await nextFrame()
-      assert.equal(1, 1)
       assert.equal(app.todos.length, 1)
       assert.equal(app.todoLabels[0].textContent.trim(), "second thing")
     })

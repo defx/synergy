@@ -1,6 +1,6 @@
-export = synergy
-export as namespace synergy
-declare namespace synergy {
+export = mosaic
+export as namespace mosaic
+declare namespace mosaic {
   function define(
     /**
      * The name for the new custom element. As per the Custom Element spec,
@@ -15,36 +15,111 @@ declare namespace synergy {
     /**
      * The template represents the HTML markup for your element.
      */
-    template: HTMLTemplateElement | string,
-    options: {
-      /**
-       * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
-       */
-      shadow?: "open" | "closed"
-    }
+    template: HTMLTemplateElement | string
   ): void
 
+  type State = {
+    [key: string]: any
+  }
+
+  type ActionInput = {
+    type: string
+    payload: {
+      [key: string]: any
+    }
+  }
+
+  type Action = {
+    type: string
+    payload: {
+      [key: string]: any
+    }
+    event: Event
+    context: {
+      [key: string]: any
+    }
+  }
+
+  type ActionHandler = {
+    (currentState: State, action: Action): State
+  }
+
+  type Store = {
+    getState(): State
+    dispatch(action: ActionInput): void
+  }
+
+  type Derivation = {
+    /**
+     * A function that is passed the current state and returns the value of the property to which the function is assigned
+     */
+    (state: State): any
+  }
+
+  type Next = {
+    /**
+     * Passes the action to the next handler in the stack
+     */
+    (action: ActionInput): void
+  }
+
+  type Middleware = {
+    /**
+     * A function that intercepts an action before it reaches its ActionHandler (if any),
+     * providing the opportunity to execute side effect(s), make asynchronous calls, re-route actions
+     * , dispatch new actions, etc
+     */
+    (action: ActionInput, next: Next, store: Store)
+  }
+
   type Model = {
+    /**
+     * Provides the initial state to the component for its very first render.
+     */
+    initialState?: State
     /**
      * Invoked each time the custom element is appended into a
      * document-connected element
      */
-    connectedCallback?(): void
-    /**
-     * Invoked each time the view is updated. This method is not called after the initial render. previous is an object representing the model state prior to the last update
-     */
-    updatedCallback?(previous: Model): void
+    connectedCallback?(store: Store): void
     /**
      * Invoked each time the custom element is disconnected from the document
      */
     disconnectedCallback?(): void
-    [s: string]: any
+    /**
+     *
+     */
+    update?: {
+      [actionName: string]: ActionHandler
+    }
+    /**
+     * Each property named here will be derived after each state update using its corresponding Derivation function.
+     */
+    derive?: {
+      [propertyName]: Derivation
+    }
+    /**
+     *  A debounced function that is called after every render cycle
+     */
+    subscribe?: {
+      (state: State): void
+    }
+    /**
+     *
+     */
+    middleware?: {
+      [actionName: string]: Middleware | [Middleware]
+    }
+    /**
+     * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
+     */
+    shadow?: "open" | "closed"
   }
 
   type ModelFactory = {
     (
       /**
-       * The element node
+       * The Custom Element node
        */
       element: HTMLElement
     ): Model | Promise<Model>
