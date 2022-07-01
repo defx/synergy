@@ -17,7 +17,6 @@ function createDataScript(node) {
 }
 
 function serialise(node, state) {
-  console.log("serialise...")
   let ds = getDataScript(node) || createDataScript(node)
   ds.innerText = JSON.stringify(state)
 }
