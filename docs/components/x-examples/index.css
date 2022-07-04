@@ -1,0 +1,19 @@
+x-examples {
+  display: block;
+  padding: 5vw;
+  max-width: 768px;
+  min-width: 520px;
+  margin: 0 auto;
+}
+
+.hljs {
+  padding: 0 !important;
+}
+
+article + article {
+  margin-top: 3rem;
+}
+
+article .title {
+  margin-bottom: 1rem;
+}

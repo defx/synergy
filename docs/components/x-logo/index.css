@@ -1,0 +1,14 @@
+x-logo {
+  height: 2rem;
+}
+
+svg {
+  height: 2rem;
+  /* margin: 0 0.5rem; */
+  margin-right: 0.5rem;
+}
+
+path {
+  stroke: teal;
+  fill: teal;
+}

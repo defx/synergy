@@ -1,0 +1,41 @@
+header {
+  color: black;
+  border-bottom: 1px solid rgba(0, 128, 128, 0.25);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+a {
+  color: teal;
+  height: 2rem;
+}
+
+.github svg {
+  height: 1.5rem;
+  margin: 0.25rem 0;
+}
+
+header a.logo-wrap {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  line-height: 1;
+  font-size: 20px;
+  color: teal;
+}
+
+nav {
+  display: flex;
+  overflow-y: scroll;
+  margin: 0 0.5rem;
+}
+
+nav a + a {
+  margin-left: 1rem;
+}
+
+nav a {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
