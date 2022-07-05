@@ -5,10 +5,10 @@ x-examples {
   min-width: 520px;
   margin: 0 auto;
 }
-
+/* 
 .hljs {
   padding: 0 !important;
-}
+} */
 
 article + article {
   margin-top: 3rem;
@@ -16,4 +16,13 @@ article + article {
 
 article .title {
   margin-bottom: 1rem;
+}
+
+article p {
+  margin: 2rem 0;
+}
+
+pre,
+code {
+  /* white-space: pre-wrap; */
 }

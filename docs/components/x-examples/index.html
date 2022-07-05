@@ -1,4 +1,28 @@
 <article each="examples">
   <h3 class="title">{{ title }}</h3>
-  <pre><code>{{ code }}</code></pre>
+  <section each="items">
+    <p>{{ description }}</p>
+    <pre><code>{{ code }}</code></pre>
+  </section>
+
 </article>
+
+<!-- <article>
+  <h3>Example #1: Hello World!"</h3>
+  <section>
+    <p>Create a new custom element by passing a name, factory, and template to the define function.</p>
+    <pre>
+    <code>
+        <script type="module">
+          import { define } from "https://unpkg.com/synergy@8.0.0"
+
+          const name = "hello-world"
+          const factory = () => ({ initialState: { name: "world" } })
+          const template = "<p>hello {{ name }}!</p>"
+
+          define(name, factory, template)
+        </script>
+      </code>
+    </pre>
+  </section>
+</article> -->
