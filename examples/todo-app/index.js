@@ -19,7 +19,7 @@ const KEYS = {
   ESCAPE: 27,
 }
 
-export const initialState = {
+export const state = {
   filters: Object.keys(filters),
   todos: [],
   activeFilter: "all",
@@ -213,5 +213,5 @@ export const factory = () => ({
   middleware,
   derive,
   subscribe,
-  initialState,
+  state,
 })

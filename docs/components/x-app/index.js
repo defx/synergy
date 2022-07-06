@@ -22,7 +22,7 @@ function trim(code) {
 
 export default () => {
   return {
-    initialState: {
+    state: {
       title: "Hello World!",
       examples,
     },

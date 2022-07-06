@@ -7,7 +7,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           boolean: false,
           undefined: undefined,
           null: null,
@@ -42,7 +42,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           c1: "red",
           c2: "green",
         },
@@ -61,7 +61,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           classes: ["one", "two", "three"],
         },
       }),
@@ -79,7 +79,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           classes: {
             one: true,
             two: false,
@@ -104,7 +104,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           foo: `
             background-color: gold;
             color: tomato;
@@ -130,7 +130,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           $foo: `
           background-color: gold;
           color: tomato;
@@ -172,7 +172,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           foo: {
             "background-color": "gold",
             color: "tomato",
@@ -198,7 +198,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           foo: {
             backgroundColor: "gold",
             color: "tomato",
@@ -224,7 +224,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           c1: "red",
           c2: "green",
         },
@@ -244,7 +244,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: { $foo: true },
+        state: { $foo: true },
       }),
       html` <p :hidden="{{ !$foo }}">boo!</p>`
     )
@@ -266,7 +266,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           columns: ["one", "two", "three"],
           rows: [
             {
@@ -312,7 +312,7 @@ describe("interpolations", () => {
   it("resolves properties from the current item first", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       foo: "bar",
       items: [
         {
@@ -330,7 +330,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <div
@@ -346,19 +346,19 @@ describe("interpolations", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, initialState.items.length)
+    assert.equal(nodes.length, state.items.length)
 
-    initialState.items.forEach(({ x }, i) => {
+    state.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), initialState.foo)
+      assert.equal(node.getAttribute("foo"), state.foo)
     })
   })
 
   it("supports simple each (just the collection property)", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       foo: "bar",
       items: [
         {
@@ -376,7 +376,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <div class="foo" :each="items" :x="{{ x }}" :foo="{{ foo }}"></div>
@@ -387,19 +387,19 @@ describe("interpolations", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, initialState.items.length)
+    assert.equal(nodes.length, state.items.length)
 
-    initialState.items.forEach(({ x }, i) => {
+    state.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), initialState.foo)
+      assert.equal(node.getAttribute("foo"), state.foo)
     })
   })
 
   it("supports shorthand attributes (when attribute name matches property name)", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       foo: "bar",
       items: [
         {
@@ -417,7 +417,7 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html` <div class="foo" :each="items" :x :foo></div> `
     )
@@ -426,12 +426,12 @@ describe("interpolations", () => {
 
     let nodes = $$(".foo")
 
-    assert.equal(nodes.length, initialState.items.length)
+    assert.equal(nodes.length, state.items.length)
 
-    initialState.items.forEach(({ x }, i) => {
+    state.items.forEach(({ x }, i) => {
       let node = nodes[i]
       assert.equal(node.getAttribute("x"), x)
-      assert.equal(node.getAttribute("foo"), initialState.foo)
+      assert.equal(node.getAttribute("foo"), state.foo)
     })
   })
 })

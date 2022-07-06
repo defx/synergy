@@ -4,14 +4,14 @@ describe("user input", () => {
   it("should bind the value to the named property", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       message: "?",
     }
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`<input name="message" /> the message is:
         <span class="message">{{message}}</span>`
@@ -25,7 +25,7 @@ describe("user input", () => {
   it("should bind the value to the named property (nested)", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       nested: {
         message: "??",
       },
@@ -34,7 +34,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <input :name="nested.message" />
@@ -51,7 +51,7 @@ describe("user input", () => {
   it("should bind the value to the named + scoped property", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       todos: [
         {
           title: "feed the cat",
@@ -66,7 +66,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <ul>
@@ -94,7 +94,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           filter: "active",
         },
       }),
@@ -122,12 +122,12 @@ describe("user input", () => {
   it("should check the correct radio button", () => {
     let name = createName()
 
-    let initialState = {}
+    let state = {}
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <input type="radio" name="filter" value="all" id="filter.all" />
@@ -153,14 +153,14 @@ describe("user input", () => {
   it("should reflect the correct radio button", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       filter: "active",
     }
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <input type="radio" :name="filter" value="all" id="filter.all" />
@@ -189,14 +189,14 @@ describe("user input", () => {
   it("should select the correct option", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       $pets: "hamster",
     }
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -226,7 +226,7 @@ describe("user input", () => {
   it("should select the correct option (each option)", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       $pets: "Hamster",
       options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
     }
@@ -234,7 +234,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -261,14 +261,14 @@ describe("user input", () => {
   it("should select multiple", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       pets: ["dog", "hamster"],
     }
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
@@ -298,7 +298,7 @@ describe("user input", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           $pets: ["hamster"],
         },
       }),
@@ -334,14 +334,14 @@ describe("user input", () => {
   it("should bind the named textarea", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       text: "ok",
     }
 
     define(
       name,
       () => ({
-        initialState,
+        state,
       }),
       html` <textarea :name="text"></textarea> `
     )

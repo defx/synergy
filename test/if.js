@@ -6,7 +6,7 @@ describe("if blocks", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           loggedIn: false,
         },
       }),
@@ -26,7 +26,7 @@ describe("if blocks", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           loggedIn: true,
         },
       }),
@@ -47,7 +47,7 @@ describe("if blocks", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           loggedIn: false,
         },
         update: {

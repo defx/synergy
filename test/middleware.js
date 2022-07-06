@@ -63,13 +63,13 @@ describe("middleware", () => {
 
   it("afterNextRender allows for things like focusing a newly rendered input", () => {
     let name = createName()
-    let initialState = {
+    let state = {
       hidden: true,
     }
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
+        update: (state = state, action) => {
           switch (action.type) {
             case "toggle": {
               return {
@@ -118,7 +118,7 @@ describe("middleware", () => {
       name,
       () => {
         return {
-          initialState: {
+          state: {
             comments: [],
           },
           update: {

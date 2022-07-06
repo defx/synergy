@@ -41,16 +41,14 @@ export const define = (name, factory, template) =>
           const { dispatch, getState, onUpdate, flush } = configure(
             {
               ...config,
-              initialState: ds ? JSON.parse(ds.innerText) : config.initialState,
+              state: ds ? JSON.parse(ds.innerText) : config.state,
             },
             this
           )
 
-          let initialState = getState()
+          let state = getState()
 
-          let observe = Object.keys(initialState).filter(
-            (v) => v.charAt(0) === "$"
-          )
+          let observe = Object.keys(state).filter((v) => v.charAt(0) === "$")
 
           let observedAttributes = observe
             .map((v) => v.slice(1))
@@ -87,7 +85,7 @@ export const define = (name, factory, template) =>
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name)
             } else {
-              value = this[property] || initialState["$" + property]
+              value = this[property] || state["$" + property]
             }
 
             Object.defineProperty(this, property, {

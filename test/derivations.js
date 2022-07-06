@@ -4,7 +4,7 @@ describe("derive", () => {
   it("derives the values", () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       todos: [
         {
           title: "feed the dog",
@@ -24,7 +24,7 @@ describe("derive", () => {
     define(
       name,
       () => ({
-        initialState,
+        state,
         derive: {
           numCompleted: ({ todos }) =>
             todos.filter(({ completed }) => completed).length,
@@ -44,7 +44,7 @@ describe("derive", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           items: [{ id: 1 }, { id: 2 }, { id: 3 }],
         },
         derive: {

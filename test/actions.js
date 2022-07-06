@@ -6,7 +6,7 @@ describe("actions", () => {
 
     let name = createName()
 
-    let initialState = {
+    let state = {
       artists: [
         {
           name: "pablo picasso",
@@ -34,7 +34,7 @@ describe("actions", () => {
             return state
           },
         },
-        initialState,
+        state,
       }),
       html`
         <article :each="artist in artists">
@@ -59,7 +59,7 @@ describe("actions", () => {
 
     let name = createName()
 
-    let initialState = {
+    let state = {
       artists: [
         {
           name: "pablo picasso",
@@ -87,7 +87,7 @@ describe("actions", () => {
             return state
           },
         },
-        initialState,
+        state,
       }),
       html`
         <article :each="artist in artists">
@@ -114,7 +114,7 @@ describe("actions", () => {
 
     let name = createName()
 
-    let initialState = {
+    let state = {
       artists: [
         {
           name: "pablo picasso",
@@ -142,7 +142,7 @@ describe("actions", () => {
             return state
           },
         },
-        initialState,
+        state,
       }),
       html`
         <article :each="artist in artists">
@@ -174,7 +174,7 @@ describe("actions", () => {
             greet: true,
           }),
         },
-        initialState: {
+        state: {
           greet: false,
         },
       }),

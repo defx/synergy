@@ -24,7 +24,7 @@ function unique(arr) {
 }
 
 export function configure(
-  { update = {}, middleware = [], derive = {}, initialState = {} },
+  { update = {}, middleware = [], derive = {}, state: initialState = {} },
   node
 ) {
   let subscribers = []

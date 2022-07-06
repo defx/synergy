@@ -76,7 +76,7 @@ declare namespace mosaic {
     /**
      * Provides the initial state to the component for its very first render.
      */
-    initialState?: State
+    state?: State
     /**
      * Invoked each time the custom element is appended into a
      * document-connected element

@@ -17,7 +17,7 @@
           import { define } from "https://unpkg.com/synergy@8.0.0"
 
           const name = "hello-world"
-          const factory = () => ({ initialState: { name: "world" } })
+          const factory = () => ({ state: { name: "world" } })
           const template = "<p>hello {{ name }}!</p>"
 
           define(name, factory, template)

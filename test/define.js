@@ -33,7 +33,7 @@ describe("define", () => {
     define(
       name,
       () => ({
-        initialState: {
+        state: {
           $title: "",
         },
       }),
@@ -48,11 +48,7 @@ describe("define", () => {
 
   it("reflects attribute changes on to viewmodel", async () => {
     let name = createName()
-    define(
-      name,
-      () => ({ initialState: { $title: "" } }),
-      "<p>{{ $title }}</p>"
-    )
+    define(name, () => ({ state: { $title: "" } }), "<p>{{ $title }}</p>")
     mount(`
       <${name} title="ok!"></${name}>
       `)
@@ -63,13 +59,13 @@ describe("define", () => {
 
   it("reflects viewmodel changes back on to attributes", async () => {
     let name = createName()
-    let initialState = {
+    let state = {
       show: true,
     }
     define(
       name,
       () => ({
-        update: (state = initialState, action) => {
+        update: (state = state, action) => {
           switch (action.type) {
             case "toggle": {
               return {
@@ -132,7 +128,7 @@ describe("define", () => {
   it("converts between kebab and pascal casing", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       $fooBar: false,
     }
 
@@ -142,7 +138,7 @@ describe("define", () => {
         update: {
           toggle: (state) => ({ ...state, $fooBar: !state.$fooBar }),
         },
-        initialState,
+        state,
       }),
       html`<button :onclick="toggle">ok</button>`
     )
@@ -161,7 +157,7 @@ describe("define", () => {
   it("correctly handles aria string booleans", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       $ariaHidden: true,
     }
 
@@ -176,7 +172,7 @@ describe("define", () => {
             }
           },
         },
-        initialState,
+        state,
       }),
       html`<button :onclick="toggle">ok</button>`
     )
@@ -281,7 +277,7 @@ describe("define", () => {
   it("reflects observed properties from viewmodel to element", async () => {
     let name = createName()
 
-    let initialState = {
+    let state = {
       $foo: "",
     }
 
@@ -294,7 +290,7 @@ describe("define", () => {
             $foo: "baz",
           }),
         },
-        initialState,
+        state,
       }),
       html` <p :onclick="updateFoo" foo="bar">{{ $foo }}</p> `
     )
@@ -315,7 +311,7 @@ describe("define", () => {
       name,
       () =>
         Promise.resolve({
-          initialState: {
+          state: {
             foo: "bar",
           },
         }),

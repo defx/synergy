@@ -42,7 +42,7 @@ describe("hydrate", () => {
       name,
       () => {
         return {
-          initialState: {
+          state: {
             $todos: [
               {
                 title: "feed the duck",
@@ -100,7 +100,7 @@ describe("hydrate", () => {
       name,
       () => {
         return {
-          initialState: {
+          state: {
             $todos: [
               {
                 title: "feed the duck",
