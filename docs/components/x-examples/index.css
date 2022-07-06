@@ -1,14 +1,14 @@
 x-examples {
   display: block;
-  padding: 5vw;
-  max-width: 768px;
-  min-width: 520px;
+
+  max-width: 640px;
+  min-width: 320px;
   margin: 0 auto;
 }
-/* 
+
 .hljs {
   padding: 0 !important;
-} */
+}
 
 article + article {
   margin-top: 3rem;
@@ -24,9 +24,6 @@ article p {
 
 pre,
 code {
-  /* white-space: pre-wrap; */
-}
-
-pre {
   margin: 0;
+  padding: 0 !important;
 }

@@ -1,6 +1,6 @@
 import hljs from "https://unpkg.com/@highlightjs/cdn-assets@11.5.1/es/highlight.min.js"
 
-import { examples } from "./examples.js"
+import { examples, myCounter } from "./examples.js"
 
 function lengthOfLeadingSpace(str) {
   let space = str.split(/^(\s+)/)[1]
@@ -24,19 +24,19 @@ export default () => {
   return {
     state: {
       title: "Hello World!",
-      examples,
+      myCounter,
     },
-    derive: {
-      examples: ({ examples }) => {
-        return examples.map((example) => ({
-          ...example,
-          items: example.items.map((item) => ({
-            ...item,
-            code: trim(item.code),
-          })),
-        }))
-      },
-    },
+    // derive: {
+    //   examples: ({ examples }) => {
+    //     return examples.map((example) => ({
+    //       ...example,
+    //       items: example.items.map((item) => ({
+    //         ...item,
+    //         code: trim(item.code),
+    //       })),
+    //     }))
+    //   },
+    // },
     connectedCallback() {
       hljs.highlightAll()
     },

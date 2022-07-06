@@ -1,28 +1,43 @@
-<article :each="examples">
+<!-- <article :each="examples">
   <h3 class="title">{{ title }}</h3>
   <section :each="items">
     <p>{{ description }}</p>
     <pre><code>{{ code }}</code></pre>
   </section>
 
-</article>
-
-<!-- <article>
-  <h3>Example #1: Hello World!"</h3>
-  <section>
-    <p>Create a new custom element by passing a name, factory, and template to the define function.</p>
-    <pre>
-    <code>
-        <script type="module">
-          import { define } from "https://unpkg.com/synergy@8.0.0"
-
-          const name = "hello-world"
-          const factory = () => ({ state: { name: "world" } })
-          const template = "<p>hello {{ name }}!</p>"
-
-          define(name, factory, template)
-        </script>
-      </code>
-    </pre>
-  </section>
 </article> -->
+
+
+
+
+<section>
+  <h2>What is Synergy?</h2>
+  <p>Synergy is a JavaScript framework for building user interfaces. It combines declarative data and event binding with
+    functional state management and reactive updates to allow you to build all types of user interface for the web, no
+    matter how simple or complex.</p>
+  <p>Here's a simple example:</p>
+  <pre>
+    <code>
+        {{ myCounter }}
+    </code>
+  </pre>
+
+  <!-- @todo: include live example -->
+
+  <p>The above example demonstrates the three core features of Synergy:</p>
+  <ul>
+    <li>
+      <p><strong>Declarative data and event binding:</strong> Synergy provides a declarative template syntax that allows
+        you to describe HTML output based on JavaScript state. The syntax is very simple and easy to learn.</p>
+    </li>
+    <li>
+      <p><strong>Functional state management:</strong> Synergy allows you to describe changes to state as individual
+        functions that are as easy to reason about
+        as they are to test.</p>
+    </li>
+    <li>
+      <p><strong>Reactive updates:</strong> Synergy efficiently batches updates to your HTML whenever your state changes
+      </p>
+    </li>
+  </ul>
+</section>

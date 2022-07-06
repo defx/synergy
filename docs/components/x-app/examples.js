@@ -1,14 +1,37 @@
 const idTpl = (strings, ...values) => {
-  return strings.reduce(
-    (a, s, i) => a + s + (values[i] || ""),
-    ""
-  )
+  return strings.reduce((a, s, i) => a + s + (values[i] || ""), "")
 }
 
 const html = idTpl
 
 const x = html` <hello-world> </hello-world>
   <!-- <hello-world><p>hello world!</p></hello-world> -->`
+
+export const myCounter = html`
+  <my-counter></my-counter>
+
+  <script type="module">
+    import { define } from "synergy"
+
+    const name = "my-counter"
+
+    const factory = () => ({
+      state: { count: 0 },
+      update: {
+        increment: (state) => ({
+          ...state,
+          count: state.count + 1,
+        }),
+      },
+    })
+
+    define(name, factory, "#my-counter")
+  </script>
+
+  <template id="my-counter">
+    <button :onclick="increment">Count is: {{ count }}</button>
+  </template>
+`
 
 const simpleComponentDefinition = {
   title: "Example #1: Hello World!",
