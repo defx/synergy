@@ -62,9 +62,13 @@ export const setValueAtPath = (path, value, target) => {
 
 export const fragmentFromTemplate = (v) => {
   if (typeof v === "string") {
-    let tpl = document.createElement("template")
-    tpl.innerHTML = v.trim()
-    return tpl.content
+    if (v.charAt(0) === "#") {
+      v = document.getElementById(v)
+    } else {
+      let tpl = document.createElement("template")
+      tpl.innerHTML = v.trim()
+      return tpl.content
+    }
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content
   if (v.nodeName === "defs") return v.firstElementChild.cloneNode(true)
