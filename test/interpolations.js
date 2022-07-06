@@ -290,10 +290,10 @@ describe("interpolations", () => {
       html`
         <table>
           <tr>
-            <th each="column in columns">{{ column }}</th>
+            <th :each="column in columns">{{ column }}</th>
           </tr>
-          <tr each="row in rows">
-            <td each="col in columns">{{ row[col] }}</td>
+          <tr :each="row in rows">
+            <td :each="col in columns">{{ row[col] }}</td>
           </tr>
         </table>
       `
@@ -335,7 +335,7 @@ describe("interpolations", () => {
       html`
         <div
           class="foo"
-          each="item in items"
+          :each="item in items"
           :x="{{ x }}"
           :foo="{{ foo }}"
         ></div>
@@ -378,7 +378,9 @@ describe("interpolations", () => {
       () => ({
         initialState,
       }),
-      html` <div class="foo" each="items" :x="{{ x }}" :foo="{{ foo }}"></div> `
+      html`
+        <div class="foo" :each="items" :x="{{ x }}" :foo="{{ foo }}"></div>
+      `
     )
 
     mount(html`<${name}></${name}>`)
@@ -417,7 +419,7 @@ describe("interpolations", () => {
       () => ({
         initialState,
       }),
-      html` <div class="foo" each="items" :x :foo></div> `
+      html` <div class="foo" :each="items" :x :foo></div> `
     )
 
     mount(html`<${name}></${name}>`)

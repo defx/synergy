@@ -62,7 +62,7 @@ describe("hydrate", () => {
       },
       `
       <ul>
-        <li each="todo in $todos" :onclick="click">{{ title }}</li>
+        <li :each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
@@ -120,7 +120,7 @@ describe("hydrate", () => {
       },
       `
       <ul>
-        <li each="todo in $todos" :onclick="click">{{ title }}</li>
+        <li :each="todo in $todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )

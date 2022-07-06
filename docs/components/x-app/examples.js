@@ -7,6 +7,9 @@ const idTpl = (strings, ...values) => {
 
 const html = idTpl
 
+const x = html` <hello-world> </hello-world>
+  <!-- <hello-world><p>hello world!</p></hello-world> -->`
+
 const simpleComponentDefinition = {
   title: "Example #1: Hello World!",
   items: [
@@ -17,9 +20,11 @@ const simpleComponentDefinition = {
           import { define } from "https://unpkg.com/synergy@8.0.0"
 
           const name = "hello-world"
+
           const factory = () => ({
-            /*#h*/ state: { name: "world" } /*/h*/,
+            state: { name: "world" },
           })
+
           const template = "<p>hello {{ name }}!</p>"
 
           define(name, factory, template)
@@ -27,17 +32,15 @@ const simpleComponentDefinition = {
       `,
     },
     {
-      description: `Once a custom element is defined then we can use it just like any other HTML element`,
-      code: html` <hello-world></hello-world>
+      description: `Once a custom element is defined then you can use it like any other HTML element`,
+      code: html` <hello-world> </hello-world>
         <!-- <hello-world><p>hello world!</p></hello-world> -->`,
     },
     {
       description: `Dollar-prefixed state properties reflect any value provided to the element via its own attributes or properties`,
       code: html`
         <hello-world name="kimberley"> </hello-world>
-        <!-- <hello-world>
-          <p>hello kimberley!</p>
-        </hello-world> -->
+        <!-- <hello-world><p>hello kimberley!</p></hello-world> -->
 
         <script type="module">
           import { define } from "https://unpkg.com/synergy@8.0.0"

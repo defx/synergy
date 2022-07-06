@@ -70,7 +70,7 @@ describe("user input", () => {
       }),
       html`
         <ul>
-          <template each="todo in todos">
+          <template :each="todo in todos">
             <li>
               {{todo.title}}
               <input type="checkbox" :name="todo.done" />
@@ -240,7 +240,9 @@ describe("user input", () => {
         <label for="pet-select">Choose a pet:</label>
         <select :name="$pets" id="pet-select">
           <option value="">--Please choose an option--</option>
-          <option each="option in options" :value="option">{{ option }}</option>
+          <option :each="option in options" :value="option">
+            {{ option }}
+          </option>
         </select>
       `
     )

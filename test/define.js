@@ -251,7 +251,7 @@ describe("define", () => {
     let template = `
     <h2>{{ obj.org }}</h2>  
     <h3>{{ obj.repo }}</h3>
-    <p each="item in arr">{{ item }}</p>
+    <p :each="item in arr">{{ item }}</p>
     `
 
     define("rich-props", factory, template)

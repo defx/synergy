@@ -29,16 +29,17 @@ h3 {
   color: hsl(180, 50%, 24%);
 }
 
-code[has-highlights] [class^="hljs-"],
+/* code[has-highlights] [class^="hljs-"],
 code[has-highlights] [x-o] {
   opacity: 0.4;
 }
 
 code[has-highlights] em {
+  opacity: 1;
   font-style: normal;
 }
 
 code[has-highlights] em [class^="hljs-"],
 code[has-highlights] em [x-o] {
   opacity: 1;
-}
+} */

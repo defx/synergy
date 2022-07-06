@@ -155,7 +155,7 @@ describe("middleware", () => {
           },
         }
       },
-      `<div each="comments" class="comment"><h3>Posted by {{ name }}</h3><p>{{ comment }}</p></div><textarea :name="comment"></textarea><button type="button" :onclick="makeComment">submit</button>`
+      `<div :each="comments" class="comment"><h3>Posted by {{ name }}</h3><p>{{ comment }}</p></div><textarea :name="comment"></textarea><button type="button" :onclick="makeComment">submit</button>`
     )
     mount(`<${name}></${name}>`)
 

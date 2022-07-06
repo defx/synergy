@@ -33,7 +33,7 @@ describe("scope", () => {
       }),
       html` <h1 first>{{todo}}</h1>
         <ul>
-          <template each="todo in todos">
+          <template :each="todo in todos">
             <li style="background-color: {{todo.colour}}">
               <p>{{todo.title}}</p>
               <p>{{message}}</p>
@@ -79,11 +79,11 @@ describe("scope", () => {
         initialState,
       }),
       html`
-        <template each="(i, artist) in artists">
+        <template :each="(i, artist) in artists">
           <article>
             <h4>{{artist.name}}</h4>
             <ul>
-              <template each="(j, tag) in artist.tags">
+              <template :each="(j, tag) in artist.tags">
                 <li>{{tag}} {{i}}:{{j}}</li>
               </template>
             </ul>

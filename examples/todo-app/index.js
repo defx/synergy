@@ -176,7 +176,7 @@ export const markup = html`
         :is-done="completed"
         :editing="editing"
         key="id"
-        each="todo in filteredTodos"
+        :each="todo in filteredTodos"
       >
         <input class="toggle" type="checkbox" :name="completed" />
         <label :ondblclick="startEdit">{{ title }}</label>
@@ -193,7 +193,7 @@ export const markup = html`
   <footer :hidden="!todos.length">
     <p id="count">{{ itemsLeft }}</p>
     <ul id="filterList">
-      <li each="filter in filters">
+      <li :each="filter in filters">
         <input type="radio" :name="activeFilter" :value="filter" />
         <label>{{ filter }}</label>
       </li>

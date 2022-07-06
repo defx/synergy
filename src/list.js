@@ -1,7 +1,7 @@
 import { isWhitespace, walk } from "./helpers.js"
 
 export function parseEach(node) {
-  let each = node.getAttribute("each")
+  let each = node.getAttribute(":each")
   let m = each?.match(/(.+)\s+in\s+(.+)/)
   if (!m) {
     if (!each) return m

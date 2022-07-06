@@ -37,10 +37,10 @@ describe("actions", () => {
         initialState,
       }),
       html`
-        <article each="artist in artists">
+        <article :each="artist in artists">
           <h4>{{artist.name}}</h4>
           <ul>
-            <li each="tag in artist.tags" :onclick="foo">{{tag}}</li>
+            <li :each="tag in artist.tags" :onclick="foo">{{tag}}</li>
           </ul>
         </article>
       `
@@ -90,10 +90,10 @@ describe("actions", () => {
         initialState,
       }),
       html`
-        <article each="artist in artists">
+        <article :each="artist in artists">
           <h4>{{artist.name}}</h4>
           <ul>
-            <li each="tag in artist.tags" :onclick="foo">{{tag}}</li>
+            <li :each="tag in artist.tags" :onclick="foo">{{tag}}</li>
           </ul>
         </article>
       `
@@ -145,10 +145,10 @@ describe("actions", () => {
         initialState,
       }),
       html`
-        <article each="artist in artists">
+        <article :each="artist in artists">
           <h4>{{artist.name}}</h4>
           <ul>
-            <li each="tag in artist.tags" :onclick="foo">{{tag}}</li>
+            <li :each="tag in artist.tags" :onclick="foo">{{tag}}</li>
           </ul>
         </article>
       `

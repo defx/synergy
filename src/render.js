@@ -275,7 +275,7 @@ export const render = (
             let ns = node.namespaceURI
             let m
 
-            node.removeAttribute("each")
+            node.removeAttribute(":each")
             node = convertToTemplate(node)
 
             if (ns.endsWith("/svg")) {

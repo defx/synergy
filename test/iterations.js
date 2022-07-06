@@ -26,7 +26,7 @@ describe("iterations", () => {
       }),
       html`
         <ul>
-          <template each="todo in todos">
+          <template :each="todo in todos">
             <li style="background-color: {{todo.colour}}">
               <p>{{todo.title}}</p>
             </li>
@@ -60,7 +60,7 @@ describe("iterations", () => {
       }),
       html`
         <ul>
-          <li each="(index, colour) in colours" :data-index="{{ index }}">
+          <li :each="(index, colour) in colours" :data-index="{{ index }}">
             <p>{{ index }}</p>
             <p>{{ colour }}</p>
           </li>
@@ -97,7 +97,7 @@ describe("iterations", () => {
         },
       }),
       html`
-        <template each="colour in $colours">
+        <template :each="colour in $colours">
           <p>{{colour.name}}</p>
         </template>
       `
@@ -152,7 +152,7 @@ describe("iterations", () => {
         },
       }),
       html`
-        <template each="colour in $colours" key="foo">
+        <template :each="colour in $colours" key="foo">
           <p>{{colour.name}}</p>
         </template>
       `
@@ -213,7 +213,7 @@ describe("iterations", () => {
       }),
       html`
         <div>
-          <template each="colour in colours">
+          <template :each="colour in colours">
             <p>{{colour.name}}</p>
             <p>{{colour.id}}</p>
           </template>
@@ -260,7 +260,7 @@ describe("iterations", () => {
       html`
         <div>
           <div
-            each="colour in colours"
+            :each="colour in colours"
             class="colour"
             :hidden="{{ !colour.show }}"
           >
@@ -303,7 +303,7 @@ describe("iterations", () => {
       }),
       html`
         <ul>
-          <li each="todo in todos" style="background-color: {{todo.colour}}">
+          <li :each="todo in todos" style="background-color: {{todo.colour}}">
             <p>{{todo.title}}</p>
           </li>
         </ul>
@@ -342,7 +342,7 @@ describe("iterations", () => {
       () => ({
         initialState,
       }),
-      html` <p each="(k, v) in foo">{{ k }} : {{ v }}</p> `
+      html` <p :each="(k, v) in foo">{{ k }} : {{ v }}</p> `
     )
 
     mount(html`<${name}></${name}>`)
@@ -399,7 +399,7 @@ describe("iterations", () => {
         >
           <rect
             class="foo"
-            each="item in items"
+            :each="item in items"
             :x="{{ item.x }}"
             :y="{{ item.y }}"
             :fill="{{ item.fill }}"

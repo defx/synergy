@@ -57,7 +57,7 @@ describe("derive", () => {
       }),
       html`
         <ul>
-          <li each="item in items">
+          <li :each="item in items">
             <a :aria-current="isSecond">{{ id }}</a>
           </li>
         </ul>
