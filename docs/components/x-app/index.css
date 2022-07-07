@@ -19,6 +19,20 @@ body {
   font-size: 1rem;
 }
 
+main {
+  padding: 1rem;
+}
+
+main ul {
+  margin: 0 2rem;
+}
+
+blockquote {
+  padding: 2rem;
+  font-style: italic;
+  background: #eaeaea;
+}
+
 h1 {
   font-size: 3rem;
   color: hsl(180, 50%, 16%);
