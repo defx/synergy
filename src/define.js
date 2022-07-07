@@ -31,7 +31,7 @@ export const define = (name, factory, template) =>
 
           if (config instanceof Promise) config = await config
 
-          let { subscribe, shadow } = config
+          let { subscribe, shadow, observe = [] } = config
 
           this.connectedCallback = config.connectedCallback
           this.disconnectedCallback = config.disconnectedCallback
@@ -48,11 +48,7 @@ export const define = (name, factory, template) =>
 
           let state = getState()
 
-          let observe = Object.keys(state).filter((v) => v.charAt(0) === "$")
-
-          let observedAttributes = observe
-            .map((v) => v.slice(1))
-            .map(pascalToKebab)
+          let observedAttributes = observe.map(pascalToKebab)
 
           let sa = this.setAttribute
           this.setAttribute = (k, v) => {
@@ -61,7 +57,7 @@ export const define = (name, factory, template) =>
 
               dispatch({
                 type: "SET",
-                payload: { name: "$" + name, value },
+                payload: { name, value },
               })
             }
             sa.apply(this, [k, v])
@@ -85,17 +81,17 @@ export const define = (name, factory, template) =>
             if (this.hasAttribute(name)) {
               value = this.getAttribute(name)
             } else {
-              value = this[property] || state["$" + property]
+              value = this[property] || state[property]
             }
 
             Object.defineProperty(this, property, {
               get() {
-                return getState()["$" + property]
+                return getState()[property]
               },
               set(v) {
                 dispatch({
                   type: "SET",
-                  payload: { name: "$" + property, value: v },
+                  payload: { name: property, value: v },
                 })
                 if (isPrimitive(v)) {
                   applyAttribute(this, property, v)
@@ -127,7 +123,7 @@ export const define = (name, factory, template) =>
                 serialise(this, state)
                 observe.forEach((k) => {
                   let v = state[k]
-                  if (isPrimitive(v)) applyAttribute(this, k.slice(1), v)
+                  if (isPrimitive(v)) applyAttribute(this, k, v)
                 })
                 subscribe?.(getState())
                 flush()

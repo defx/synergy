@@ -130,8 +130,9 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
+        observe: ["foo"],
         state: {
-          $foo: `
+          foo: `
           background-color: gold;
           color: tomato;
           width: 100px;
@@ -139,7 +140,7 @@ describe("interpolations", () => {
           `,
         },
       }),
-      html` <section :style="{{ $foo }}"></section> `
+      html` <section :style="{{ foo }}"></section> `
     )
 
     mount(html`<${name}></${name}>`)
@@ -244,9 +245,10 @@ describe("interpolations", () => {
     define(
       name,
       () => ({
-        state: { $foo: true },
+        observe: ["foo"],
+        state: { foo: true },
       }),
-      html` <p :hidden="{{ !$foo }}">boo!</p>`
+      html` <p :hidden="{{ !foo }}">boo!</p>`
     )
 
     mount(html`<${name} foo></${name}>`)

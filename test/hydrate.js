@@ -42,8 +42,9 @@ describe("hydrate", () => {
       name,
       () => {
         return {
+          observe: ["todos"],
           state: {
-            $todos: [
+            todos: [
               {
                 title: "feed the duck",
               },
@@ -62,7 +63,7 @@ describe("hydrate", () => {
       },
       `
       <ul>
-        <li :each="todo in $todos" :onclick="click">{{ title }}</li>
+        <li :each="todo in todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )
@@ -81,6 +82,7 @@ describe("hydrate", () => {
       title: "eat the frog",
     })
 
+    // @todo: discuss this in the docs ...
     // $(name).todos.push({
     //   title: "eat the frog",
     // })
@@ -100,8 +102,9 @@ describe("hydrate", () => {
       name,
       () => {
         return {
+          observe: ["todos"],
           state: {
-            $todos: [
+            todos: [
               {
                 title: "feed the duck",
               },
@@ -120,7 +123,7 @@ describe("hydrate", () => {
       },
       `
       <ul>
-        <li :each="todo in $todos" :onclick="click">{{ title }}</li>
+        <li :each="todo in todos" :onclick="click">{{ title }}</li>
       </ul>
     `
     )

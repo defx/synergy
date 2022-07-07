@@ -190,17 +190,18 @@ describe("user input", () => {
     let name = createName()
 
     let state = {
-      $pets: "hamster",
+      pets: "hamster",
     }
 
     define(
       name,
       () => ({
+        observe: ["pets"],
         state,
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
-        <select :name="$pets" id="pet-select">
+        <select :name="pets" id="pet-select">
           <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>
@@ -226,19 +227,18 @@ describe("user input", () => {
   it("should select the correct option (each option)", async () => {
     let name = createName()
 
-    let state = {
-      $pets: "Hamster",
-      options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
-    }
-
     define(
       name,
       () => ({
-        state,
+        observe: ["pets"],
+        state: {
+          pets: "Hamster",
+          options: ["Dog", "Cat", "Hamster", "Parrot", "Spider", "Goldfish"],
+        },
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
-        <select :name="$pets" id="pet-select">
+        <select :name="pets" id="pet-select">
           <option value="">--Please choose an option--</option>
           <option :each="option in options" :value="option">
             {{ option }}
@@ -298,13 +298,14 @@ describe("user input", () => {
     define(
       name,
       () => ({
+        observe: ["pets"],
         state: {
-          $pets: ["hamster"],
+          pets: ["hamster"],
         },
       }),
       html`
         <label for="pet-select">Choose a pet:</label>
-        <select :name="$pets" id="pet-select" multiple>
+        <select :name="pets" id="pet-select" multiple>
           <option value="">--Please choose an option--</option>
           <option value="dog">Dog</option>
           <option value="cat">Cat</option>

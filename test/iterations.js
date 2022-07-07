@@ -134,8 +134,9 @@ describe("iterations", () => {
     define(
       name,
       () => ({
+        observe: ["colours"],
         state: {
-          $colours: [
+          colours: [
             {
               name: "red",
               foo: 1,
@@ -152,7 +153,7 @@ describe("iterations", () => {
         },
       }),
       html`
-        <template :each="colour in $colours" key="foo">
+        <template :each="colour in colours" key="foo">
           <p>{{colour.name}}</p>
         </template>
       `
