@@ -22,6 +22,7 @@ import { getParts, getValueFromParts, hasMustache } from "./token.js"
 import { applyAttribute } from "./attribute.js"
 import { createContext } from "./context.js"
 import { convertToTemplate } from "./template.js"
+import { partials } from "./partial.js"
 
 export const render = (
   target,
@@ -269,6 +270,11 @@ export const render = (
           break
         }
         case node.ELEMENT_NODE: {
+          if (node.nodeName in partials) {
+            node.innerHTML = partials[node.nodeName]
+            break
+          }
+
           let each = parseEach(node)
 
           if (each) {
