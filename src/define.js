@@ -23,7 +23,7 @@ function serialise(node, state) {
 }
 
 export const define = (name, factory, template, css) => {
-  if (css) appendStyles(css)
+  if (css) appendStyles(name, css)
 
   customElements.define(
     name,
