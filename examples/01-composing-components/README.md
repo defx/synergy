@@ -1,4 +1,4 @@
-# Synergy - Building an app
+# Composing components
 
 Making a component is great but when we start to compose components together the possibilities are endless.
 
