@@ -1,6 +1,7 @@
 import { configure } from "./update.js"
 import { render } from "./render.js"
 import { mergeSlots } from "./mergeSlots.js"
+import { appendStyles } from "./css.js"
 import {
   applyAttribute,
   attributeToProp,
@@ -21,7 +22,9 @@ function serialise(node, state) {
   ds.innerText = JSON.stringify(state)
 }
 
-export const define = (name, factory, template) =>
+export const define = (name, factory, template, css) => {
+  if (css) appendStyles(css)
+
   customElements.define(
     name,
     class extends HTMLElement {
@@ -143,3 +146,4 @@ export const define = (name, factory, template) =>
       }
     }
   )
+}
