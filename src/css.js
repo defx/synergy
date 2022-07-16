@@ -1,3 +1,7 @@
+function nextWord(css, count) {
+  return css.slice(count - 1).split(/[\s+|\n+|,]/)[0]
+}
+
 export function prefixSelectors(prefix, css) {
   let insideBlock = false
   let look = true
@@ -29,6 +33,8 @@ export function prefixSelectors(prefix, css) {
     output += char
     count += 1
   }
+
+  return output
 }
 
 export function appendStyles(name, css) {
