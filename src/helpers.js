@@ -67,7 +67,7 @@ export const fragmentFromTemplate = (v) => {
     } else {
       let tpl = document.createElement("template")
       tpl.innerHTML = v.trim()
-      return tpl.content
+      return tpl.content.cloneNode(true)
     }
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content
@@ -138,5 +138,7 @@ export const attributeToProp = (k, v) => {
 }
 
 export function getDataScript(node) {
-  return node.querySelector(`script[type="application/synergy"]`)
+  return node.querySelector(
+    `script[type="application/synergy"][id="${node.nodeName}"]`
+  )
 }

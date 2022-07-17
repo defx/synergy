@@ -13,6 +13,7 @@ import {
 function createDataScript(node) {
   let ds = document.createElement("script")
   ds.setAttribute("type", "application/synergy")
+  ds.setAttribute("id", node.nodeName)
   node.append(ds)
   return ds
 }
