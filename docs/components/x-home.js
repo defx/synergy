@@ -31,7 +31,9 @@ const myCounterExample = /* HTML */ `
 
 define(
   "x-home",
-  () => ({ state: { myCounterExample } }),
+  () => ({
+    state: { myCounterExample },
+  }),
   /* HTML */ `
     <x-app>
       <x-hero></x-hero>
@@ -50,7 +52,11 @@ define(
             </code>
         </pre>
 
-        <!-- @todo: consider linking to online code editor -->
+        <!-- @todo: consider linking to online code editor
+        
+        also, the module import wont work with an http server
+        
+        -->
 
         <blockquote>
           If you want to try Synergy out then simply copy and paste the example

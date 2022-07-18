@@ -18,24 +18,16 @@ partial(
             <li><a href="/events">Events</a></li>
             <li><a href="/state">State</a></li>
             <li><a href="/styles">Styles</a></li>
-            <li><a href="/conditional-rendering">Conditional rendering</a></li>
+            <li><a href="/conditional-rendering">Conditionals</a></li>
             <li><a href="/lists">Lists</a></li>
             <li><a href="/forms">Forms</a></li>
-            <li>
-              CLI
-              <ul>
-                <li><a href="">Config</a></li>
-                <li><a href="">Partials</a></li>
-                <li><a href="">Scoped CSS</a></li>
-              </ul>
-            </li>
+            <li><a href="/slots">Slots</a></li>
           </ul>
         </li>
         <li>
           Advanced Usage
           <ul>
             <li><a href="">Custom Elements</a></li>
-            <li><a href="">Slots</a></li>
             <li><a href="">Lazy loading</a></li>
             <li><a href="">Hydration</a></li>
           </ul>

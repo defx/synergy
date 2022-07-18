@@ -55,12 +55,6 @@ export const render = (
           let state = context ? context.wrap(getState()) : getState()
           let a = node.textContent
           let b = getValueFromParts(state, getParts(value))
-          console.log("TEXT UPDATE", {
-            root: target.nodeName,
-            node,
-            isConnected: node.isConnected,
-            $: node.$i,
-          })
 
           if (a !== b) node.textContent = b
         },
@@ -412,27 +406,8 @@ export const render = (
   } else {
     walk(frag, bindAll(map))
     beforeMountCallback?.(frag)
-
-    // walk(frag.firstChild, (node) => {
-    //   if (node.$i === 28) console.log(target, "gotcha!", node, node.isConnected)
-    // })
-
-    // this is where we lose the binding refs....
-    /*
-    
-    presumably when a fragment is appended it is then cloned???
-    
-    */
-    target.prepend(frag)
-
-    walk(target.firstChild, (node) => {
-      if (node.$i === 28) {
-        console.log(target, "gotcha!", node, node.isConnected)
-        node.remove()
-      }
-    })
-
     update()
+    target.prepend(frag)
   }
 
   return debounce(() => update(updatedCallback))

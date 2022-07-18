@@ -67,7 +67,7 @@ const fragmentFromTemplate = (v) => {
     } else {
       let tpl = document.createElement("template");
       tpl.innerHTML = v.trim();
-      return tpl.content.cloneNode(true)
+      return tpl.content
     }
   }
   if (v.nodeName === "TEMPLATE") return v.cloneNode(true).content
@@ -138,9 +138,7 @@ const attributeToProp = (k, v) => {
 };
 
 function getDataScript(node) {
-  return node.querySelector(
-    `script[type="application/synergy"][id="${node.nodeName}"]`
-  )
+  return node.querySelector(`script[type="application/synergy"]`)
 }
 
 function systemReducer(state, action) {
@@ -648,82 +646,6 @@ const convertToTemplate = (node) => {
   }
 };
 
-function nextWord(css, count) {
-  return css.slice(count - 1).split(/[\s+|\n+|,]/)[0]
-}
-
-function nextOpenBrace(css, count) {
-  let index = css.slice(count - 1).indexOf("{");
-  if (index > -1) {
-    return count + index
-  }
-}
-
-function prefixSelectors(prefix, css) {
-  let insideBlock = false;
-  let look = true;
-  let output = "";
-  let count = 0;
-  let skip = false;
-
-  for (let char of css) {
-    if (char === "@" && nextWord(css, count + 1) === "@media") {
-      skip = nextOpenBrace(css, count);
-    }
-
-    if (skip) {
-      if (skip === count) skip = false;
-    }
-
-    if (!skip) {
-      if (char === "}") {
-        insideBlock = false;
-        look = true;
-      } else if (char === ",") {
-        look = true;
-      } else if (char === "{") {
-        insideBlock = true;
-      } else if (look && !insideBlock && !char.match(/\s/)) {
-        let w = nextWord(css, count + 1);
-
-        // console.log({ w })
-
-        if (
-          w !== prefix &&
-          w.charAt(0) !== "@" &&
-          w.charAt(0) !== ":" &&
-          w.charAt(0) !== "*" &&
-          w !== "html" &&
-          w !== "body"
-        ) {
-          output += prefix + " ";
-        }
-        look = false;
-      }
-    }
-    output += char;
-    count += 1;
-  }
-
-  return output
-}
-
-function appendStyles(name, css) {
-  if (document.querySelector(`style#${name}`)) return
-
-  const el = document.createElement("style");
-  el.id = name;
-  el.innerHTML = prefixSelectors(name, css);
-  document.head.appendChild(el);
-}
-
-const partials = {};
-
-const partial = (name, html, css) => {
-  if (css) appendStyles(name, css);
-  partials[name.toUpperCase()] = html;
-};
-
 const render = (
   target,
   { getState, dispatch },
@@ -753,13 +675,6 @@ const render = (
           let state = context ? context.wrap(getState()) : getState();
           let a = node.textContent;
           let b = getValueFromParts(state, getParts(value));
-          console.log("TEXT UPDATE", {
-            root: target.nodeName,
-            node,
-            isConnected: node.isConnected,
-            $: node.$i,
-          });
-
           if (a !== b) node.textContent = b;
         },
       }
@@ -969,17 +884,12 @@ const render = (
           if (hasMustache(value)) {
             x.push({
               type: TEXT,
-              value: value.trim(), //@todo?
+              value,
             });
           }
           break
         }
         case node.ELEMENT_NODE: {
-          if (node.nodeName in partials) {
-            node.innerHTML = partials[node.nodeName];
-            break
-          }
-
           let each = parseEach(node);
 
           if (each) {
@@ -1110,26 +1020,7 @@ const render = (
   } else {
     walk(frag, bindAll(map));
     beforeMountCallback?.(frag);
-
-    // walk(frag.firstChild, (node) => {
-    //   if (node.$i === 28) console.log(target, "gotcha!", node, node.isConnected)
-    // })
-
-    // this is where we lose the binding refs....
-    /*
-    
-    presumably when a fragment is appended it is then cloned???
-    
-    */
     target.prepend(frag);
-
-    walk(target.firstChild, (node) => {
-      if (node.$i === 28) {
-        console.log(target, "gotcha!", node, node.isConnected);
-        node.remove();
-      }
-    });
-
     update();
   }
 
@@ -1143,16 +1034,6 @@ const childNodes = (node) => {
   }
   return frag
 };
-
-/*
-
-@bug: when using slots we're losing the node references cached in the bindings
-
-in short, mergeSlots is grosely under-tested
-
-yep, all slot tests only pass in plain html, never another component..
-
-*/
 
 const mergeSlots = (targetNode, sourceNode) => {
   let namedSlots = sourceNode.querySelectorAll("slot[name]");
@@ -1171,35 +1052,16 @@ const mergeSlots = (targetNode, sourceNode) => {
   let defaultSlot = sourceNode.querySelector("slot:not([name])");
 
   if (defaultSlot) {
-    let t = targetNode.innerHTML.trim() ? targetNode : defaultSlot;
-
-    walk(t, (node) => {
-      if (!node.$i) return
-      console.log("@todo: update ref", node, node.$i);
-    });
-
-    while (t.firstChild) {
-      defaultSlot.parentNode.insertBefore(t.firstChild, defaultSlot);
-    }
-
-    /*
-    
-    proving that it still exists at this point...
-    
-    */
-
-    // walk(defaultSlot.parentNode, (node) => {
-    //   if (node.$i === 28) console.log("gotcha!")
-    // })
-
-    defaultSlot.remove();
+    defaultSlot.parentNode.replaceChild(
+      childNodes(targetNode.innerHTML.trim() ? targetNode : defaultSlot),
+      defaultSlot
+    );
   }
 };
 
 function createDataScript(node) {
   let ds = document.createElement("script");
   ds.setAttribute("type", "application/synergy");
-  ds.setAttribute("id", node.nodeName);
   node.append(ds);
   return ds
 }
@@ -1209,9 +1071,7 @@ function serialise(node, state) {
   ds.innerText = JSON.stringify(state);
 }
 
-const define = (name, factory, template, css) => {
-  if (css) appendStyles(name, css);
-
+const define = (name, factory, template) =>
   customElements.define(
     name,
     class extends HTMLElement {
@@ -1333,6 +1193,5 @@ const define = (name, factory, template, css) => {
       }
     }
   );
-};
 
-export { define, partial };
+export { define };

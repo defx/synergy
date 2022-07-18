@@ -1,13 +1,12 @@
 {
-  "name": "synergy-docs",
-  "type": "module",
+  "name": "docs",
   "version": "1.0.0",
-  "private": true,
   "description": "",
+  "main": "index.js",
   "scripts": {
-    "dev": "npm link synergy mosaic && mosaic dev"
+    "dev": "npx serve"
   },
   "keywords": [],
   "author": "",
-  "license": "MIT"
+  "license": "ISC"
 }
