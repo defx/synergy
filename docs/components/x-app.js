@@ -23,10 +23,11 @@ define(
     <x-header> </x-header>
 
     <span class="wrapper">
-      <x-nav></x-nav>
+      <aside><x-nav></x-nav></aside>
       <main>
         <slot></slot>
       </main>
+      <x-foo></x-foo>
     </span>
   `,
   /* CSS */ `
@@ -52,9 +53,8 @@ define(
   }
   
   main {
-    padding: 1rem;
+    padding: 1rem 2rem;
     max-width: 768px;
-    margin: 0 auto;
   }
   
   main ul {
@@ -84,15 +84,24 @@ define(
   .wrapper {
     display: flex;
     flex-direction: row;
+    justify-content: center
   }
   
-  x-nav {
+  aside {
+    width: 280px;
     display: none;
+    border-right: 1px solid rgba(0, 128, 128, 0.25);
   }
   
-  @media screen and (min-width: 1024px) {
-    x-nav {
+  @media screen and (min-width: 960px) {
+    aside {
       display: block;
+    }
+    .wrapper {
+      justify-content: initial
+    }
+    a[href="/docs"] {
+      display: none;
     }
   }
     `

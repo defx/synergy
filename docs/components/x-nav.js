@@ -37,12 +37,16 @@ partial(
   `,
   /* CSS */ `
   x-nav {
-    padding: 1rem 0;
+    padding: 1rem 2rem;
   }
   
   ul {
     margin-left: 1rem;
     list-style-type: none;
+  }
+
+  li {
+    margin: 0.5rem 0;
   }
 `
 )

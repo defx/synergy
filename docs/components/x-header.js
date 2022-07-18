@@ -11,8 +11,7 @@ partial(
         <span>synergy<span class="light">.js</span></span>
       </a>
       <nav>
-        <a href="">docs</a>
-        <a href="">learn</a>
+        <a href="/docs">docs</a>
         <a
           href="https://github.com/defx/synergy"
           class="github"

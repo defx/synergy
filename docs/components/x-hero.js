@@ -14,7 +14,7 @@ partial(
   `,
   /* CSS */ `
   x-hero {
-    padding: 2rem;
+    padding: 2rem 0;
     display: block;
     text-align: center;
   }
