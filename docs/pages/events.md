@@ -24,7 +24,7 @@ Template:
 
 ## Template scope
 
-Because repeated blocks create scoped value contexts (i.e., new values created within the iteration as part of the `:each="x in y"` expression), it is useful to be able to access those values within your handler. You can do this via the `context` property of the second argument to your event handler.
+Because repeated blocks create scoped value contexts (i.e., new values created within the iteration as part of the `:each="x in y"` expression), it is useful to be able to access those values within your handler. You can do this via the `scope` property of the second argument to your event handler.
 
 Model:
 
@@ -50,8 +50,8 @@ const factory = () => {
       ],
     },
     update: {
-      select: (state, { context }) => {
-        const { artist, tag } = context
+      select: (state, { scope }) => {
+        const { artist, tag } = scope
 
         return {
           ...state,

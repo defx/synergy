@@ -25,10 +25,10 @@ partial(
           </ul>
         </li>
         <li>
-          Advanced Usage
+          Advanced Topics
           <ul>
-            <li><a href="">Lazy loading</a></li>
-            <li><a href="">Hydration</a></li>
+            <li><a href="/best-practices">Best practices</a></li>
+            <li><a href="/hydration">Hydration</a></li>
           </ul>
         </li>
       </ul>
