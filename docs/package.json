@@ -1,12 +1,15 @@
 {
-  "name": "docs",
+  "name": "synergydocs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx serve"
+    "dev": "x-static"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@defx/x-static": "^0.1.0"
+  }
 }

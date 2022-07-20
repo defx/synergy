@@ -1,7 +1,8 @@
-import { partial } from "../synergy.js"
+import { define } from "../synergy.js"
 
-partial(
+define(
   "x-hero",
+  () => ({}),
   /* HTML */ `
     <section>
       <h1>The JavaScript UI Framework</h1>

@@ -51,6 +51,14 @@ define(
     color: hsl(180, 100%, 10%);
     font-size: 1rem;
   }
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
   
   main {
     padding: 1rem 2rem;
@@ -68,8 +76,14 @@ define(
   }
   
   h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     color: hsl(180, 50%, 16%);
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    color: hsl(180, 50%, 16%);
+    margin: 2rem 0 1rem
   }
   
   h3 {
@@ -96,7 +110,13 @@ define(
   @media screen and (min-width: 960px) {
     aside {
       display: block;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+
+      overflow-y: scroll;
     }
+
     .wrapper {
       justify-content: initial
     }
