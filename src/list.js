@@ -7,7 +7,7 @@ export function parseEach(node) {
     if (!each) return m
     return {
       path: each.trim(),
-      key: node.getAttribute("key"),
+      key: node.getAttribute(":key"),
     }
   }
   let [_, left, right] = m
@@ -18,7 +18,7 @@ export function parseEach(node) {
     path: right.trim(),
     identifier: b ? b : a,
     index: b ? a : b,
-    key: node.getAttribute("key"),
+    key: node.getAttribute(":key"),
   }
 }
 

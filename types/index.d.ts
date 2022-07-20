@@ -1,6 +1,6 @@
-export = mosaic
-export as namespace mosaic
-declare namespace mosaic {
+export = synergy
+export as namespace synergy
+declare namespace synergy {
   function define(
     /**
      * The name for the new custom element. As per the Custom Element spec,
@@ -35,7 +35,10 @@ declare namespace mosaic {
       [key: string]: any
     }
     event: Event
-    context: {
+    /*
+     * The current state including any scoped values created by repeated blocks within the template
+     */
+    scope: {
       [key: string]: any
     }
   }

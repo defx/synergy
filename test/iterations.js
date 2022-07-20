@@ -153,7 +153,7 @@ describe("iterations", () => {
         },
       }),
       html`
-        <template :each="colour in colours" key="foo">
+        <template :each="colour in colours" :key="foo">
           <p>{{colour.name}}</p>
         </template>
       `

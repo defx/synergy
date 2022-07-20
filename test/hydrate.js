@@ -55,7 +55,7 @@ describe("hydrate", () => {
           },
           update: {
             click: (state, action) => {
-              stack.push(action.context.todo.title)
+              stack.push(action.scope.todo.title)
               return state
             },
           },
@@ -114,7 +114,7 @@ describe("hydrate", () => {
             ],
           },
           update: {
-            click: (state, { context: { todo } }) => {
+            click: (state, { scope: { todo } }) => {
               stack.push(todo.title)
               return state
             },

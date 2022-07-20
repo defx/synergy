@@ -93,10 +93,10 @@ export const update = {
       }
     }
   },
-  startEdit: (state, { context }) => {
+  startEdit: (state, { scope }) => {
     const todos = state.todos.map((todo) => ({
       ...todo,
-      editing: todo.id === context.todo.id,
+      editing: todo.id === scope.todo.id,
     }))
     const titleEdit = todos.find((todo) => todo.editing)?.title
     return {
@@ -105,9 +105,9 @@ export const update = {
       todos,
     }
   },
-  deleteTodo: (state, { context }) => ({
+  deleteTodo: (state, { scope }) => ({
     ...state,
-    todos: state.todos.filter((todo) => todo.id !== context.todo.id),
+    todos: state.todos.filter((todo) => todo.id !== scope.todo.id),
   }),
   removeCompleted: (state) => ({
     ...state,

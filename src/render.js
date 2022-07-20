@@ -121,7 +121,7 @@ export const render = (
         let action = {
           type: actionType,
           event,
-          context: context ? context.wrap(getState()) : getState(),
+          scope: context ? context.wrap(getState()) : getState(),
         }
 
         dispatch(action)

@@ -54,7 +54,7 @@ describe("actions", () => {
     assert.equal(stack[0], "foo")
   })
 
-  it("provides the template context", () => {
+  it("provides the template scope", () => {
     let stack = []
 
     let name = createName()
@@ -82,8 +82,8 @@ describe("actions", () => {
       name,
       () => ({
         update: {
-          foo: (state, { context }) => {
-            stack.push(context)
+          foo: (state, { scope }) => {
+            stack.push(scope)
             return state
           },
         },
