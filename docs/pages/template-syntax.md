@@ -7,12 +7,6 @@ declaratively add data and event bindings to your components HTML. All
 synergy templates are syntactically valid HTML that can be parsed by
 spec-compliant browsers and HTML parsers.
 
-Something that characterises Synergy templates is that they have no
-support for arbitrary JavaScript expressions. This is very much an
-intentional design choice, and we will talk about that in depth later
-but the main thing to understand right now is that Synergy templates are
-super simple!
-
 ## Text
 
 Let's take a look at how text interpolation works with a simple example.

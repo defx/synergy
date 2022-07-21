@@ -2,9 +2,9 @@
 
 # Forms
 
-Synergy makes working with form data a breeze by automagically binding named form controls to properties of the same name on your model.
+Synergy makes working with form data a breeze by automagically binding named form controls to state properties of the same name.
 
-Model:
+State:
 
 ```js
 {
@@ -24,7 +24,7 @@ Attribute a name to your `<select>` and the value
 of the bound property will reflect that of the
 currently selected `<option>`
 
-Model:
+State:
 
 ```js
 {

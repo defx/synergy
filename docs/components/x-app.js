@@ -93,7 +93,11 @@ define(
   
   p {
     margin: 1rem 0;
-  }  
+  }
+  
+  code {
+    font-size: 0.875rem
+  }
 
   .wrapper {
     display: flex;

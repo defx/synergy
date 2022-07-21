@@ -29,4 +29,54 @@ define(tagName, factory, template, styles)
 
 None (`undefined`)
 
+## Model
+
+The factory function provided as the second argument to `define` must return a plain JavaScript object that represents the element _Model_.
+
+```ts
+type Model = {
+  /**
+   * Provides the initial state to the component for its very first render.
+   */
+  state?: State
+  /**
+   * Invoked each time the custom element is appended into a
+   * document-connected element
+   */
+  connectedCallback?(store: Store): void
+  /**
+   * Invoked each time the custom element is disconnected from the document
+   */
+  disconnectedCallback?(): void
+  /**
+   *
+   */
+  update?: {
+    [actionName: string]: ActionHandler
+  }
+  /**
+   * Each property named here will be derived after each state update using its corresponding Derivation function.
+   */
+  derive?: {
+    [propertyName]: Derivation
+  }
+  /**
+   *  A debounced function that is called after every render cycle
+   */
+  subscribe?: {
+    (state: State): void
+  }
+  /**
+   *
+   */
+  middleware?: {
+    [actionName: string]: Middleware | [Middleware]
+  }
+  /**
+   * If this is omitted then Shadow DOM is not utilised and <slot> functionality is polyfilled.
+   */
+  shadow?: "open" | "closed"
+}
+```
+
 </x-app>

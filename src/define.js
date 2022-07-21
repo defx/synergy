@@ -19,8 +19,8 @@ function createDataScript(node) {
 }
 
 function serialise(node, state) {
-  let ds = getDataScript(node) || createDataScript(node)
-  ds.innerText = JSON.stringify(state)
+  // let ds = getDataScript(node) || createDataScript(node)
+  // ds.innerText = JSON.stringify(state)
 }
 
 export const define = (name, factory, template, css) => {
@@ -30,117 +30,114 @@ export const define = (name, factory, template, css) => {
     name,
     class extends HTMLElement {
       async connectedCallback() {
-        if (!this.initialised) {
-          let config = factory(this)
+        let config = factory(this)
 
-          if (config instanceof Promise) config = await config
+        if (config instanceof Promise) config = await config
 
-          let { subscribe, shadow, observe = [] } = config
+        let { subscribe, shadow, observe = [] } = config
 
-          this.connectedCallback = config.connectedCallback
-          this.disconnectedCallback = config.disconnectedCallback
+        this.connectedCallback = config.connectedCallback
+        this.disconnectedCallback = config.disconnectedCallback
 
-          const ds = getDataScript(this)
+        const ds = getDataScript(this)
 
-          const { dispatch, getState, onUpdate, flush } = configure(
-            {
-              ...config,
-              state: ds ? JSON.parse(ds.innerText) : config.state,
-            },
-            this
-          )
+        const { dispatch, getState, onUpdate, flush } = configure(
+          {
+            ...config,
+            state: ds ? JSON.parse(ds.innerText) : config.state,
+          },
+          this
+        )
 
-          let state = getState()
+        let state = getState()
 
-          let observedAttributes = observe.map(pascalToKebab)
+        let observedAttributes = observe.map(pascalToKebab)
 
-          let sa = this.setAttribute
-          this.setAttribute = (k, v) => {
-            if (observedAttributes.includes(k)) {
-              let { name, value } = attributeToProp(k, v)
+        let sa = this.setAttribute
+        this.setAttribute = (k, v) => {
+          if (observedAttributes.includes(k)) {
+            let { name, value } = attributeToProp(k, v)
 
-              dispatch({
-                type: "SET",
-                payload: { name, value },
-              })
-            }
-            sa.apply(this, [k, v])
-          }
-          let ra = this.removeAttribute
-          this.removeAttribute = (k) => {
-            if (observedAttributes.includes(k)) {
-              let { name, value } = attributeToProp(k, null)
-              dispatch({
-                type: "SET",
-                payload: { name, value },
-              })
-            }
-            ra.apply(this, [k])
-          }
-
-          observedAttributes.forEach((name) => {
-            let property = attributeToProp(name).name
-            let value
-
-            if (this.hasAttribute(name)) {
-              value = this.getAttribute(name)
-            } else {
-              value = this[property] || state[property]
-            }
-
-            Object.defineProperty(this, property, {
-              get() {
-                return getState()[property]
-              },
-              set(v) {
-                dispatch({
-                  type: "SET",
-                  payload: { name: property, value: v },
-                })
-                if (isPrimitive(v)) {
-                  applyAttribute(this, property, v)
-                }
-              },
+            dispatch({
+              type: "SET",
+              payload: { name, value },
             })
+          }
+          sa.apply(this, [k, v])
+        }
+        let ra = this.removeAttribute
+        this.removeAttribute = (k) => {
+          if (observedAttributes.includes(k)) {
+            let { name, value } = attributeToProp(k, null)
+            dispatch({
+              type: "SET",
+              payload: { name, value },
+            })
+          }
+          ra.apply(this, [k])
+        }
 
-            this[property] = value
+        observedAttributes.forEach((name) => {
+          let property = attributeToProp(name).name
+          let value
+
+          if (this.hasAttribute(name)) {
+            value = this.getAttribute(name)
+          } else {
+            value = this[property] || state[property]
+          }
+
+          Object.defineProperty(this, property, {
+            get() {
+              return getState()[property]
+            },
+            set(v) {
+              dispatch({
+                type: "SET",
+                payload: { name: property, value: v },
+              })
+              if (isPrimitive(v)) {
+                applyAttribute(this, property, v)
+              }
+            },
           })
 
-          let beforeMountCallback
+          this[property] = value
+        })
 
-          if (shadow) {
-            this.attachShadow({
-              mode: shadow,
-            })
-          } else {
-            beforeMountCallback = (frag) => mergeSlots(this, frag)
-          }
+        let beforeMountCallback
 
-          onUpdate(
-            render(
-              this.shadowRoot || this,
-              { getState, dispatch },
-              template,
-              () => {
-                const state = getState()
-
-                serialise(this, state)
-                observe.forEach((k) => {
-                  let v = state[k]
-                  if (isPrimitive(v)) applyAttribute(this, k, v)
-                })
-                subscribe?.(getState())
-                flush()
-              },
-              beforeMountCallback
-            )
-          )
-          this.initialised = true
-
-          if (!ds) serialise(this, getState())
-
-          this.connectedCallback?.({ dispatch, getState })
+        if (shadow) {
+          this.attachShadow({
+            mode: shadow,
+          })
+        } else {
+          beforeMountCallback = (frag) => mergeSlots(this, frag)
         }
+
+        onUpdate(
+          render(
+            this.shadowRoot || this,
+            { getState, dispatch },
+            template,
+            () => {
+              const state = getState()
+
+              serialise(this, state)
+              observe.forEach((k) => {
+                let v = state[k]
+                if (isPrimitive(v)) applyAttribute(this, k, v)
+              })
+              subscribe?.(getState())
+              flush()
+            },
+            beforeMountCallback
+          )
+        )
+
+        if (!ds) serialise(this, getState())
+
+        this.connectedCallback?.({ dispatch, getState })
       }
       disconnectedCallback() {
         this.disconnectedCallback?.()

@@ -4,7 +4,7 @@
 
 ## Multiple classes with Array
 
-Model:
+State:
 
 ```js
 {
@@ -26,7 +26,7 @@ Output:
 
 ## Conditional Classes with Object
 
-Model:
+State:
 
 ```js
 {
@@ -49,36 +49,9 @@ Output:
 <div class="mx-auto"></div>
 ```
 
-## Conditional Classes with Getter + Object
-
-Model:
-
-```js
-{
-    hasErrors: true,
-    get classes() {
-        return {
-            errors: this.hasErrors
-        }
-    }
-}
-```
-
-Template:
-
-```html
-<form :class="classes"></form>
-```
-
-Output:
-
-```html
-<form class="errors"></form>
-```
-
 ## Inline Styles
 
-Model:
+State:
 
 ```js
 {

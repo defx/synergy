@@ -16,4 +16,13 @@ const template = /* html */ `
     <button :onclick="increment">Count is: {{ count }}</button>
 `
 
+const css = /* css */ `
+  button {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    background-color: gold;
+    color: tomato;
+  }
+`
+
 define(name, factory, template)

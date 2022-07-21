@@ -2,7 +2,7 @@
 
 # Events
 
-Synergy allows you to map events to event handlers of the same name within your Models `update` object.
+Synergy allows you to map events to update functions of the same name.
 
 Model:
 
@@ -22,6 +22,8 @@ Template:
 <button :onclick="sayHello">Say hello</button>
 ```
 
+Every update function accepts the current state as its first argument, its return value will provide the next state for the custom element.
+
 ## Template scope
 
 Because repeated blocks create scoped value contexts (i.e., new values created within the iteration as part of the `:each="x in y"` expression), it is useful to be able to access those values within your handler. You can do this via the `scope` property of the second argument to your event handler.
@@ -35,13 +37,7 @@ const factory = () => {
       artists: [
         {
           name: "pablo picasso",
-          tags: [
-            "painter",
-            "sculptor",
-            "printmaker",
-            "ceramicist",
-            "theatre designer",
-          ],
+          tags: ["painter", "sculptor", "printmaker", "ceramicist"],
         },
         {
           name: "salvador dali",
@@ -77,6 +73,6 @@ Template:
 </article>
 ```
 
-Note that the value of `artist` and `tag` within the handler are specific to the repeated block from which the event was raised. So if you click on the "theatre designer" tag, for example, then `tag` will have a value of "theatre designer" and `artist` will equal "Pablo Picasso"
+Note that the value of `artist` and `tag` within the handler are specific to the repeated block from which the event was raised. So if you click on the "ceramacist" tag, for example, then `tag` will have a value of "ceramacist" and `artist` will equal "Pablo Picasso"
 
 </x-app>

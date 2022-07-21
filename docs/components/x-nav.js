@@ -14,7 +14,7 @@ partial(
         <li>
           Essentials
           <ul>
-            <li><a href="/state">State</a></li>
+            <li><a href="/reactivity">Reactivity</a></li>
             <li><a href="/template-syntax">Template syntax</a></li>
             <li><a href="/repeated-blocks">Repeated blocks</a></li>
             <li><a href="/events">Events</a></li>

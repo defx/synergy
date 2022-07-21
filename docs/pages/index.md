@@ -18,24 +18,20 @@ Here's a simple example:
 <script type="module">
   import { define } from "https://unpkg.com/synergy@8.0.0"
 
-  const name = "my-counter"
-
-  const factory = () => ({
-    state: { count: 0 },
-    update: {
-      increment: (state) => ({
-        ...state,
-        count: state.count + 1,
-      }),
-    },
-  })
-
-  define(name, factory, "#my-counter")
+  define(
+    "my-counter",
+    () => ({
+      state: { count: 0 },
+      update: {
+        increment: (state) => ({
+          ...state,
+          count: state.count + 1,
+        }),
+      },
+    }),
+    `<button :onclick="increment">Count is: {{ count }}</button>`
+  )
 </script>
-
-<template id="my-counter">
-  <button :onclick="increment">Count is: {{ count }}</button>
-</template>
 ```
 
 The above example demonstrates the three core features of Synergy:
@@ -49,5 +45,24 @@ The above example demonstrates the three core features of Synergy:
   easy to reason about as they are to test.
 - **Reactive updates:** Synergy efficiently batches
   updates to your HTML whenever your state changes
+
+## High-level view
+
+The Synergy `define` function allows you to register a custom element on the page. Once defined, you can use your custom element like any other HTML tag.
+
+The `define` function takes up to four arguments:
+
+- `tagName` (required) [string] - Name for the new Custom Element. As per the Custom Element
+  spec, an elements name must include a hyphen to differentiate from standard built-in elements.
+
+- `factory` (required) [function] - A factory function that will be called whenever a new instance of your Custom Element is created. It will be provided with one argument which is the Custom Element node itself. The factory function returns an Object (or a Promise that resolves to an Object) that defines the behaviour of the element.
+
+- `template` (required) [HTMLTemplateElement | string] - The HTML for your view.
+
+- `styles` (optional) [string] - The CSS for your custom element. The CSS will be transformed to apply lightweight scoping before being added to the head of the document.
+
+As you can see, the first, third, and fourth arguments are just strings. The third argument is standard HTML, and the fourth argument is standard CSS. One of the great things about Synergy is that it allows you to build UI using 100% standard, spec-compliant HTML, CSS, and JavaScript.
+
+In the next section we will look closer at our simple element example to understand more about how Synergys reactivity system works and what you can do with it.
 
 </x-app>
