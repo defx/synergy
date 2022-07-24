@@ -8,22 +8,17 @@ import {
   isPrimitive,
   pascalToKebab,
   getDataScript,
+  createDataScript,
 } from "./helpers.js"
 
-function createDataScript(node) {
-  let ds = document.createElement("script")
-  ds.setAttribute("type", "application/synergy")
-  ds.setAttribute("id", node.nodeName)
-  node.append(ds)
-  return ds
-}
-
 function serialise(node, state) {
-  // let ds = getDataScript(node) || createDataScript(node)
-  // ds.innerText = JSON.stringify(state)
+  let ds = getDataScript(node) || createDataScript(node)
+  ds.innerText = JSON.stringify(state)
 }
 
 export const define = (name, factory, template, css) => {
+  if (customElements.get(name)) return
+
   if (css) appendStyles(name, css)
 
   customElements.define(

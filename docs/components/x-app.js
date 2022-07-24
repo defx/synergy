@@ -9,7 +9,7 @@ define(
   "x-app",
   () => ({
     connectedCallback() {
-      hljs.highlightAll()
+      // hljs.highlightAll()
     },
   }),
   /* HTML */ `

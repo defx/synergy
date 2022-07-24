@@ -138,6 +138,7 @@ describe("actions", () => {
       () => ({
         update: {
           foo: (state, { event }) => {
+            console.log(event.constructor.name)
             stack.push(event)
             return state
           },
@@ -158,7 +159,7 @@ describe("actions", () => {
 
     $("article:nth-of-type(2) li").click() //salvador dali painter
 
-    assert.equal(stack[0] instanceof PointerEvent, true)
+    assert.equal(stack[0] instanceof MouseEvent, true)
     assert.equal(stack[0].target.nodeName, "LI")
   })
 

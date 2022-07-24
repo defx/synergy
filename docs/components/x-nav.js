@@ -12,9 +12,15 @@ partial(
           </ul>
         </li>
         <li>
-          Essentials
+          Learn by Example
           <ul>
-            <li><a href="/reactivity">Reactivity</a></li>
+            <li><a href="/my-counter">my-counter</a></li>
+            <li><a href="/simple-clock">simple-clock</a></li>
+          </ul>
+        </li>
+        <li>
+          Reference
+          <ul>
             <li><a href="/template-syntax">Template syntax</a></li>
             <li><a href="/repeated-blocks">Repeated blocks</a></li>
             <li><a href="/events">Events</a></li>

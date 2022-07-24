@@ -237,6 +237,7 @@ export const render = (
     return {
       bind(v) {
         let s = createSubscription[v.type](v, { getState, dispatch })
+
         o.subscribe(s.handler)
         return s
       },
@@ -260,20 +261,20 @@ export const render = (
       let pickupNode
 
       switch (node.nodeType) {
-        case node.TEXT_NODE: {
-          let value = node.textContent
-          if (hasMustache(value)) {
-            x.push({
-              type: TEXT,
-              value: value.trim(), //@todo?
-            })
-          }
-          break
-        }
         case node.ELEMENT_NODE: {
           if (node.nodeName in partials) {
             node.innerHTML = partials[node.nodeName]
             break
+          }
+
+          if (node.children.length === 0) {
+            let value = node.textContent
+            if (hasMustache(value)) {
+              x.push({
+                type: TEXT,
+                value: value.trim(),
+              })
+            }
           }
 
           let each = parseEach(node)
@@ -357,7 +358,9 @@ export const render = (
           }
         }
       }
-      if (x.length) map[index] = x
+      if (x.length) {
+        map[index] = x
+      }
       index++
       return pickupNode
     })
@@ -379,6 +382,7 @@ export const render = (
     return (node) => {
       let k = index
       let p
+
       if (k in bMap) {
         bMap[k].forEach((v) => {
           let x = bind({

@@ -12,6 +12,8 @@ export const isWhitespace = (node) => {
 
 export const walk = (node, callback, deep = true) => {
   if (!node) return
+  // if (node.matches?.(`script[type="application/synergy"]`))
+  //   return walk(node.nextSibling, callback, deep)
   if (!isWhitespace(node)) {
     let v = callback(node)
     if (v === false) return
@@ -141,4 +143,12 @@ export function getDataScript(node) {
   return node.querySelector(
     `script[type="application/synergy"][id="${node.nodeName}"]`
   )
+}
+
+export function createDataScript(node) {
+  let ds = document.createElement("script")
+  ds.setAttribute("type", "application/synergy")
+  ds.setAttribute("id", node.nodeName)
+  node.append(ds)
+  return ds
 }
