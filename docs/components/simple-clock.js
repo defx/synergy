@@ -15,7 +15,6 @@ define(
         },
       },
       connectedCallback: ({ dispatch, getState }) => {
-        console.log("connected", getState())
         t = setInterval(() => {
           dispatch({
             type: "setTime",
@@ -24,7 +23,6 @@ define(
         }, 100)
       },
       disconnectedCallback: () => {
-        console.log("disconnected")
         clearInterval(t)
       },
     }

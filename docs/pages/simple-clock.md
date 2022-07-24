@@ -7,20 +7,18 @@
 
 <simple-clock></simple-clock>
 
-In this example we're going to create a custom element that displays the current time. We need a way to setup a scheduled event once the element is mounted to the DOM, and we will also need a way to programatically update state whenever that event fires, so let's take a look at the `connectedCallback` lifecycle event.
+In this example we're going to create a custom element that displays the current time. We need a way to setup a scheduled event once the element is mounted to the DOM, and we will also need a way to programatically update state whenever that event fires to keep our time value synchronised with the real world.
 
 `connectedCallback` is a lifecycle event that fires whenever the element is connected to the DOM...
-
-<!-- <simple-clock></simple-clock> -->
 
 ```js
 const factory = () => {
   return {
     update: {
-      setTime: (state, { payload }) => {
+      setTime: (state) => {
         return {
           ...state,
-          time: payload,
+          time: new Date().toLocaleTimeString(),
         }
       },
     },
@@ -28,7 +26,6 @@ const factory = () => {
       setInterval(() => {
         dispatch({
           type: "setTime",
-          payload: new Date().toLocaleTimeString(),
         })
       }, 100)
     },
@@ -40,9 +37,7 @@ const factory = () => {
 <p>Time: {{ time }}</p>
 ```
 
-In the above example we've created a `simple-clock` element that displays the current time. This is a great opportunity to use the `connectedCallback` so that we can schedule state updates to keep the time value synchronised with the real world.
-
-In order to _programatically_ update state we can use the `dispatch` function provided within the first argument to `connectedCallback`. The `dispatch` function accepts a single argument which is an object that must include a `type` property to identify the update function that we want to call. We can also optionally add the `payload` property if we have some data that we wish to provide to our update function. In this case, we make use of `payload` to provide the latest time value.
+In order to _programatically_ update state we can use the `dispatch` function provided within the first argument to `connectedCallback`. The `dispatch` function accepts a single argument which is an object that must include a `type` property to identify the update function that we want to call.
 
 ## disconnectedCallback
 
