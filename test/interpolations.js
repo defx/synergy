@@ -436,4 +436,24 @@ describe("interpolations", () => {
       assert.equal(node.getAttribute("foo"), state.foo)
     })
   })
+
+  it("supports top-level text bindings", () => {
+    define(
+      "x-bind",
+      () => ({
+        state: {
+          one: "foo",
+          two: "bar",
+          three: "baz",
+        },
+      }),
+      /* html */ `{{ one }}/<p>{{ two }}</p>/{{ three }}`
+    )
+
+    mount(/* html */ `<x-bind></x-bind>`)
+
+    const innerText = $(`x-bind`).innerText.replace(/\n+/g, "")
+
+    assert.equal(innerText, "foo/bar/baz")
+  })
 })

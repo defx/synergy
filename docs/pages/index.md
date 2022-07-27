@@ -46,23 +46,8 @@ The above example demonstrates the three core features of Synergy:
 - **Reactive updates:** Synergy efficiently batches
   updates to your HTML whenever your state changes
 
-## High-level view
+## Getting started
 
-The Synergy `define` function allows you to register a custom element on the page. Once defined, you can use your custom element like any other HTML tag.
-
-The `define` function takes up to four arguments:
-
-- `tagName` (required) [string] - Name for the new Custom Element. As per the Custom Element
-  spec, an elements name must include a hyphen to differentiate from standard built-in elements.
-
-- `factory` (required) [function] - A factory function that will be called whenever a new instance of your Custom Element is created. It will be provided with one argument which is the Custom Element node itself. The factory function returns an Object (or a Promise that resolves to an Object) that defines the behaviour of the element.
-
-- `template` (required) [HTMLTemplateElement | string] - The HTML for your view.
-
-- `styles` (optional) [string] - The CSS for your custom element. The CSS will be transformed to apply lightweight scoping before being added to the head of the document.
-
-As you can see, the first, third, and fourth arguments are just strings. The third argument is standard HTML, and the fourth argument is standard CSS. One of the great things about Synergy is that it allows you to build UI using 100% standard, spec-compliant HTML, CSS, and JavaScript.
-
-In the next section we will look closer at our simple element example to understand more about how Synergys reactivity system works and what you can do with it.
+If you're new to Synergy then the best place to start is the Learn by Example section. It will introduce you to all of the features of Synergy by showing different examples that will help you to understand and learn quickly. Once you've worked your way through the examples there is also a Reference section for you to dip into whenever you need to quickly look up any particular detail.
 
 </x-app>

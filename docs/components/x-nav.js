@@ -1,41 +1,26 @@
-import { partial } from "../synergy.js"
+import { define } from "../synergy.js"
+import { navigation } from "../data.js"
 
-partial(
+define(
   "x-nav",
+  () => {
+    return {
+      state: { navigation },
+    }
+  },
   /* HTML */ `
     <nav>
       <ul>
-        <li>
-          Getting Started
-          <ul>
-            <li><a href="/">Introduction</a></li>
-          </ul>
-        </li>
-        <li>
-          Learn by Example
-          <ul>
-            <li><a href="/my-counter">my-counter</a></li>
-            <li><a href="/simple-clock">simple-clock</a></li>
-          </ul>
-        </li>
-        <li>
-          Reference
-          <ul>
-            <li><a href="/template-syntax">Template syntax</a></li>
-            <li><a href="/repeated-blocks">Repeated blocks</a></li>
-            <li><a href="/events">Events</a></li>
-            <li><a href="/styles">Styles</a></li>
-            <li><a href="/forms">Forms</a></li>
-            <li><a href="/slots">Slots</a></li>
-            <li><a href="/api">API</a></li>
-          </ul>
-        </li>
-        <li>
-          Advanced Topics
-          <ul>
-            <li><a href="/best-practices">Best practices</a></li>
-            <li><a href="/hydration">Hydration</a></li>
-          </ul>
+        <li :each="navigation">
+          <a :if="!items" :href>{{ title }}</a>
+          <template :if="items">
+            {{ title }}
+            <ul>
+              <li :each="items">
+                <a :href>{{ title }}</a>
+              </li>
+            </ul>
+          </template>
         </li>
       </ul>
     </nav>
