@@ -261,20 +261,20 @@ export const render = (
       let pickupNode
 
       switch (node.nodeType) {
+        case node.TEXT_NODE: {
+          let value = node.textContent
+          if (hasMustache(value)) {
+            x.push({
+              type: TEXT,
+              value: value.trim(),
+            })
+          }
+          break
+        }
         case node.ELEMENT_NODE: {
           if (node.nodeName in partials) {
             node.innerHTML = partials[node.nodeName]
             break
-          }
-
-          if (node.children.length === 0) {
-            let value = node.textContent
-            if (hasMustache(value)) {
-              x.push({
-                type: TEXT,
-                value: value.trim(),
-              })
-            }
           }
 
           let each = parseEach(node)
