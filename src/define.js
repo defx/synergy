@@ -25,117 +25,126 @@ export const define = (name, factory, template, css) => {
     name,
     class extends HTMLElement {
       async connectedCallback() {
-        let config = factory(this)
+        if (!this.initialised) {
+          let config = factory(this)
 
-        if (config instanceof Promise) config = await config
+          if (config instanceof Promise) config = await config
 
-        let { subscribe, shadow, observe = [] } = config
+          let { subscribe, shadow, observe = [] } = config
 
-        this.connectedCallback = config.connectedCallback
-        this.disconnectedCallback = config.disconnectedCallback
+          this.connectedCallback = config.connectedCallback
+          this.disconnectedCallback = config.disconnectedCallback
 
-        const ds = getDataScript(this)
+          const ds = getDataScript(this)
 
-        const { dispatch, getState, onUpdate, flush } = configure(
-          {
-            ...config,
-            state: ds ? JSON.parse(ds.innerText) : config.state,
-          },
-          this
-        )
-
-        let state = getState()
-
-        let observedAttributes = observe.map(pascalToKebab)
-
-        let sa = this.setAttribute
-        this.setAttribute = (k, v) => {
-          if (observedAttributes.includes(k)) {
-            let { name, value } = attributeToProp(k, v)
-
-            dispatch({
-              type: "SET",
-              payload: { name, value },
-            })
-          }
-          sa.apply(this, [k, v])
-        }
-        let ra = this.removeAttribute
-        this.removeAttribute = (k) => {
-          if (observedAttributes.includes(k)) {
-            let { name, value } = attributeToProp(k, null)
-            dispatch({
-              type: "SET",
-              payload: { name, value },
-            })
-          }
-          ra.apply(this, [k])
-        }
-
-        observedAttributes.forEach((name) => {
-          let property = attributeToProp(name).name
-          let value
-
-          if (this.hasAttribute(name)) {
-            value = this.getAttribute(name)
-          } else {
-            value = this[property] || state[property]
-          }
-
-          Object.defineProperty(this, property, {
-            get() {
-              return getState()[property]
+          const { dispatch, getState, onUpdate, flush } = configure(
+            {
+              ...config,
+              state: ds ? JSON.parse(ds.innerText) : config.state,
             },
-            set(v) {
+            this
+          )
+
+          this.store = { dispatch, getState }
+
+          let state = getState()
+
+          let observedAttributes = observe.map(pascalToKebab)
+
+          let sa = this.setAttribute
+          this.setAttribute = (k, v) => {
+            if (observedAttributes.includes(k)) {
+              let { name, value } = attributeToProp(k, v)
+
               dispatch({
                 type: "SET",
-                payload: { name: property, value: v },
+                payload: { name, value },
               })
-              if (isPrimitive(v)) {
-                applyAttribute(this, property, v)
-              }
-            },
+            }
+            sa.apply(this, [k, v])
+          }
+          let ra = this.removeAttribute
+          this.removeAttribute = (k) => {
+            if (observedAttributes.includes(k)) {
+              let { name, value } = attributeToProp(k, null)
+              dispatch({
+                type: "SET",
+                payload: { name, value },
+              })
+            }
+            ra.apply(this, [k])
+          }
+
+          observedAttributes.forEach((name) => {
+            let property = attributeToProp(name).name
+            let value
+
+            if (this.hasAttribute(name)) {
+              value = this.getAttribute(name)
+            } else {
+              value = this[property] || state[property]
+            }
+
+            Object.defineProperty(this, property, {
+              get() {
+                return getState()[property]
+              },
+              set(v) {
+                dispatch({
+                  type: "SET",
+                  payload: { name: property, value: v },
+                })
+                if (isPrimitive(v)) {
+                  applyAttribute(this, property, v)
+                }
+              },
+            })
+
+            this[property] = value
           })
 
-          this[property] = value
-        })
+          let beforeMountCallback
 
-        let beforeMountCallback
+          if (shadow) {
+            this.attachShadow({
+              mode: shadow,
+            })
+          } else {
+            beforeMountCallback = (frag) => mergeSlots(this, frag)
+          }
 
-        if (shadow) {
-          this.attachShadow({
-            mode: shadow,
-          })
-        } else {
-          beforeMountCallback = (frag) => mergeSlots(this, frag)
+          onUpdate(
+            render(
+              this.shadowRoot || this,
+              { getState, dispatch },
+              template,
+              () => {
+                const state = getState()
+
+                serialise(this, state)
+                observe.forEach((k) => {
+                  let v = state[k]
+                  if (isPrimitive(v)) applyAttribute(this, k, v)
+                })
+                subscribe?.(getState())
+                flush()
+              },
+              beforeMountCallback
+            )
+          )
+
+          if (!ds) serialise(this, getState())
         }
 
-        onUpdate(
-          render(
-            this.shadowRoot || this,
-            { getState, dispatch },
-            template,
-            () => {
-              const state = getState()
-
-              serialise(this, state)
-              observe.forEach((k) => {
-                let v = state[k]
-                if (isPrimitive(v)) applyAttribute(this, k, v)
-              })
-              subscribe?.(getState())
-              flush()
-            },
-            beforeMountCallback
-          )
-        )
-
-        if (!ds) serialise(this, getState())
-
-        this.connectedCallback?.({ dispatch, getState })
+        if (!this._C) this.connectedCallback?.(this.store)
+        this._C = false
       }
       disconnectedCallback() {
-        this.disconnectedCallback?.()
+        this._C = true
+        requestAnimationFrame(() => {
+          if (this._C) this.disconnectedCallback?.()
+          this._C = false
+        })
       }
     }
   )
