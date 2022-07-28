@@ -178,7 +178,7 @@ describe("define", () => {
     assert.equal($(`${name}`).getAttribute("aria-hidden"), "true")
   })
 
-  it("forwards lifecycle events", () => {
+  it("forwards lifecycle events", async () => {
     let name = createName()
 
     let connected = false
@@ -200,6 +200,12 @@ describe("define", () => {
     assert.ok(connected)
     assert.notOk(disconnected)
     $(name).remove()
+    /*
+    
+    we need to wait here as synergy will avoid triggering lifecycle events if element is reconnected within the same frame (as can happen during a manual content slot)
+    
+    */
+    await nextFrame()
     assert.ok(disconnected)
   })
 

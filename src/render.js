@@ -252,6 +252,16 @@ export const render = (
 
   let blockCount = 0
 
+  function compareAttributes(a, b) {
+    if (b.name === ":if") {
+      return -1
+    }
+    if (a.name === ":if") {
+      return 1
+    }
+    return 0
+  }
+
   const parse = (frag) => {
     let index = 0
     let map = {}
@@ -304,7 +314,7 @@ export const render = (
             break
           }
 
-          let attrs = node.attributes
+          let attrs = [...node.attributes].sort(compareAttributes)
           let i = attrs.length
           while (i--) {
             let { name, value } = attrs[i]

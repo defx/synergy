@@ -4,6 +4,7 @@ import { define } from "../synergy.js"
 
 import "./x-header.js"
 import "./x-nav.js"
+import "./x-pager.js"
 
 define(
   "x-app",
@@ -26,8 +27,8 @@ define(
       <aside><x-nav></x-nav></aside>
       <main>
         <slot></slot>
+        <x-pager></x-pager>
       </main>
-      <x-foo></x-foo>
     </span>
   `,
   /* CSS */ `

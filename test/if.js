@@ -80,4 +80,42 @@ describe("if blocks", () => {
     assert.ok($("button#logout"))
     assert.notOk($("button#login"))
   })
+  it("binds other attributes on host", () => {
+    const name = createName()
+    const href = "https://bbc.co.uk/"
+    define(
+      name,
+      () => {
+        return {
+          state: {
+            show: true,
+            href,
+          },
+        }
+      },
+      /* HTML */ ` <a :if="show" :href="href">ok</a> `
+    )
+    mount(`<${name}></${name}>`)
+
+    assert.equal($(`${name} a`).href, href)
+  })
+  it("binds other attributes on host (reverse order)", () => {
+    const name = createName()
+    const href = "https://bbc.co.uk/"
+    define(
+      name,
+      () => {
+        return {
+          state: {
+            show: true,
+            href,
+          },
+        }
+      },
+      /* HTML */ ` <a :href="href" :if="show">ok</a> `
+    )
+    mount(`<${name}></${name}>`)
+
+    assert.equal($(`${name} a`).href, href)
+  })
 })
