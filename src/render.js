@@ -212,7 +212,7 @@ export const render = (
           initialiseBlock(block[0], i, k, last(block).nextSibling)
         })
 
-        pickupNode = last(last(blocks)).nextSibling
+        pickupNode = last(last(blocks))?.nextSibling
       }
 
       return {

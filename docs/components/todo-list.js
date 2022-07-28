@@ -20,18 +20,17 @@ define(
             }),
           }
         },
-        removeTodo: (state, { scope }) => {
+        removeTodo: (state, { scope: { todo } }) => {
           return {
             ...state,
-            todos: state.todos.filter(({ title }) => title !== scope.title),
+            todos: state.todos.filter(({ title }) => title !== todo.title),
           }
         },
       },
       derive: {
-        itemsLeftText: ({ todos }) => {
-          const incomplete = todos.filter(({ completed }) => !completed)
-          if (incomplete.length === 1) return `1 item left`
-          return `${incomplete.length} items left`
+        itemsLeft: ({ todos }) => {
+          const n = todos.filter(({ completed }) => !completed).length
+          return `${n} ${n === 1 ? "item" : "items"} left`
         },
       },
     }
@@ -39,13 +38,13 @@ define(
   /* html */ `
         <input :name="newTodo" :onkeyup="addTodo" placeholder="What needs to be done?">
         <ul>
-            <li :each="todos">
-                <input type="checkbox" :name="completed">
-                {{ title }}
+            <li :each="todo in todos">
+                <input type="checkbox" :name="todo.completed">
+                {{ todo.title }}
                 <button :onclick="removeTodo">[x]</button>
             </li>
         </ul>
-        <p>{{ itemsLeftText }}</p>
+        <p>{{ itemsLeft }}</p>
 
 `
 )
