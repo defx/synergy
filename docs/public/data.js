@@ -19,6 +19,10 @@ export const navigation = [
         title: "simple-clock",
         href: "/simple-clock",
       },
+      {
+        title: "todo-list",
+        href: "/todo-list",
+      },
     ],
   },
   {

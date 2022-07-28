@@ -1,5 +1,3 @@
-import hljs from "https://unpkg.com/@highlightjs/cdn-assets@11.5.1/es/highlight.min.js"
-
 import { define } from "../synergy.js"
 
 import "./x-header.js"
@@ -8,11 +6,7 @@ import "./x-pager.js"
 
 define(
   "x-app",
-  () => ({
-    connectedCallback() {
-      // hljs.highlightAll()
-    },
-  }),
+  () => ({}),
   /* HTML */ `
     <link
       rel="stylesheet"
