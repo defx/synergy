@@ -55,3 +55,14 @@ export const navigation = [
     ],
   },
 ]
+
+function flatten(items) {
+  return items.reduce((acc, item) => {
+    if (item.items) {
+      acc.push(...item.items.map((v) => ({ ...v, category: item.title })))
+    }
+    return acc
+  }, [])
+}
+
+export const flatNav = flatten(navigation)

@@ -1,19 +1,10 @@
 import { define } from "../synergy.js"
-import { navigation } from "../data.js"
-
-function flatten(items) {
-  return items.reduce((acc, item) => {
-    if (item.items) {
-      acc.push(...item.items.map((v) => ({ ...v, category: item.title })))
-    }
-    return acc
-  }, [])
-}
+import { flatNav } from "../data.js"
 
 define(
   "x-pager",
   () => {
-    const items = flatten(navigation)
+    const items = flatNav
     const { pathname } = location
     const index = items.findIndex(({ href }) => href === pathname)
 
@@ -58,7 +49,6 @@ define(
    svg {
     stroke: currentColor;
     stroke-width: 1px;
-    margin-right: 0 1rem;
     margin: auto 0;
   }
   
