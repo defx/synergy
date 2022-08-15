@@ -17,13 +17,13 @@ define(
     />
     <x-header> </x-header>
 
-    <span class="wrapper">
+    <div class="wrapper">
       <aside><x-nav></x-nav></aside>
       <main>
         <slot></slot>
         <x-pager></x-pager>
       </main>
-    </span>
+    </div>
   `,
   /* CSS */ `
     * {
