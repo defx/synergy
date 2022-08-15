@@ -1,7 +1,10 @@
+ <head>
+  <title>hello world!</title>
+ </head>
  <x-app>
       <x-hero></x-hero>
 
-# What is Synergy?
+## What is Synergy?
 
 Synergy is a JavaScript framework for building user interfaces. It
 combines declarative data and event binding with functional state
