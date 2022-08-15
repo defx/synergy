@@ -138,18 +138,18 @@ export const render = (
             state,
             getParts(wrapToken(expression))
           )
-          let isMounted = node.getAttribute("m") === "1"
+          let isMounted = node.dataset.mounted === "1"
 
           if (shouldMount && !isMounted) {
             // MOUNT
             let frag = fragmentFromTemplate(node)
             walk(frag.firstChild, bindAll(map, null, context))
             node.after(frag)
-            node.setAttribute("m", "1")
+            node.dataset.mounted = "1"
           } else if (!shouldMount && isMounted) {
             // UNMOUNT
             node.nextSibling.remove()
-            node.removeAttribute("m")
+            delete node.dataset.mounted
           }
         },
         // pickupNode,

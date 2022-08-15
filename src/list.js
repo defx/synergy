@@ -52,7 +52,7 @@ const getBlockFragments = (template, numBlocks) => {
 }
 
 export const getBlocks = (template) => {
-  let numBlocks = template.getAttribute("length")
+  let numBlocks = +(template.dataset.length || 0)
   let blockSize = getBlockSize(template)
   let r = []
   let node = template
@@ -82,7 +82,7 @@ function lastChild(v) {
 }
 
 export const updateList = (template, delta, entries, createListItem) => {
-  let n = +(template.getAttribute("length") || 0)
+  let n = +(template.dataset.length || 0)
 
   const unchanged = delta.length === n && delta.every((a, b) => a == b)
 
@@ -101,5 +101,5 @@ export const updateList = (template, delta, entries, createListItem) => {
     t = x
   })
 
-  template.setAttribute("length", delta.length)
+  template.dataset.length = delta.length
 }
