@@ -10,7 +10,7 @@ partial(
         <x-logo></x-logo>
         <span>synergy<span class="light">.js</span></span>
       </a>
-      <nav role="navigation">
+      <nav>
         <a href="/docs">docs</a>
         <a
           href="https://github.com/defx/synergy"
