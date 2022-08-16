@@ -1,3 +1,6 @@
+<head>
+  <title>Learn by example - Todo List | Synergy JS</title>
+</head>
 <x-app>
 
 # todo-list

@@ -15,8 +15,7 @@ define(
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <x-header> </x-header>
-
+    <x-header></x-header>
     <div class="wrapper">
       <aside><x-nav></x-nav></aside>
       <main>

@@ -1,7 +1,7 @@
+<head>
+  <title>Learn by example - Simple Clock | Synergy JS</title>
+</head>
 <x-app>
-  <head>
-    <title>Learn by example - Simple Clock | Synergy JS</title>
-  </head>
 
 # simple-clock
 
