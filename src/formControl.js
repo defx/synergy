@@ -29,8 +29,11 @@ export const updateFormControl = (node, value) => {
       }
       break
     default:
-      if (node.value !== value)
+      if (node.value !== value) {
+        if (!isNaN(value) && node.value.slice(-1) === ".") break
         node.setAttribute("value", (node.value = value ?? ""))
+      }
+
       break
   }
 }
