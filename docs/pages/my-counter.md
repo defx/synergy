@@ -7,7 +7,7 @@
 
 <my-counter></my-counter>
 
-A key feature of any user interface (UI) is the ability to update its state in response to different events. In Synergy, this process is defined by the object returned from your custom elements factory function.
+A key feature of any user interface is the ability to update its state in response to different events. In Synergy, this process is defined by the object returned from your custom elements factory function.
 
 Lets take another look at the `my-counter` example from the home page:
 
