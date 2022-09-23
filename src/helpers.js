@@ -65,7 +65,7 @@ export const setValueAtPath = (path, value, target) => {
 export const fragmentFromTemplate = (v) => {
   if (typeof v === "string") {
     if (v.charAt(0) === "#") {
-      v = document.getElementById(v)
+      v = document.querySelector(v)
     } else {
       let tpl = document.createElement("template")
       tpl.innerHTML = v.trim()
