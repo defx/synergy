@@ -24,7 +24,12 @@ function unique(arr) {
 }
 
 export function configure(
-  { update = {}, middleware = [], derive = {}, state: initialState = {} },
+  {
+    update = {},
+    middleware = [],
+    state: initialState = {},
+    getState: getStateWrapper = (v) => v,
+  },
   node
 ) {
   let subscribers = []
@@ -38,10 +43,7 @@ export function configure(
   )
 
   function updateState(o) {
-    state = { ...o }
-    for (let k in derive) {
-      state[k] = derive[k](o)
-    }
+    state = getStateWrapper({ ...o })
   }
 
   updateState(initialState)

@@ -55,11 +55,9 @@ type Model = {
     [actionName: string]: ActionHandler
   }
   /**
-   * Each property named here will be derived after each state update using its corresponding Derivation function.
+   * A custom wrapper around calls to getState, giving you the ability to define derived properties, for example
    */
-  derive?: {
-    [propertyName]: Derivation
-  }
+  getState?(state: State): State
   /**
    *  A debounced function that is called after every render cycle
    */

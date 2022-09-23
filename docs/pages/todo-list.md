@@ -10,6 +10,11 @@
 In this example we will learn some more features of Synergy by looking at how to create a simple todo list. Let's take a look at the code and then we talk about each section and how it works...
 
 ```js
+const itemsLeft = ({ todos }) => {
+  const n = todos.filter(({ completed }) => !completed).length
+  return `${n} ${n === 1 ? "item" : "items"} left`
+}
+
 const factory = () => {
   return {
     state: {
@@ -35,11 +40,11 @@ const factory = () => {
         }
       },
     },
-    derive: {
-      itemsLeft: ({ todos }) => {
-        const n = todos.filter(({ completed }) => !completed).length
-        return `${n} ${n === 1 ? "item" : "items"} left`
-      },
+    getState: (state) => {
+      return {
+        ...state,
+        itemsLeft: itemsLeft(state),
+      }
     },
   }
 }

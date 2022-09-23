@@ -27,11 +27,11 @@ define(
           }
         },
       },
-      derive: {
-        itemsLeft: ({ todos }) => {
-          const n = todos.filter(({ completed }) => !completed).length
-          return `${n} ${n === 1 ? "item" : "items"} left`
-        },
+      getState: (state) => {
+        return {
+          ...state,
+          itemsLeft: itemsLeft(state),
+        }
       },
     }
   },

@@ -66,6 +66,16 @@ export const derive = {
   },
 }
 
+export const getState = (state) => {
+  return {
+    ...state,
+    allDone: derive.allDone(state),
+    filteredTodos: derive.filteredTodos(state),
+    numCompleted: derive.numCompleted(state),
+    itemsLeft: derive.itemsLeft(state),
+  }
+}
+
 export const update = {
   toggleAll: (state, { event }) => {
     let allDone = event.target.checked
@@ -211,7 +221,7 @@ export const markup = html`
 export const factory = () => ({
   update,
   middleware,
-  derive,
   subscribe,
   state,
+  getState,
 })
