@@ -24,7 +24,8 @@ export function xprefixSelectors(prefix, css) {
         w.charAt(0) !== ":" &&
         w.charAt(0) !== "*" &&
         w !== "html" &&
-        w !== "body"
+        w !== "body" &&
+        w.slice(0, 2) !== "/*"
       ) {
         output += prefix + " "
       }
