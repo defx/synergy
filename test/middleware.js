@@ -63,9 +63,6 @@ describe("middleware", () => {
 
   it("allows promise chaining after the next update following an action", () => {
     let name = createName()
-    let state = {
-      hidden: true,
-    }
     define(
       name,
       () => ({

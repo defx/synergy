@@ -59,11 +59,19 @@ declare namespace synergy {
     (state: State): any
   }
 
+  type PromiseLike = {
+    /**
+     *
+     * Returns a Promise that will be resolved after the next UI update
+     */
+    then(fn: Function): Promise
+  }
+
   type Next = {
     /**
      * Passes the action to the next handler in the stack
      */
-    (action: ActionInput): void
+    (action: ActionInput): PromiseLike
   }
 
   type Middleware = {
