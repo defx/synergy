@@ -52,24 +52,16 @@ export const subscribe = (state) => {
   storage.set("todos", state.todos)
 }
 
-export const derive = {
-  allDone: ({ todos }) => todos.every((todo) => todo.completed),
-  filteredTodos: ({ todos, activeFilter }) => filters[activeFilter](todos),
-  numCompleted: ({ todos }) =>
-    todos.filter(({ completed }) => completed).length,
-  itemsLeft: ({ todos }) => {
-    const n = todos.filter(({ completed }) => !completed).length
-    return `${n} item${n === 1 ? "" : "s"} left`
-  },
-}
-
 export const getState = (state) => {
+  const { todos, activeFilter } = state
+  const n = todos.filter(({ completed }) => !completed).length
+
   return {
     ...state,
-    allDone: derive.allDone(state),
-    filteredTodos: derive.filteredTodos(state),
-    numCompleted: derive.numCompleted(state),
-    itemsLeft: derive.itemsLeft(state),
+    allDone: todos.every((todo) => todo.completed),
+    filteredTodos: filters[activeFilter](todos),
+    numCompleted: todos.filter(({ completed }) => completed).length,
+    itemsLeft: `${n} item${n === 1 ? "" : "s"} left`,
   }
 }
 
