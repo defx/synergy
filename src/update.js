@@ -83,43 +83,35 @@ export function configure(
       let next = (middleware) => (action) => {
         let mw = middleware[action.type]
 
-        if (mw) {
-          if (typeof mw === "function") {
-            mw(
-              action,
-              next({
-                ...middleware,
-                [action.type]: null,
-              }),
-              {
-                getState,
-                dispatch,
-                afterNextRender: subscribe,
-              }
-            )
-            return
-          }
-          if (Array.isArray(mw) && mw.length) {
-            let fn = mw[0]
-            fn(
-              action,
-              next({
-                ...middleware,
-                [action.type]: mw.slice(1),
-              }),
-              {
-                getState,
-                dispatch,
-                afterNextRender: subscribe,
-              }
-            )
-            return
-          }
+        if (typeof mw === "function") {
+          mw(
+            action,
+            next({
+              ...middleware,
+              [action.type]: null,
+            }),
+            {
+              getState,
+              dispatch,
+            }
+          )
+          return
         }
 
         if (action.type in update) {
           updateState(update[action.type](getState(), action))
           updatedCallback()
+        }
+
+        // { then } returns a Promise that will resolve after the next update
+        return {
+          then: (fn) =>
+            new Promise((resolve) => {
+              subscribe(() => {
+                fn()
+                resolve()
+              })
+            }),
         }
       }
 

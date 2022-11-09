@@ -43,11 +43,10 @@ export const middleware = {
       }
     }
   },
-  startEdit: (action, next, { afterNextRender }) => {
-    afterNextRender(() =>
+  startEdit: (action, next) => {
+    next(action).then(() =>
       action.event.target.parentNode.querySelector(".edit").focus()
     )
-    next(action)
   },
 }
 
