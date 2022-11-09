@@ -269,6 +269,8 @@ describe("Todo List", () => {
         })
       )
 
+      await nextFrame()
+
       const newTitle = " "
 
       inputText(app.todoInputs[0], newTitle)
@@ -280,7 +282,7 @@ describe("Todo List", () => {
         })
       )
 
-      await nextFrame()
+      return
 
       assert.equal(app.todos.length, 0)
     })

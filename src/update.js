@@ -48,6 +48,8 @@ export function configure(
 
   updateState(initialState)
 
+  const refs = {}
+
   function getState() {
     return { ...state }
   }
@@ -93,6 +95,7 @@ export function configure(
             {
               getState,
               dispatch,
+              refs,
             }
           )
           return
@@ -103,7 +106,6 @@ export function configure(
           updatedCallback()
         }
 
-        // { then } returns a Promise that will resolve after the next update
         return {
           then: (fn) =>
             new Promise((resolve) => {
@@ -132,5 +134,6 @@ export function configure(
     getState,
     onUpdate,
     flush,
+    refs,
   }
 }

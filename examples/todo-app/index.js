@@ -43,10 +43,8 @@ export const middleware = {
       }
     }
   },
-  startEdit: (action, next) => {
-    next(action).then(() =>
-      action.event.target.parentNode.querySelector(".edit").focus()
-    )
+  startEdit: (action, next, { refs }) => {
+    next(action).then(() => refs.titleEditInput?.focus())
   },
 }
 
@@ -194,6 +192,7 @@ export const markup = html`
           :name="titleEdit"
           :onblur="saveEdit"
           :onkeydown="keydown"
+          :ref="titleEditInput"
         />
         <button class="delete" :onclick="deleteTodo">[delete]</button>
       </li>

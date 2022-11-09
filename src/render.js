@@ -26,7 +26,7 @@ import { partials } from "./partial.js"
 
 export const render = (
   target,
-  { getState, dispatch },
+  { getState, dispatch, refs },
   template,
   updatedCallback,
   beforeMountCallback
@@ -342,6 +342,14 @@ export const render = (
                 type: CONDITIONAL,
                 expression: value,
                 map: parse(node.content?.firstChild || node.firstChild),
+              })
+            } else if (name === ":ref") {
+              node.removeAttribute(name)
+              node.setAttribute("ref", value)
+              Object.defineProperty(refs, value, {
+                get() {
+                  return document.querySelector(`[ref="${value}"]`)
+                },
               })
             } else if (name.startsWith(":on")) {
               node.removeAttribute(name)

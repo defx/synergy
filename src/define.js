@@ -37,7 +37,7 @@ export const define = (name, factory, template, css) => {
 
           const ds = getDataScript(this)
 
-          const { dispatch, getState, onUpdate, flush } = configure(
+          const { dispatch, getState, onUpdate, flush, refs } = configure(
             {
               ...config,
               state: ds ? JSON.parse(ds.innerText) : config.state,
@@ -116,7 +116,7 @@ export const define = (name, factory, template, css) => {
           onUpdate(
             render(
               this.shadowRoot || this,
-              { getState, dispatch },
+              { getState, dispatch, refs },
               template,
               () => {
                 const state = getState()
