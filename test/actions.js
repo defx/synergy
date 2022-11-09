@@ -138,7 +138,6 @@ describe("actions", () => {
       () => ({
         update: {
           foo: (state, { event }) => {
-            console.log(event.constructor.name)
             stack.push(event)
             return state
           },
