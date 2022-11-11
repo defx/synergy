@@ -37,7 +37,7 @@ export const define = (name, factory, template, css) => {
 
           const ds = getDataScript(this)
 
-          const { dispatch, getState, onUpdate, flush, refs } = configure(
+          const { dispatch, getState, onChange, flush, refs } = configure(
             {
               ...config,
               state: ds ? JSON.parse(ds.innerText) : config.state,
@@ -113,7 +113,7 @@ export const define = (name, factory, template, css) => {
             beforeMountCallback = (frag) => mergeSlots(this, frag)
           }
 
-          onUpdate(
+          onChange(
             render(
               this.shadowRoot || this,
               { getState, dispatch, refs },

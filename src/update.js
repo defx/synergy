@@ -27,11 +27,11 @@ export function configure({
 }) {
   let subscribers = []
   let state
-  let updatedCallback = () => {}
+  let onChangeCallback = () => {}
 
   function updateState(o) {
     state = getStateWrapper({ ...o })
-    updatedCallback()
+    onChangeCallback()
   }
 
   updateState(initialState)
@@ -51,8 +51,8 @@ export function configure({
     subscribers = []
   }
 
-  function onUpdate(fn) {
-    updatedCallback = fn
+  function onChange(fn) {
+    onChangeCallback = fn
   }
 
   function dispatch(action) {
@@ -93,7 +93,7 @@ export function configure({
   return {
     dispatch,
     getState,
-    onUpdate,
+    onChange,
     flush,
     refs,
   }
