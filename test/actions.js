@@ -161,38 +161,4 @@ describe("actions", () => {
     assert.equal(stack[0] instanceof MouseEvent, true)
     assert.equal(stack[0].target.nodeName, "LI")
   })
-
-  it("allows child components to invoke dollar-prefixed actions up the tree", () => {
-    let ancestor = createName()
-
-    define(
-      ancestor,
-      () => ({
-        update: {
-          $sayHi: (state) => ({
-            ...state,
-            greet: true,
-          }),
-        },
-        state: {
-          greet: false,
-        },
-      }),
-      `<p :hidden="!greet">hello!</p>`
-    )
-
-    let child = createName()
-
-    define(child, () => ({}), `<button :onclick="$sayHi">say hi</button>`)
-
-    mount(`
-        <${ancestor}>
-          <${child}></${child}>
-        </${ancestor}>
-      `)
-
-    $(`${child} button`).click()
-
-    assert.equal($(`${ancestor} p`).hidden, false)
-  })
 })

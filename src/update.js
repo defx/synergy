@@ -19,28 +19,15 @@ function systemReducer(state, action) {
   }
 }
 
-function unique(arr) {
-  return [...new Set(arr)]
-}
-
-export function configure(
-  {
-    update = {},
-    middleware = [],
-    state: initialState = {},
-    getState: getStateWrapper = (v) => v,
-  },
-  node
-) {
+export function configure({
+  update = {},
+  middleware = [],
+  state: initialState = {},
+  getState: getStateWrapper = (v) => v,
+}) {
   let subscribers = []
   let state
   let updatedCallback = () => {}
-
-  let dollarKeys = unique(
-    Object.keys(update)
-      .concat(Object.keys(middleware))
-      .filter((v) => v.startsWith("$"))
-  )
 
   function updateState(o) {
     state = getStateWrapper({ ...o })
@@ -131,12 +118,6 @@ export function configure(
 
       next(middleware)(action)
     }
-  }
-
-  for (let actionName of dollarKeys) {
-    node.addEventListener(actionName, ({ detail }) => {
-      dispatch(detail)
-    })
   }
 
   return {
