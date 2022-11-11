@@ -58,53 +58,15 @@ export function configure({
   function dispatch(action) {
     const { type } = action
 
-    if (type.startsWith("$")) {
-      node.parentNode.dispatchEvent(
-        new CustomEvent(type, {
-          detail: action,
-          bubbles: true,
-        })
-      )
-    }
-
     if (type === "SET" || type === "MERGE") {
       updateState(systemReducer(getState(), action))
     } else {
-      // let mw = middleware[action.type]
+      let mw = middleware[action.type]
 
-      // if (typeof mw === "function") {
-      //   mw(action)
-      // }
-
-      /* 
-      
-      the current implementatiom supports being able to pass to another middleware with a different name, but is that something that we really need to support??
-      
-      */
-
-      let next = (middleware) => (action) => {
-        let mw = middleware[action.type]
-
-        if (typeof mw === "function") {
-          mw(
-            action,
-            next({
-              ...middleware,
-              [action.type]: null,
-            }),
-            {
-              getState,
-              dispatch,
-              refs,
-            }
-          )
-          return
-        }
-
+      const done = (action) => {
         if (action.type in update) {
           updateState(update[action.type](getState(), action))
         }
-
         return {
           then: (fn) =>
             new Promise((resolve) => {
@@ -116,7 +78,15 @@ export function configure({
         }
       }
 
-      next(middleware)(action)
+      if (typeof mw === "function") {
+        mw(action, done, {
+          getState,
+          dispatch,
+          refs,
+        })
+      } else {
+        done(action)
+      }
     }
   }
 
