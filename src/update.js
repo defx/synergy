@@ -46,7 +46,7 @@ export function configure({
     subscribers.push(fn)
   }
 
-  function nextTick() {
+  function updated() {
     subscribers.forEach((fn) => fn())
     subscribers = []
   }
@@ -61,8 +61,6 @@ export function configure({
     if (type === "SET" || type === "MERGE") {
       updateState(systemReducer(getState(), action))
     } else {
-      let mw = middleware[action.type]
-
       const done = (action) => {
         if (action.type in update) {
           updateState(update[action.type](getState(), action))
@@ -78,23 +76,19 @@ export function configure({
         }
       }
 
-      if (typeof mw === "function") {
-        mw(action, done, {
-          getState,
-          dispatch,
-          refs,
-        })
-      } else {
-        done(action)
-      }
+      middleware[action.type]?.(action, done, {
+        getState,
+        dispatch,
+        refs,
+      }) || done(action)
     }
   }
 
   return {
     dispatch, // dispatch an action to the reducers
     getState, // optionally provide a wrapper function to derive additional properties in state
-    onChange, // register you'r callback here to update UI whenever state changes
-    nextTick, // call this once you've updated the UI
+    onChange, // register a callback here to update UI whenever state changes
+    updated, // call this once you've updated the UI so that all subscribers will be invoked and then removed
     refs, // an empty object that you can attach element refs to (supplied on object passed as the third argument to middleware functions)
   }
 }
