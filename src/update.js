@@ -46,7 +46,7 @@ export function configure({
     subscribers.push(fn)
   }
 
-  function flush() {
+  function nextTick() {
     subscribers.forEach((fn) => fn())
     subscribers = []
   }
@@ -91,10 +91,10 @@ export function configure({
   }
 
   return {
-    dispatch,
-    getState,
-    onChange,
-    flush,
-    refs,
+    dispatch, // dispatch an action to the reducers
+    getState, // optionally provide a wrapper function to derive additional properties in state
+    onChange, // register you'r callback here to update UI whenever state changes
+    nextTick, // call this once you've updated the UI
+    refs, // an empty object that you can attach element refs to (supplied on object passed as the third argument to middleware functions)
   }
 }

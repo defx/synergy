@@ -37,7 +37,7 @@ export const define = (name, factory, template, css) => {
 
           const ds = getDataScript(this)
 
-          const { dispatch, getState, onChange, flush, refs } = configure(
+          const { dispatch, getState, onChange, nextTick, refs } = configure(
             {
               ...config,
               state: ds ? JSON.parse(ds.innerText) : config.state,
@@ -127,7 +127,7 @@ export const define = (name, factory, template, css) => {
                   if (isPrimitive(v)) applyAttribute(this, k, v)
                 })
                 subscribe?.(getState())
-                flush()
+                nextTick()
               },
               beforeMountCallback
             )
