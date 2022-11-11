@@ -44,6 +44,7 @@ export function configure(
 
   function updateState(o) {
     state = getStateWrapper({ ...o })
+    updatedCallback()
   }
 
   updateState(initialState)
@@ -82,6 +83,18 @@ export function configure(
     if (type === "SET" || type === "MERGE") {
       updateState(systemReducer(getState(), action))
     } else {
+      // let mw = middleware[action.type]
+
+      // if (typeof mw === "function") {
+      //   mw(action)
+      // }
+
+      /* 
+      
+      the current implementatiom supports being able to pass to another middleware with a different name, but is that something that we really need to support??
+      
+      */
+
       let next = (middleware) => (action) => {
         let mw = middleware[action.type]
 
@@ -103,7 +116,6 @@ export function configure(
 
         if (action.type in update) {
           updateState(update[action.type](getState(), action))
-          updatedCallback()
         }
 
         return {
@@ -119,8 +131,6 @@ export function configure(
 
       next(middleware)(action)
     }
-
-    updatedCallback()
   }
 
   for (let actionName of dollarKeys) {
