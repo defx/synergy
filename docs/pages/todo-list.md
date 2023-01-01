@@ -143,4 +143,4 @@ const factory = () => {
 }
 ```
 
-As we just learned, the second argument to every state update function is the _context_ object. If the update function was triggered inside a repeated block, then this object includes a `scope` key that points to an object containing all properties of the variable scope from where the event originated. In the example above, the scope object includes a `todo` property which holds the value of the same todo for which the button was pressed.
+As we just learned, the second argument to every state update function is the _context_ object. If the update function was triggered inside a repeated block, then this object includes a `scope` key that points to a copy of the scope from the event origin.
