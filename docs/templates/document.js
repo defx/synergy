@@ -96,18 +96,21 @@ export const documentTemplate = ({
 
         aside {
           width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
           display: none;
           border-right: 1px solid rgba(0, 128, 128, 0.25);
         }
 
         @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
           aside {
             display: block;
-            height: 100vh;
-            position: sticky;
-            top: 0;
-
-            overflow-y: scroll;
           }
 
           .wrapper {
@@ -139,6 +142,7 @@ export const documentTemplate = ({
     <body>
       <header>
         <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
       </header>
       <div class="wrapper">
         <aside>${mainNavigation}</aside>

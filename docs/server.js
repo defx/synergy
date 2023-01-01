@@ -39,6 +39,14 @@ let md = new MarkdownIt({
 
   app.use("/components", express.static("components"))
 
+  app.get("/docs", (_, res) => {
+    const html = documentTemplate({
+      mainContent: mainNavigation,
+    })
+
+    res.send(html)
+  })
+
   app.use(async function (req, res, next) {
     if (req.originalUrl.includes(".")) return next()
 

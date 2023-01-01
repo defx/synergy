@@ -3,11 +3,11 @@
  </head>
  <x-hero>
   <section>
-    <h1>The JavaScript UI Framework</h1>
+    <h1>The Web Component Framework</h1>
     <ul>
-      <li><strong>declarative</strong> data &amp; event binding</li>
-      <li><strong>functional</strong> state management</li>
-      <li><strong>reactive</strong> updates</li>
+      <li><strong>Declarative</strong> data &amp; event binding</li>
+      <li><strong>Functional</strong> state management</li>
+      <li><strong>Reactive</strong> updates</li>
     </ul>
   </section>
 </x-hero>
