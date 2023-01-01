@@ -34,12 +34,10 @@ Here's a simple example:
     () => ({
       state: { count: 0 },
       update: {
-        increment: (state) => ({
-          ...state,
-          count: state.count + 1,
+        increment: ({ count }) => ({
+          count: count + 1,
         }),
-      },
-    }),
+  }),
     `<button :onclick="increment">Count is: {{ count }}</button>`
   )
 </script>

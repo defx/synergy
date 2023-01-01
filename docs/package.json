@@ -3,10 +3,11 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "nodemon --ignore 'build/*' server.js",
-    "clean": "rm -r dist"
+    "build": "rm -r build ; mkdir build && cd build && wget -r -nH --html-extension http://localhost:3000",
+    "postbuild": "cp -a public/. build && cp -r components build",
+    "serve": "cd build && npx serve -p 8000"
   },
   "keywords": [],
   "author": "",

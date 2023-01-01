@@ -50,12 +50,17 @@ export const documentTemplate = ({
         }
 
         main {
-          padding: 1rem 2rem;
+          padding: 1rem;
+          width: 100%;
           max-width: 768px;
         }
 
         main ul {
-          margin: 0 2rem;
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
         }
 
         blockquote {
@@ -136,6 +141,10 @@ export const documentTemplate = ({
         }
         strong {
           color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
         }
       </style>
     </head>
