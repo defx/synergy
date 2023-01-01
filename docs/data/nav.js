@@ -48,10 +48,6 @@ export const navigation = [
         title: "Forms",
         href: "/forms",
       },
-      {
-        title: "Slots",
-        href: "/slots",
-      },
     ],
   },
 ]

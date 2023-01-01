@@ -1,6 +1,7 @@
  <head>
   <title>hello world!</title>
  </head>
+ <x-hero>
   <section>
     <h1>The JavaScript UI Framework</h1>
     <ul>
@@ -9,6 +10,7 @@
       <li><strong>reactive</strong> updates</li>
     </ul>
   </section>
+</x-hero>
 
 ## What is Synergy?
 
