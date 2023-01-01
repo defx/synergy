@@ -121,7 +121,6 @@ export const documentTemplate = ({
     </head>
     <body>
       <header>
-        <a href="#mainNavigation">[=]</a>
         <a href="/">Synergy</a>
       </header>
       <div class="wrapper">
