@@ -1,7 +1,6 @@
 <head>
   <title>Learn by example - Simple Clock | Synergy JS</title>
 </head>
-<x-app>
 
 # simple-clock
 
@@ -71,5 +70,3 @@ const factory = () => {
   }
 }
 ```
-
-</x-app>

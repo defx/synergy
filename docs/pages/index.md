@@ -1,8 +1,8 @@
  <head>
   <title>hello world!</title>
  </head>
- <x-app>
-      <x-hero></x-hero>
+
+<x-hero></x-hero>
 
 ## What is Synergy?
 
@@ -52,5 +52,3 @@ The above example demonstrates the three core features of Synergy:
 ## Getting started
 
 If you're new to Synergy then the best place to start is the Learn by Example section. It will introduce you to all of the features of Synergy by showing different examples that will help you to understand and learn quickly. Once you've worked your way through the examples there is also a Reference section for you to dip into whenever you need to quickly look up any particular detail.
-
-</x-app>

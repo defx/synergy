@@ -1,5 +1,3 @@
-<x-app>
-
 # Template syntax
 
 Synergy uses an HTML-based template syntax that allows you to
@@ -208,5 +206,3 @@ Output:
 ```html
 <button>Log out</button>
 ```
-
-</x-app>

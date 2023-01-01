@@ -1,5 +1,3 @@
-<x-app>
-
 # Events
 
 Synergy allows you to map events to update functions of the same name.
@@ -74,5 +72,3 @@ Template:
 ```
 
 Note that the value of `artist` and `tag` within the handler are specific to the repeated block from which the event was raised. So if you click on the "ceramacist" tag, for example, then `tag` will have a value of "ceramacist" and `artist` will equal "Pablo Picasso"
-
-</x-app>

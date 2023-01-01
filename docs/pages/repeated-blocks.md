@@ -1,5 +1,3 @@
-<x-app>
-
 # Repeated Blocks
 
 Repeated blocks work with both Arrays and Objects.
@@ -124,5 +122,3 @@ List keys are specified using the `:key` attribute and should be a primitive val
   <li :each="person in people" :key="id">Hello {{ person.name }}</li>
 </ul>
 ```
-
-</x-app>

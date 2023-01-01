@@ -1,5 +1,3 @@
-<x-app>
-
 # Forms
 
 Synergy makes working with form data a breeze by automagically binding named form controls to state properties of the same name.
@@ -84,5 +82,3 @@ property will reflect the value of the selected
   filter: "active"
 }
 ```
-
-</x-app>

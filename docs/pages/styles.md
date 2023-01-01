@@ -1,5 +1,3 @@
- <x-app>
-
 # Styles
 
 ## Multiple classes with Array
@@ -85,5 +83,3 @@ Output:
     border: 2px solid white;"
 ></button>
 ```
-
-</x-app>

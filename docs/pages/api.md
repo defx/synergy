@@ -1,5 +1,3 @@
-<x-app>
-
 # API
 
 ## Define
@@ -95,5 +93,3 @@ The `define` function takes up to four arguments:
 As you can see, the first, third, and fourth arguments are just strings. The third argument is standard HTML, and the fourth argument is standard CSS. One of the great things about Synergy is that it allows you to build UI using 100% standard, spec-compliant HTML, CSS, and JavaScript.
 
 In the next section we will look closer at our simple element example to understand more about how Synergys reactivity system works and what you can do with it.
-
-</x-app>

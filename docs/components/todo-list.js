@@ -30,7 +30,7 @@ define(
       getState: (state) => {
         return {
           ...state,
-          itemsLeft: itemsLeft(state),
+          itemsLeft: state.todos.filter(({ completed }) => !completed).length,
         }
       },
     }

@@ -5,16 +5,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "x-static",
-    "build": "npm run clean || true && node scripts/build.js",
-    "start": "serve dist",
+    "start": "nodemon --ignore 'build/*' server.js",
     "clean": "rm -r dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "express": "^4.18.2",
     "fs-extra": "^10.1.0",
+    "globby": "^13.1.2",
+    "highlight.js": "^11.7.0",
+    "markdown-it": "^13.0.1",
+    "nodemon": "^2.0.20",
     "puppeteer-core": "^15.5.0"
   }
 }

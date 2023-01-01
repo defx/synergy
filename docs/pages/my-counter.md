@@ -1,7 +1,6 @@
 <head>
   <title>Learn by example - My Counter | Synergy JS</title>
 </head>
-<x-app>
 
 # my-counter
 
@@ -37,5 +36,3 @@ In the example above, the returned object includes both the `state` and `update`
 `Update` is a dictionary of named state update functions that can be referenced directly in the template as event handlers, as per the `:onclick="increment"` binding in the example above.
 
 Each state update function takes the _current_ state as its first argument and returns the _next_ state for the custom element.
-
-</x-app>
