@@ -1,4 +1,4 @@
-import { define } from "../synergy.js"
+import { define } from "/synergy.js"
 
 const name = "my-counter"
 
