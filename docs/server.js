@@ -39,15 +39,6 @@ let md = new MarkdownIt({
 
   app.use("/components", express.static("components"))
 
-  app.get("/", (_, res) => {
-    const html = documentTemplate({
-      title: "Synergy | A JavaScript library for crafting Web Components",
-      mainNavigation,
-    })
-
-    res.send(html)
-  })
-
   app.use(async function (req, res, next) {
     if (req.originalUrl.includes(".")) return next()
 
@@ -60,8 +51,6 @@ let md = new MarkdownIt({
 
     if (markdown) {
       let { head, body } = decapitate(markdown)
-
-      console.log({ head, body })
 
       const customElements = listCustomElements(body)
 
