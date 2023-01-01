@@ -1,8 +1,14 @@
  <head>
   <title>hello world!</title>
  </head>
-
-<x-hero></x-hero>
+  <section>
+    <h1>The JavaScript UI Framework</h1>
+    <ul>
+      <li><strong>declarative</strong> data &amp; event binding</li>
+      <li><strong>functional</strong> state management</li>
+      <li><strong>reactive</strong> updates</li>
+    </ul>
+  </section>
 
 ## What is Synergy?
 
@@ -51,4 +57,4 @@ The above example demonstrates the three core features of Synergy:
 
 ## Getting started
 
-If you're new to Synergy then the best place to start is the Learn by Example section. It will introduce you to all of the features of Synergy by showing different examples that will help you to understand and learn quickly. Once you've worked your way through the examples there is also a Reference section for you to dip into whenever you need to quickly look up any particular detail.
+If you're new to Synergy then the best place to start is the _Learn by Example_ section. It will introduce you to all of the features of Synergy by showing different examples that will help you to understand and learn quickly.

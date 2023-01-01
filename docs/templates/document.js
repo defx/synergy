@@ -118,6 +118,23 @@ export const documentTemplate = ({
           }
         }
       </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+      </style>
     </head>
     <body>
       <header>

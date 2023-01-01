@@ -24,7 +24,7 @@ Every update function accepts the current state as its first argument, its retur
 
 ## Template scope
 
-Because repeated blocks create scoped value contexts (i.e., new values created within the iteration as part of the `:each="x in y"` expression), it is useful to be able to access those values within your handler. You can do this via the `scope` property of the second argument to your event handler.
+Because each repeated block creates a new [_variable scope_](https://developer.mozilla.org/en-US/docs/Glossary/Scope), it is useful to be able to access those values within your handler. You can do this via the `scope` property of the second argument to your event handler.
 
 Model:
 
@@ -70,5 +70,3 @@ Template:
   </ul>
 </article>
 ```
-
-Note that the value of `artist` and `tag` within the handler are specific to the repeated block from which the event was raised. So if you click on the "ceramacist" tag, for example, then `tag` will have a value of "ceramacist" and `artist` will equal "Pablo Picasso"
