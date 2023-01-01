@@ -14,9 +14,8 @@ Lets take another look at the `my-counter` example from the home page:
 const factory = () => ({
   state: { count: 0 },
   update: {
-    increment: (state) => ({
-      ...state,
-      count: state.count + 1,
+    increment: ({ count }) => ({
+      count: count + 1,
     }),
   })
 ```
