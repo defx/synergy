@@ -28,9 +28,11 @@ define(
         },
       },
       getState: (state) => {
+        const n = state.todos.filter(({ completed }) => !completed).length
+
         return {
           ...state,
-          itemsLeft: state.todos.filter(({ completed }) => !completed).length,
+          itemsLeft: `${n} item${n === 1 ? "" : "s"} left`,
         }
       },
     }

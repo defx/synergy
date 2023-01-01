@@ -425,4 +425,77 @@ describe("iterations", () => {
       assert.equal(box.height, height)
     })
   })
+
+  it("works as expected", async () => {
+    let name = createName()
+
+    mount(html`<${name}></${name}>`)
+
+    define(
+      name,
+      () => {
+        return {
+          state: {
+            todos: [
+              {
+                title: "foo",
+                completed: false,
+              },
+              {
+                title: "bar",
+                completed: true,
+              },
+            ],
+          },
+          update: {
+            addTodo: (state, { event: { key } }) => {
+              if (key !== "Enter" || !state.newTodo?.length) return state
+
+              return {
+                ...state,
+                newTodo: null,
+                todos: state.todos.concat({
+                  title: state.newTodo,
+                  completed: false,
+                }),
+              }
+            },
+            removeTodo: (state, { scope: { todo } }) => {
+              return {
+                ...state,
+                todos: state.todos.filter(({ title }) => title !== todo.title),
+              }
+            },
+          },
+          getState: (state) => {
+            return {
+              ...state,
+              itemsLeft: state.todos.filter(({ completed }) => !completed)
+                .length,
+            }
+          },
+        }
+      },
+      /* html */ `
+            <input :name="newTodo" :onkeyup="addTodo" placeholder="What needs to be done?">
+            <ul>
+                <li :each="todo in todos">
+                    <input type="checkbox" :name="todo.completed">
+                    {{ todo.title }}
+                    <button :onclick="removeTodo">[x]</button>
+                </li>
+            </ul>
+            <p>{{ itemsLeft }}</p>
+    
+    `
+    )
+
+    const [_, secondButton] = $$(`button`)
+
+    secondButton.click()
+
+    await nextFrame()
+
+    assert.equal($(`input[type="checkbox"]`).checked, false)
+  })
 })
