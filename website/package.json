@@ -6,8 +6,8 @@
   "scripts": {
     "linklib": "cp ../dist/synergy.js public/",
     "start": "nodemon --ignore 'build/*' server.js",
-    "build": "rm -r build ; mkdir build && cd build && wget -r -nH --html-extension http://localhost:3000",
-    "postbuild": "cp -a public/. build && cp -r components build && echo 'synergyjs.org' > build/CNAME && mv build ../docs",
+    "build": "rm -r build ; mkdir build && cd build && wget -r -k -nH --html-extension http://localhost:3000",
+    "postbuild": "cp -a public/. build && cp -r components build && echo 'synergyjs.org' > build/CNAME && rm -r ../docs && mv build ../docs",
     "serve": "cd build && npx serve -p 8000"
   },
   "keywords": [],
