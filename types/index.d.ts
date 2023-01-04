@@ -15,7 +15,11 @@ declare namespace synergy {
     /**
      * The template represents the HTML markup for your element.
      */
-    template: HTMLTemplateElement | string
+    template: HTMLTemplateElement | string,
+    /**
+     * CSS for your Custom Element will be partially scoped by prefixing selectors with the elements name to stop your styles from leaking out, whilst still allowing inheritance of more generic global styles. CSS will be copied once into the document head and shared between all instances of the Custom Element.
+     */
+    css?: string
   ): void
 
   type State = {
@@ -36,7 +40,7 @@ declare namespace synergy {
     }
     event: Event
     /*
-     * The current state including any scoped values created by repeated blocks within the template
+     * The current state including the variable scope of the event origin (i.e., created with a Repeated Block)
      */
     scope: {
       [key: string]: any
@@ -50,13 +54,6 @@ declare namespace synergy {
   type Store = {
     getState(): State
     dispatch(action: ActionInput): void
-  }
-
-  type Derivation = {
-    /**
-     * A function that is passed the current state and returns the value of the property to which the function is assigned
-     */
-    (state: State): any
   }
 
   type PromiseLike = {
@@ -104,7 +101,7 @@ declare namespace synergy {
       [actionName: string]: ActionHandler
     }
     /**
-     * A custom wrapper around calls to getState, giving you the ability to define derived properties, for example
+     * A custom wrapper around calls to getState, giving you the ability to derive additional properties
      */
     getState?(state: State): State
     /**

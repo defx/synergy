@@ -1,14 +1,5 @@
 export const navigation = [
   {
-    title: "Getting Started",
-    items: [
-      {
-        title: "Introduction",
-        href: "/",
-      },
-    ],
-  },
-  {
     title: "Learn by Example",
     items: [
       {
