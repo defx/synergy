@@ -1,3 +1,7 @@
+<head>
+  <title>API | Synergy JS</title>
+</head>
+
 # API
 
 ## Define

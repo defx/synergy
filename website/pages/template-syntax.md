@@ -1,3 +1,7 @@
+<head>
+  <title>Template Syntax | Synergy JS</title>
+</head>
+
 # Template syntax
 
 Synergy uses an HTML-based template syntax that allows you to

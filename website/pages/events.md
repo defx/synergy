@@ -1,3 +1,7 @@
+<head>
+  <title>Events | Synergy JS</title>
+</head>
+
 # Events
 
 Synergy allows you to map events to update functions of the same name.

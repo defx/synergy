@@ -1,5 +1,5 @@
  <head>
-  <title>hello world!</title>
+  <title>Synergy - A JavaScript library for building user interfaces</title>
  </head>
  <x-hero>
   <section>

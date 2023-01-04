@@ -1,3 +1,7 @@
+<head>
+  <title>Getting started | Synergy JS</title>
+</head>
+
 # Getting Started
 
 Synergy doesn't require any special toolchain, compiler, plugins etc. Its a tiny (~4k) package that gives you everything you need to start building directly in the browser.
@@ -8,7 +12,7 @@ The quickest way to get started is to import the Synergy package directly from a
 
 ```html
 <script type="module">
-  import { define } from "https://unpkg.com/synergy@7.0.4";
+  import { define } from "https://unpkg.com/synergy@7.0.4"
 </script>
 ```
 

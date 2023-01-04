@@ -1,3 +1,7 @@
+<head>
+  <title>Styles | Synergy JS</title>
+</head>
+
 # Styles
 
 ## Multiple classes with Array

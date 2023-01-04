@@ -1,3 +1,7 @@
+<head>
+  <title>Forms | Synergy JS</title>
+</head>
+
 # Forms
 
 Synergy makes working with form data a breeze by automagically binding named form controls to state properties of the same name.

@@ -1,3 +1,7 @@
+<head>
+  <title>Repeated Blocks | Synergy JS</title>
+</head>
+
 # Repeated Blocks
 
 Repeated blocks work with both Arrays and Objects.
