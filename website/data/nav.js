@@ -4,15 +4,15 @@ export const navigation = [
     items: [
       {
         title: "my-counter",
-        href: "/my-counter",
+        href: "my-counter",
       },
       {
         title: "simple-clock",
-        href: "/simple-clock",
+        href: "simple-clock",
       },
       {
         title: "todo-list",
-        href: "/todo-list",
+        href: "todo-list",
       },
     ],
   },
@@ -21,23 +21,23 @@ export const navigation = [
     items: [
       {
         title: "Template syntax",
-        href: "/template-syntax",
+        href: "template-syntax",
       },
       {
         title: "Repeated blocks",
-        href: "/repeated-blocks",
+        href: "repeated-blocks",
       },
       {
         title: "Events",
-        href: "/events",
+        href: "events",
       },
       {
         title: "Styles",
-        href: "/styles",
+        href: "styles",
       },
       {
         title: "Forms",
-        href: "/forms",
+        href: "forms",
       },
     ],
   },
