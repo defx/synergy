@@ -1,0 +1,298 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>Learn by example - Todo List | Synergy JS</title>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/tomorrow.min.css"
+        integrity="sha512-5D/fcZ3y3nuaeHSxDbFwWDEy1Fvj5qQKsU0tilD7bhWAA+IN/Jl9fzGdUotzvA7wgXtsnZmafcuunH+6nyuA0A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        :root {
+          font-size: 100%;
+        }
+
+        body {
+          background-color: #fafafa;
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          color: hsl(180, 100%, 10%);
+          font-size: 1rem;
+        }
+        html {
+          height: -webkit-fill-available;
+        }
+
+        body {
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+        }
+
+        main {
+          padding: 1rem;
+          width: 100%;
+          max-width: 768px;
+        }
+
+        main ul {
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
+        }
+
+        blockquote {
+          padding: 2rem;
+          font-style: italic;
+          background: #eaeaea;
+        }
+
+        h1 {
+          font-size: 2rem;
+          color: hsl(180, 50%, 16%);
+        }
+
+        h2 {
+          font-size: 1.6rem;
+          color: hsl(180, 50%, 16%);
+          margin: 2rem 0 1rem;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          color: hsl(180, 50%, 24%);
+        }
+
+        p {
+          margin: 1rem 0;
+        }
+
+        code {
+          font-size: 0.875rem;
+        }
+
+        .wrapper {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        aside {
+          width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
+          display: none;
+          border-right: 1px solid rgba(0, 128, 128, 0.25);
+        }
+
+        @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
+          aside {
+            display: block;
+          }
+
+          .wrapper {
+            justify-content: initial;
+          }
+          a[href="/docs"] {
+            display: none;
+          }
+        }
+      </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
+      </header>
+      <div class="wrapper">
+        <aside> <nav id="mainNavigation">
+    <ul>
+      <li>Learn by Example 
+    <ul>
+      <li>
+            <a href="/my-counter">my-counter</a>
+          </li><li>
+            <a href="/simple-clock">simple-clock</a>
+          </li><li>
+            <a href="/todo-list">todo-list</a>
+          </li>
+    </ul>
+  </li><li>Reference 
+    <ul>
+      <li>
+            <a href="/template-syntax">Template syntax</a>
+          </li><li>
+            <a href="/repeated-blocks">Repeated blocks</a>
+          </li><li>
+            <a href="/events">Events</a>
+          </li><li>
+            <a href="/styles">Styles</a>
+          </li><li>
+            <a href="/forms">Forms</a>
+          </li>
+    </ul>
+  </li>
+    </ul>
+  </nav> </aside>
+        <main><h1>todo-list</h1>
+<p><todo-list></todo-list></p>
+<p>In this example we will learn some more features of Synergy by looking at how to create a simple todo list. Let's take a look at the code and then we talk about each section and how it works...</p>
+<pre class="hljs"><code><span class="hljs-keyword">const</span> <span class="hljs-title function_">itemsLeft</span> = (<span class="hljs-params">{ todos }</span>) =&gt; {
+  <span class="hljs-keyword">const</span> n = todos.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">{ completed }</span>) =&gt;</span> !completed).<span class="hljs-property">length</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">${n}</span> <span class="hljs-subst">${n === <span class="hljs-number">1</span> ? <span class="hljs-string">&quot;item&quot;</span> : <span class="hljs-string">&quot;items&quot;</span>}</span> left`</span>
+}
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">factory</span> = (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">state</span>: {
+      <span class="hljs-attr">todos</span>: [],
+    },
+    <span class="hljs-attr">update</span>: {
+      <span class="hljs-attr">addTodo</span>: <span class="hljs-function">(<span class="hljs-params">state, { event: { key } }</span>) =&gt;</span> {
+        <span class="hljs-keyword">if</span> (key !== <span class="hljs-string">&quot;Enter&quot;</span> || !state.<span class="hljs-property">newTodo</span>?.<span class="hljs-property">length</span>) <span class="hljs-keyword">return</span> state
+
+        <span class="hljs-keyword">return</span> {
+          ...state,
+          <span class="hljs-attr">newTodo</span>: <span class="hljs-literal">null</span>,
+          <span class="hljs-attr">todos</span>: state.<span class="hljs-property">todos</span>.<span class="hljs-title function_">concat</span>({
+            <span class="hljs-attr">title</span>: state.<span class="hljs-property">newTodo</span>,
+            <span class="hljs-attr">completed</span>: <span class="hljs-literal">false</span>,
+          }),
+        }
+      },
+      <span class="hljs-attr">removeTodo</span>: <span class="hljs-function">(<span class="hljs-params">state, { scope: { todo } }</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> {
+          ...state,
+          <span class="hljs-attr">todos</span>: state.<span class="hljs-property">todos</span>.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">{ title }</span>) =&gt;</span> title !== todo.<span class="hljs-property">title</span>),
+        }
+      },
+    },
+    <span class="hljs-attr">getState</span>: <span class="hljs-function">(<span class="hljs-params">state</span>) =&gt;</span> {
+      <span class="hljs-keyword">return</span> {
+        ...state,
+        <span class="hljs-attr">itemsLeft</span>: <span class="hljs-title function_">itemsLeft</span>(state),
+      }
+    },
+  }
+}
+</code></pre>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+  <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;newTodo&quot;</span>
+  <span class="hljs-attr">:onkeyup</span>=<span class="hljs-string">&quot;addTodo&quot;</span>
+  <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;What needs to be done?&quot;</span>
+/&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">:each</span>=<span class="hljs-string">&quot;todo in todos&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;todo.completed&quot;</span> /&gt;</span>
+    {{ todo.title }}
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:onclick</span>=<span class="hljs-string">&quot;removeTodo&quot;</span>&gt;</span>[x]<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{{ itemsLeft }}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<h2>Two-way bindings (:name)</h2>
+<p>Using the <code>:name</code> binding on a form input automatically creates a special two-way binding. The input will assume the value (if there is one) from a state property of the same name (in this case <code>newTodo</code>), and whenever the value of the input changes, state will automatically be updated to reflect that change.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+  <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;newTodo&quot;</span>
+  <span class="hljs-attr">:onkeyup</span>=<span class="hljs-string">&quot;addTodo&quot;</span>
+  <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;What needs to be done?&quot;</span>
+/&gt;</span>
+</code></pre>
+<p>We've already seen in previous examples how to add event bindings, and we're adding another one here to the input element so that it will invoke the <code>addTodo</code> update function whenever the <code>keyup</code> event fires.</p>
+<h2>Context { event }</h2>
+<p>We want to add a new todo item whenever the user presses the Enter key inside the input. The second argument to every state update function is the <em>context</em> object which, if the update function was triggered by an event, includes an <code>event</code> key that points to the native <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a> object.</p>
+<pre class="hljs"><code><span class="hljs-keyword">const</span> <span class="hljs-title function_">factory</span> = (<span class="hljs-params"></span>) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-comment">// ...</span>
+      <span class="hljs-attr">update</span>: {
+        <span class="hljs-attr">addTodo</span>: <span class="hljs-function">(<span class="hljs-params">state, { event: { key } }</span>) =&gt;</span> {
+          <span class="hljs-keyword">if</span> (key !== <span class="hljs-string">&quot;Enter&quot;</span> || !state.<span class="hljs-property">newTodo</span>?.<span class="hljs-property">length</span>) <span class="hljs-keyword">return</span> state
+
+          <span class="hljs-keyword">return</span> {
+            ...state,
+            <span class="hljs-attr">newTodo</span>: <span class="hljs-literal">null</span>,
+            <span class="hljs-attr">todos</span>: state.<span class="hljs-property">todos</span>.<span class="hljs-title function_">concat</span>({
+              <span class="hljs-attr">title</span>: state.<span class="hljs-property">newTodo</span>,
+              <span class="hljs-attr">completed</span>: <span class="hljs-literal">false</span>,
+            }),
+          }
+        },
+        <span class="hljs-comment">// ...</span>
+    }
+    <span class="hljs-comment">// ...</span>
+}
+</code></pre>
+<p>In the example above, we use the Event object to check which key was pressed, and if it's <em>not</em> the Enter key then we simply return the current state so that nothing changes. If it <em>was</em> the Enter key, then our second condition checks that the <code>newTodo</code> input isn't empty before using its value to add the new todo to our list. When we add the new todo, we also set the value of <code>newTodo</code> to <code>null</code> so as to clear the input element ready for the next todo item to be added.</p>
+<h2>Repeated blocks (:each)</h2>
+<p>A block of HTML can be repeated for each item in an array by using the <code>:each</code> binding.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">:each</span>=<span class="hljs-string">&quot;todo in todos&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;checkbox&quot;</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;todo.completed&quot;</span> /&gt;</span>
+  {{ todo.title }}
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:onclick</span>=<span class="hljs-string">&quot;removeTodo&quot;</span>&gt;</span>[x]<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+</code></pre>
+<p>The <code>todo in todos</code> expression creates a new value called <code>todo</code> that refers to the current item in the iteration.</p>
+<h2>Context { scope }</h2>
+<p>When the button on one of our todo items is clicked, the <code>removeTodo</code> update function is invoked...</p>
+<pre class="hljs"><code><span class="hljs-keyword">const</span> <span class="hljs-title function_">factory</span> = (<span class="hljs-params"></span>) =&gt; {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-comment">// ...</span>
+      <span class="hljs-attr">update</span>: {
+        <span class="hljs-attr">removeTodo</span>: <span class="hljs-function">(<span class="hljs-params">state, { scope: { todo } }</span>) =&gt;</span> {
+          <span class="hljs-keyword">return</span> {
+            ...state,
+            <span class="hljs-attr">todos</span>: state.<span class="hljs-property">todos</span>.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">{ title }</span>) =&gt;</span> title !== todo.<span class="hljs-property">title</span>),
+          }
+        },
+        <span class="hljs-comment">// ...</span>
+    }
+    <span class="hljs-comment">// ...</span>
+}
+</code></pre>
+<p>As we just learned, the second argument to every state update function is the <em>context</em> object. If the update function was triggered inside a repeated block, then this object includes a <code>scope</code> key that points to a copy of the scope from the event origin.</p>
+</main>
+      </div>
+    </body>
+  </html>

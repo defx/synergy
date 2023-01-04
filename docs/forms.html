@@ -1,0 +1,238 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/tomorrow.min.css"
+        integrity="sha512-5D/fcZ3y3nuaeHSxDbFwWDEy1Fvj5qQKsU0tilD7bhWAA+IN/Jl9fzGdUotzvA7wgXtsnZmafcuunH+6nyuA0A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        :root {
+          font-size: 100%;
+        }
+
+        body {
+          background-color: #fafafa;
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          color: hsl(180, 100%, 10%);
+          font-size: 1rem;
+        }
+        html {
+          height: -webkit-fill-available;
+        }
+
+        body {
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+        }
+
+        main {
+          padding: 1rem;
+          width: 100%;
+          max-width: 768px;
+        }
+
+        main ul {
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
+        }
+
+        blockquote {
+          padding: 2rem;
+          font-style: italic;
+          background: #eaeaea;
+        }
+
+        h1 {
+          font-size: 2rem;
+          color: hsl(180, 50%, 16%);
+        }
+
+        h2 {
+          font-size: 1.6rem;
+          color: hsl(180, 50%, 16%);
+          margin: 2rem 0 1rem;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          color: hsl(180, 50%, 24%);
+        }
+
+        p {
+          margin: 1rem 0;
+        }
+
+        code {
+          font-size: 0.875rem;
+        }
+
+        .wrapper {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        aside {
+          width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
+          display: none;
+          border-right: 1px solid rgba(0, 128, 128, 0.25);
+        }
+
+        @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
+          aside {
+            display: block;
+          }
+
+          .wrapper {
+            justify-content: initial;
+          }
+          a[href="/docs"] {
+            display: none;
+          }
+        }
+      </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
+      </header>
+      <div class="wrapper">
+        <aside> <nav id="mainNavigation">
+    <ul>
+      <li>Learn by Example 
+    <ul>
+      <li>
+            <a href="/my-counter">my-counter</a>
+          </li><li>
+            <a href="/simple-clock">simple-clock</a>
+          </li><li>
+            <a href="/todo-list">todo-list</a>
+          </li>
+    </ul>
+  </li><li>Reference 
+    <ul>
+      <li>
+            <a href="/template-syntax">Template syntax</a>
+          </li><li>
+            <a href="/repeated-blocks">Repeated blocks</a>
+          </li><li>
+            <a href="/events">Events</a>
+          </li><li>
+            <a href="/styles">Styles</a>
+          </li><li>
+            <a href="/forms">Forms</a>
+          </li>
+    </ul>
+  </li>
+    </ul>
+  </nav> </aside>
+        <main><h1>Forms</h1>
+<p>Synergy makes working with form data a breeze by automagically binding named form controls to state properties of the same name.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">color</span>: <span class="hljs-string">&quot;#4287f5&quot;</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;color&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;color&quot;</span> /&gt;</span>
+</code></pre>
+<h2>Select</h2>
+<p>Attribute a name to your <code>&lt;select&gt;</code> and the value
+of the bound property will reflect that of the
+currently selected <code>&lt;option&gt;</code></p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">pets</span>: <span class="hljs-string">&quot;hamster&quot;</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">&quot;pet-select&quot;</span>&gt;</span>Choose a pet:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;pets&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;pet-select&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>--Please choose an option--<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;dog&quot;</span>&gt;</span>Dog<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;cat&quot;</span>&gt;</span>Cat<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;hamster&quot;</span>&gt;</span>Hamster<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;parrot&quot;</span>&gt;</span>Parrot<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;spider&quot;</span>&gt;</span>Spider<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;goldfish&quot;</span>&gt;</span>Goldfish<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+</code></pre>
+<p>The standard HTML <code>&lt;select&gt;</code> element also supports
+the ability to select multiple options, using the
+<strong>multiple</strong> attribute:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;pets&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;pet-select&quot;</span> <span class="hljs-attr">multiple</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+</code></pre>
+<p>A <code>&lt;select&gt;</code> with <code>[multiple]</code> binds to an Array
+on your data:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">pets</span>: [<span class="hljs-string">&quot;hamster&quot;</span>, <span class="hljs-string">&quot;spider&quot;</span>]
+}
+</code></pre>
+<h2>Radio Buttons</h2>
+<p>Add a name to each radio button to indicate which
+<em>group</em> it belongs to.</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;filter&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;all&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;filter.all&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;filter&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;active&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;filter.active&quot;</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span> <span class="hljs-attr">:name</span>=<span class="hljs-string">&quot;filter&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;complete&quot;</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;filter.complete&quot;</span> /&gt;</span>
+</code></pre>
+<p>As with <code>&lt;select&gt;</code>, the value of the named
+property will reflect the value of the selected
+<code>&lt;input type=&quot;radio&quot;&gt;</code>.</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">filter</span>: <span class="hljs-string">&quot;active&quot;</span>
+}
+</code></pre>
+</main>
+      </div>
+    </body>
+  </html>
