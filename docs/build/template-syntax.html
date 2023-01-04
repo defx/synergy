@@ -1,0 +1,301 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/tomorrow.min.css"
+        integrity="sha512-5D/fcZ3y3nuaeHSxDbFwWDEy1Fvj5qQKsU0tilD7bhWAA+IN/Jl9fzGdUotzvA7wgXtsnZmafcuunH+6nyuA0A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        :root {
+          font-size: 100%;
+        }
+
+        body {
+          background-color: #fafafa;
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          color: hsl(180, 100%, 10%);
+          font-size: 1rem;
+        }
+        html {
+          height: -webkit-fill-available;
+        }
+
+        body {
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+        }
+
+        main {
+          padding: 1rem;
+          width: 100%;
+          max-width: 768px;
+        }
+
+        main ul {
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
+        }
+
+        blockquote {
+          padding: 2rem;
+          font-style: italic;
+          background: #eaeaea;
+        }
+
+        h1 {
+          font-size: 2rem;
+          color: hsl(180, 50%, 16%);
+        }
+
+        h2 {
+          font-size: 1.6rem;
+          color: hsl(180, 50%, 16%);
+          margin: 2rem 0 1rem;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          color: hsl(180, 50%, 24%);
+        }
+
+        p {
+          margin: 1rem 0;
+        }
+
+        code {
+          font-size: 0.875rem;
+        }
+
+        .wrapper {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        aside {
+          width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
+          display: none;
+          border-right: 1px solid rgba(0, 128, 128, 0.25);
+        }
+
+        @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
+          aside {
+            display: block;
+          }
+
+          .wrapper {
+            justify-content: initial;
+          }
+          a[href="/docs"] {
+            display: none;
+          }
+        }
+      </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
+      </header>
+      <div class="wrapper">
+        <aside> <nav id="mainNavigation">
+    <ul>
+      <li>Learn by Example 
+    <ul>
+      <li>
+            <a href="/my-counter">my-counter</a>
+          </li><li>
+            <a href="/simple-clock">simple-clock</a>
+          </li><li>
+            <a href="/todo-list">todo-list</a>
+          </li>
+    </ul>
+  </li><li>Reference 
+    <ul>
+      <li>
+            <a href="/template-syntax">Template syntax</a>
+          </li><li>
+            <a href="/repeated-blocks">Repeated blocks</a>
+          </li><li>
+            <a href="/events">Events</a>
+          </li><li>
+            <a href="/styles">Styles</a>
+          </li><li>
+            <a href="/forms">Forms</a>
+          </li>
+    </ul>
+  </li>
+    </ul>
+  </nav> </aside>
+        <main><h1>Template syntax</h1>
+<p>Synergy uses an HTML-based template syntax that allows you to
+declaratively add data and event bindings to your components HTML. All
+synergy templates are syntactically valid HTML that can be parsed by
+spec-compliant browsers and HTML parsers.</p>
+<h2>Text</h2>
+<p>Let's take a look at how text interpolation works with a simple example.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Kimberley&quot;</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Hello {{ name }}!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Hello Kimberley!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<h2>Attributes</h2>
+<p>Attribute bindings are always prefixed with the colon mark (<code>:</code>).</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">cx</span>: [<span class="hljs-string">&quot;pt-6&quot;</span>, <span class="hljs-string">&quot;space-y-4&quot;</span>],
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;cx&quot;</span>&gt;</span>ok<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;foo&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;pt-6 space-y-4&quot;</span>&gt;</span>ok<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<h2>Attribute interpolation</h2>
+<p>When you need more than just a single state value you can use the mustache syntax for interpolation:</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">textColor</span>: <span class="hljs-string">&#x27;gold&#x27;</span>,
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">:style</span>=<span class="hljs-string">&quot;color: {{ textColor }}&quot;</span>&gt;</span>ok<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;color: gold;&quot;</span>&gt;</span>ok<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+</code></pre>
+<h2>Shorthand attributes</h2>
+<p>When you bind an attribute to a property with the same name then you can use the shorthand notation:</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">width</span>: <span class="hljs-string">&quot;100%&quot;</span>,
+  <span class="hljs-attr">height</span>: <span class="hljs-string">&quot;100%&quot;</span>,
+  <span class="hljs-attr">fill</span>: <span class="hljs-string">&quot;black&quot;</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">rect</span> <span class="hljs-attr">:width</span> <span class="hljs-attr">:height</span> <span class="hljs-attr">:fill</span> /&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">rect</span> <span class="hljs-attr">width</span>=<span class="hljs-string">&quot;100%&quot;</span> <span class="hljs-attr">height</span>=<span class="hljs-string">&quot;100%&quot;</span> <span class="hljs-attr">fill</span>=<span class="hljs-string">&quot;black&quot;</span> /&gt;</span>
+</code></pre>
+<h2>Boolean attributes</h2>
+<p>This is how we refer to any attribute bound to a boolean state property. It will be present on the bound element only when the value of the property is truthy.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">open</span>: <span class="hljs-literal">true</span>
+  <span class="hljs-attr">closed</span>: <span class="hljs-literal">false</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">:open</span> <span class="hljs-attr">:closed</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">open</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+</code></pre>
+<h2>ARIA attributes</h2>
+<p>One exception to Boolean Attributes are attributes prefixed with &quot;aria-&quot;, these particular attributes will be set to the &quot;true&quot; of &quot;false&quot; string values as per their specification.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">title</span>: <span class="hljs-string">&quot;more information&quot;</span>,
+  <span class="hljs-attr">expanded</span>: <span class="hljs-literal">false</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:aria-expanded</span>=<span class="hljs-string">&quot;expanded&quot;</span>&gt;</span>{{ title }}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">:hidden</span>=<span class="hljs-string">&quot;!expanded&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">aria-expanded</span>=<span class="hljs-string">&quot;false&quot;</span>&gt;</span>{{ title }}<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">hidden</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<h2>Logical NOT (!)</h2>
+<p>As per the examples above, you can prefix boolean properties with an exclamation mark to convert a truthy value to a falsy value, and vice versa.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">authenticated</span>: <span class="hljs-literal">true</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">:hidden</span>=<span class="hljs-string">&quot;authenticated&quot;</span>&gt;</span>Log in<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">:hidden</span>=<span class="hljs-string">&quot;!authenticated&quot;</span>&gt;</span>Log out<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">hidden</span>&gt;</span>Log in<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>Log out<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<h2>Conditional rendering</h2>
+<p>You can also conditionally render an element and its subtree using the <code>:if</code> binding with a boolean state property.</p>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">authenticated</span>: <span class="hljs-literal">true</span>
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:if</span>=<span class="hljs-string">&quot;authenticated&quot;</span>&gt;</span>Log out<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:if</span>=<span class="hljs-string">&quot;!authenticated&quot;</span>&gt;</span>Log in<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>Log out<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+</main>
+      </div>
+    </body>
+  </html>

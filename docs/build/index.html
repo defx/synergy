@@ -1,0 +1,231 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <title>hello world!</title>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/tomorrow.min.css"
+        integrity="sha512-5D/fcZ3y3nuaeHSxDbFwWDEy1Fvj5qQKsU0tilD7bhWAA+IN/Jl9fzGdUotzvA7wgXtsnZmafcuunH+6nyuA0A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        :root {
+          font-size: 100%;
+        }
+
+        body {
+          background-color: #fafafa;
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          color: hsl(180, 100%, 10%);
+          font-size: 1rem;
+        }
+        html {
+          height: -webkit-fill-available;
+        }
+
+        body {
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+        }
+
+        main {
+          padding: 1rem;
+          width: 100%;
+          max-width: 768px;
+        }
+
+        main ul {
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
+        }
+
+        blockquote {
+          padding: 2rem;
+          font-style: italic;
+          background: #eaeaea;
+        }
+
+        h1 {
+          font-size: 2rem;
+          color: hsl(180, 50%, 16%);
+        }
+
+        h2 {
+          font-size: 1.6rem;
+          color: hsl(180, 50%, 16%);
+          margin: 2rem 0 1rem;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          color: hsl(180, 50%, 24%);
+        }
+
+        p {
+          margin: 1rem 0;
+        }
+
+        code {
+          font-size: 0.875rem;
+        }
+
+        .wrapper {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        aside {
+          width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
+          display: none;
+          border-right: 1px solid rgba(0, 128, 128, 0.25);
+        }
+
+        @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
+          aside {
+            display: block;
+          }
+
+          .wrapper {
+            justify-content: initial;
+          }
+          a[href="/docs"] {
+            display: none;
+          }
+        }
+      </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
+      </header>
+      <div class="wrapper">
+        <aside> <nav id="mainNavigation">
+    <ul>
+      <li>Learn by Example 
+    <ul>
+      <li>
+            <a href="/my-counter">my-counter</a>
+          </li><li>
+            <a href="/simple-clock">simple-clock</a>
+          </li><li>
+            <a href="/todo-list">todo-list</a>
+          </li>
+    </ul>
+  </li><li>Reference 
+    <ul>
+      <li>
+            <a href="/template-syntax">Template syntax</a>
+          </li><li>
+            <a href="/repeated-blocks">Repeated blocks</a>
+          </li><li>
+            <a href="/events">Events</a>
+          </li><li>
+            <a href="/styles">Styles</a>
+          </li><li>
+            <a href="/forms">Forms</a>
+          </li>
+    </ul>
+  </li>
+    </ul>
+  </nav> </aside>
+        <main><x-hero>
+  <section>
+    <h1>The Web Component Framework</h1>
+    <ul>
+      <li><strong>Declarative</strong> data &amp; event binding</li>
+      <li><strong>Functional</strong> state management</li>
+      <li><strong>Reactive</strong> updates</li>
+    </ul>
+  </section>
+</x-hero>
+<h2>What is Synergy?</h2>
+<p>Synergy is a JavaScript framework for building user interfaces. It
+combines declarative data and event binding with functional state
+management and reactive updates to allow you to build all types of
+user interface for the web, no matter how simple or complex.</p>
+<p>Here's a simple example:</p>
+<p><my-counter></my-counter></p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">my-counter</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">my-counter</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;module&quot;</span>&gt;</span><span class="language-javascript">
+  <span class="hljs-keyword">import</span> { define } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;https://unpkg.com/synergy@8.0.0&quot;</span>
+
+  <span class="hljs-title function_">define</span>(
+    <span class="hljs-string">&quot;my-counter&quot;</span>,
+    <span class="hljs-function">() =&gt;</span> ({
+      <span class="hljs-attr">state</span>: { <span class="hljs-attr">count</span>: <span class="hljs-number">0</span> },
+      <span class="hljs-attr">update</span>: {
+        <span class="hljs-attr">increment</span>: <span class="hljs-function">(<span class="hljs-params">{ count }</span>) =&gt;</span> ({
+          <span class="hljs-attr">count</span>: count + <span class="hljs-number">1</span>,
+        }),
+  }),
+    <span class="hljs-string">`&lt;button :onclick=&quot;increment&quot;&gt;Count is: {{ count }}&lt;/button&gt;`</span>
+  )
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p>The above example demonstrates the three core features of Synergy:</p>
+<ul>
+<li><strong>Declarative data and event binding:</strong> Synergy
+provides a declarative template syntax that allows you to describe
+HTML output based on JavaScript state. The syntax is very simple
+and easy to learn.</li>
+<li><strong>Functional state management:</strong> Synergy allows you
+to describe changes to state as individual functions that are as
+easy to reason about as they are to test.</li>
+<li><strong>Reactive updates:</strong> Synergy efficiently batches
+updates to your HTML whenever your state changes</li>
+</ul>
+<h2>Getting started</h2>
+<p>If you're new to Synergy then the best place to start is the <em>Learn by Example</em> section. It will introduce you to all of the features of Synergy by showing different examples that will help you to understand and learn quickly.</p>
+<script type="module" src="/components/my-counter.js"></script></main>
+      </div>
+    </body>
+  </html>

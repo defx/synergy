@@ -2,7 +2,6 @@
 coverage
 node_modules
 dist
-build
 cjs
 scratch*
 synergy.js

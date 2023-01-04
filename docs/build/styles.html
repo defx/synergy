@@ -1,0 +1,237 @@
+
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/tomorrow.min.css"
+        integrity="sha512-5D/fcZ3y3nuaeHSxDbFwWDEy1Fvj5qQKsU0tilD7bhWAA+IN/Jl9fzGdUotzvA7wgXtsnZmafcuunH+6nyuA0A=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
+      <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          line-height: 1.5;
+        }
+
+        :root {
+          font-size: 100%;
+        }
+
+        body {
+          background-color: #fafafa;
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+          color: hsl(180, 100%, 10%);
+          font-size: 1rem;
+        }
+        html {
+          height: -webkit-fill-available;
+        }
+
+        body {
+          min-height: 100vh;
+          min-height: -webkit-fill-available;
+        }
+
+        main {
+          padding: 1rem;
+          width: 100%;
+          max-width: 768px;
+        }
+
+        main ul {
+          margin: 0 1rem;
+        }
+
+        li + li {
+          margin-top: 1rem;
+        }
+
+        blockquote {
+          padding: 2rem;
+          font-style: italic;
+          background: #eaeaea;
+        }
+
+        h1 {
+          font-size: 2rem;
+          color: hsl(180, 50%, 16%);
+        }
+
+        h2 {
+          font-size: 1.6rem;
+          color: hsl(180, 50%, 16%);
+          margin: 2rem 0 1rem;
+        }
+
+        h3 {
+          font-size: 1.1rem;
+          color: hsl(180, 50%, 24%);
+        }
+
+        p {
+          margin: 1rem 0;
+        }
+
+        code {
+          font-size: 0.875rem;
+        }
+
+        .wrapper {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        aside {
+          width: 280px;
+          height: 100vh;
+          position: sticky;
+          top: 0;
+          overflow-y: scroll;
+          display: none;
+          border-right: 1px solid rgba(0, 128, 128, 0.25);
+        }
+
+        @media screen and (min-width: 960px) {
+          .lso {
+            display: none;
+          }
+
+          aside {
+            display: block;
+          }
+
+          .wrapper {
+            justify-content: initial;
+          }
+          a[href="/docs"] {
+            display: none;
+          }
+        }
+      </style>
+      <style>
+        x-hero {
+          padding: 2rem 0;
+          display: block;
+          text-align: center;
+        }
+        ul {
+          padding: 1rem;
+          list-style-type: none;
+        }
+        li {
+          line-height: 2;
+        }
+        strong {
+          color: teal;
+        }
+
+        .hljs {
+          overflow-y: scroll;
+        }
+      </style>
+    </head>
+    <body>
+      <header>
+        <a href="/">Synergy</a>
+        <a href="/docs" class="lso">docs</a>
+      </header>
+      <div class="wrapper">
+        <aside> <nav id="mainNavigation">
+    <ul>
+      <li>Learn by Example 
+    <ul>
+      <li>
+            <a href="/my-counter">my-counter</a>
+          </li><li>
+            <a href="/simple-clock">simple-clock</a>
+          </li><li>
+            <a href="/todo-list">todo-list</a>
+          </li>
+    </ul>
+  </li><li>Reference 
+    <ul>
+      <li>
+            <a href="/template-syntax">Template syntax</a>
+          </li><li>
+            <a href="/repeated-blocks">Repeated blocks</a>
+          </li><li>
+            <a href="/events">Events</a>
+          </li><li>
+            <a href="/styles">Styles</a>
+          </li><li>
+            <a href="/forms">Forms</a>
+          </li>
+    </ul>
+  </li>
+    </ul>
+  </nav> </aside>
+        <main><h1>Styles</h1>
+<h2>Multiple classes with Array</h2>
+<p>State:</p>
+<pre class="hljs"><code>{
+  <span class="hljs-attr">classes</span>: [<span class="hljs-string">&quot;w32&quot;</span>, <span class="hljs-string">&quot;h32&quot;</span>, <span class="hljs-string">&quot;rounded-full&quot;</span>, <span class="hljs-string">&quot;mx-auto&quot;</span>]
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;classes&quot;</span> /&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;w32 h32 rounded-full mx-auto&quot;</span> /&gt;</span>
+</code></pre>
+<h2>Conditional Classes with Object</h2>
+<p>State:</p>
+<pre class="hljs"><code>{
+    <span class="hljs-attr">classes</span>: {
+        <span class="hljs-string">&#x27;mx-auto&#x27;</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-string">&#x27;has-error&#x27;</span>: <span class="hljs-literal">false</span>
+    }
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;classes&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;mx-auto&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</code></pre>
+<h2>Inline Styles</h2>
+<p>State:</p>
+<pre class="hljs"><code>{
+   <span class="hljs-attr">primary</span>: <span class="hljs-literal">true</span>,
+   <span class="hljs-attr">style</span>: {
+        <span class="hljs-attr">display</span>: <span class="hljs-string">&quot;inline-block&quot;</span>,
+        <span class="hljs-attr">borderRadius</span>: <span class="hljs-string">&quot;3px&quot;</span>,
+        <span class="hljs-attr">background</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">primary</span> ? <span class="hljs-string">&quot;white&quot;</span> : <span class="hljs-string">&quot;transparent&quot;</span>,
+        <span class="hljs-attr">color</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">primary</span> ? <span class="hljs-string">&quot;black&quot;</span> : <span class="hljs-string">&quot;white&quot;</span>,
+        <span class="hljs-attr">border</span>: <span class="hljs-string">&quot;2px solid white&quot;</span>,
+    }
+}
+</code></pre>
+<p>Template:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">:primary</span> <span class="hljs-attr">:style</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+<p>Output:</p>
+<pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-name">button</span>
+  <span class="hljs-attr">primary</span>
+  <span class="hljs-attr">style</span>=<span class="hljs-string">&quot;
+    display: inline-block; 
+    border-radius: 3px; 
+    background: white; 
+    color: black; 
+    border: 2px solid white;&quot;</span>
+&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+</main>
+      </div>
+    </body>
+  </html>
