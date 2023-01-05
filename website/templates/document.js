@@ -181,7 +181,7 @@ export const documentTemplate = ({
           <header>
             <h1><a href="/">Synergy</a></h1>
             <div class="strap">
-              The tiny runtime library for crafting Web Components.
+              A JavaScript library for crafting user interfaces
             </div>
           </header>
           ${mainNavigation}

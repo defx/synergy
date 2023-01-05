@@ -1,10 +1,10 @@
  <head>
-  <title>Synergy - A JavaScript library for building user interfaces</title>
+  <title>Synergy - A JavaScript library for crafting user interfaces</title>
  </head>
 
 ## What is Synergy?
 
-Synergy is a JavaScript framework for building user interfaces. It
+Synergy
 combines declarative data and event binding with functional state
 management and reactive updates to allow you to build all types of
 user interface for the web, no matter how simple or complex.
