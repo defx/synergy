@@ -20,7 +20,7 @@
     "test:watch": "mocha-express --watch",
     "build": "rm -rf dist && rollup -c && npm run size",
     "size": "gzip -c9 ./dist/synergy.min.js | wc -c",
-    "coveralls": "cat ./coverage/lcov-report/lcov.info | coveralls",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prepublish": "npm t && npm run build",
     "release": "npm t && standard-version"
   },
