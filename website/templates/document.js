@@ -28,16 +28,20 @@ export const documentTemplate = ({
           line-height: 1.5;
         }
 
-        :root {
-          font-size: 100%;
+        html {
+          --khaki-web: #b7ad99;
+          --timberwolf: #d7d9ce;
+          --primary: #63768d;
+          --illuminating-emerald: #1a936f;
+          --slate-grey: #63768d;
+          --fire-opal: #eb5e55;
         }
 
         body {
           background-color: #fafafa;
           font-family: Georgia, "Times New Roman", Times, serif;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-          color: hsl(180, 100%, 10%);
+
+          color: rgb(81, 81, 81);
           font-size: 1rem;
         }
         html {
@@ -71,18 +75,16 @@ export const documentTemplate = ({
 
         h1 {
           font-size: 2rem;
-          color: hsl(180, 50%, 16%);
         }
 
         h2 {
           font-size: 1.6rem;
-          color: hsl(180, 50%, 16%);
+
           margin: 2rem 0 1rem;
         }
 
         h3 {
           font-size: 1.1rem;
-          color: hsl(180, 50%, 24%);
         }
 
         p {
@@ -95,30 +97,43 @@ export const documentTemplate = ({
 
         .wrapper {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: center;
         }
 
-        aside {
-          width: 280px;
-          height: 100vh;
-          position: sticky;
-          top: 0;
-          overflow-y: scroll;
+        #sidebar {
+          background-color: var(--primary);
+          color: white;
+        }
+
+        #sidebar a {
+          color: white;
+        }
+
+        .large-screen {
           display: none;
-          border-right: 1px solid rgba(0, 128, 128, 0.25);
         }
 
         @media screen and (min-width: 960px) {
-          .lso {
+          .small-screen {
             display: none;
           }
 
-          aside {
-            display: block;
+          .large-screen {
+            display: initial;
+          }
+
+          #sidebar {
+            width: 280px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: scroll;
+            border-right: 1px solid rgba(0, 128, 128, 0.25);
           }
 
           .wrapper {
+            flex-direction: row;
             justify-content: initial;
           }
           a[href="/docs"] {
@@ -140,7 +155,7 @@ export const documentTemplate = ({
           line-height: 2;
         }
         strong {
-          color: teal;
+          color: var(--primary);
         }
 
         .hljs {
@@ -149,12 +164,15 @@ export const documentTemplate = ({
       </style>
     </head>
     <body>
-      <header>
-        <a href="/">Synergy</a>
-        <a href="/docs" class="lso">docs</a>
-      </header>
       <div class="wrapper">
-        <aside>${mainNavigation}</aside>
+        <div id="sidebar">
+          <header>
+            <h1><a href="/">Synergy JS</a></h1>
+            <h2>The tiny runtime library for crafting Web Components.</h2>
+            <!--<a href="/docs" class="lso">docs</a>-->
+          </header>
+          ${mainNavigation}
+        </div>
         <main>${mainContent}</main>
       </div>
     </body>

@@ -1,16 +1,6 @@
  <head>
   <title>Synergy - A JavaScript library for building user interfaces</title>
  </head>
- <x-hero>
-  <section>
-    <h1>The Web Component Framework</h1>
-    <ul>
-      <li><strong>Declarative</strong> data &amp; event binding</li>
-      <li><strong>Functional</strong> state management</li>
-      <li><strong>Reactive</strong> updates</li>
-    </ul>
-  </section>
-</x-hero>
 
 ## What is Synergy?
 

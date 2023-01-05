@@ -1,6 +1,6 @@
 export const navigation = [
   {
-    title: "Learn by Example",
+    title: "Examples",
     items: [
       {
         title: "my-counter",

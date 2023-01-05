@@ -20,5 +20,12 @@ function list(items) {
 }
 
 export function navTemplate(items = []) {
-  return html` <nav id="mainNavigation">${list(items)}</nav> `
+  return html`
+    <nav id="mainNavigation">
+      <span class="small-screen">
+        <a href="docs">docs</a>
+      </span>
+      <span class="large-screen">${list(items)}</span>
+    </nav>
+  `
 }
