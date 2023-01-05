@@ -21,65 +21,91 @@
           line-height: 1.5;
         }
 
-        :root {
-          font-size: 100%;
+        html {
+          --khaki-web: #b7ad99;
+          --timberwolf: #d7d9ce;
+          --primary: #63768d;
+          --illuminating-emerald: #1a936f;
+          --slate-grey: #63768d;
+          --fire-opal: #eb5e55;
         }
 
-        body {
-          background-color: #fafafa;
-          font-family: Georgia, "Times New Roman", Times, serif;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-            Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-          color: hsl(180, 100%, 10%);
-          font-size: 1rem;
-        }
         html {
           height: -webkit-fill-available;
         }
 
         body {
+          background-color: #fafafa;
+          font-family: serif;
+          color: rgb(81, 81, 81);
+          font-size: 1.1rem;
           min-height: 100vh;
           min-height: -webkit-fill-available;
         }
 
+        #sidebar,
         main {
-          padding: 1rem;
+          padding: 1.5rem;
+        }
+
+        main {
           width: 100%;
           max-width: 768px;
         }
 
-        main ul {
-          margin: 0 1rem;
-        }
-
-        li + li {
-          margin-top: 1rem;
-        }
-
-        blockquote {
-          padding: 2rem;
-          font-style: italic;
-          background: #eaeaea;
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .strap {
+          /* Change heading typefaces here */
+          font-family: sans-serif;
+          margin-top: 1.5rem;
+          margin-bottom: 0;
+          line-height: 1.5rem;
         }
 
         h1 {
-          font-size: 2rem;
-          color: hsl(180, 50%, 16%);
+          font-size: 4.242rem;
+          line-height: 4.5rem;
+          margin-top: 3rem;
+        }
+
+        .strap {
+          font-size: 2.828rem;
+          line-height: 3rem;
+          margin-top: 3rem;
         }
 
         h2 {
-          font-size: 1.6rem;
-          color: hsl(180, 50%, 16%);
-          margin: 2rem 0 1rem;
+          font-size: 1.414rem;
         }
-
-        h3 {
-          font-size: 1.1rem;
-          color: hsl(180, 50%, 24%);
+        h4 {
+          font-size: 0.707rem;
+        }
+        h5 {
+          font-size: 0.4713333333333333rem;
+        }
+        h6 {
+          font-size: 0.3535rem;
         }
 
         p {
-          margin: 1rem 0;
+          line-height: 1.5rem;
+          margin: 1.5rem 0;
+        }
+
+        ul,
+        ol {
+          list-style-type: none;
+          margin: 1.5rem 0;
+        }
+
+        li {
+          line-height: 1.5rem;
+          margin: 1.5rem 0;
         }
 
         code {
@@ -88,52 +114,53 @@
 
         .wrapper {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: center;
         }
 
-        aside {
-          width: 280px;
-          height: 100vh;
-          position: sticky;
-          top: 0;
-          overflow-y: scroll;
+        #sidebar {
+          background-color: var(--primary);
+          color: white;
+        }
+
+        #sidebar a {
+          color: white;
+        }
+
+        .large-screen {
           display: none;
-          border-right: 1px solid rgba(0, 128, 128, 0.25);
         }
 
         @media screen and (min-width: 960px) {
-          .lso {
+          .small-screen {
             display: none;
           }
 
-          aside {
-            display: block;
+          .large-screen {
+            display: initial;
+          }
+
+          #sidebar {
+            max-width: 32vw;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: scroll;
+            border-right: 1px solid rgba(0, 128, 128, 0.25);
           }
 
           .wrapper {
+            flex-direction: row;
             justify-content: initial;
           }
+
           a[href="/docs"] {
             display: none;
           }
         }
-      </style>
-      <style>
-        x-hero {
-          padding: 2rem 0;
-          display: block;
-          text-align: center;
-        }
-        ul {
-          padding: 1rem;
-          list-style-type: none;
-        }
-        li {
-          line-height: 2;
-        }
+
         strong {
-          color: teal;
+          color: var(--primary);
         }
 
         .hljs {
@@ -142,14 +169,22 @@
       </style>
     </head>
     <body>
-      <header>
-        <a href="index.html">Synergy</a>
-        <a href="docs.html" class="lso">docs</a>
-      </header>
       <div class="wrapper">
-        <aside> <nav id="mainNavigation">
+        <div id="sidebar">
+          <header>
+            <h1><a href="index.html">Synergy</a></h1>
+            <div class="strap">
+              The tiny runtime library for crafting Web Components.
+            </div>
+          </header>
+          
+    <nav id="mainNavigation">
+      <span class="small-screen">
+        <a href="docs.html">docs</a>
+      </span>
+      <span class="large-screen">
     <ul>
-      <li>Learn by Example 
+      <li>Examples 
     <ul>
       <li>
             <a href="my-counter.html">my-counter</a>
@@ -175,7 +210,10 @@
     </ul>
   </li>
     </ul>
-  </nav> </aside>
+  </span>
+    </nav>
+  
+        </div>
         <main><h1>Events</h1>
 <p>Synergy allows you to map events to update functions of the same name.</p>
 <p>Model:</p>

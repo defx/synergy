@@ -37,58 +37,82 @@ export const documentTemplate = ({
           --fire-opal: #eb5e55;
         }
 
-        body {
-          background-color: #fafafa;
-          font-family: Georgia, "Times New Roman", Times, serif;
-
-          color: rgb(81, 81, 81);
-          font-size: 1rem;
-        }
         html {
           height: -webkit-fill-available;
         }
 
         body {
+          background-color: #fafafa;
+          font-family: serif;
+          color: rgb(81, 81, 81);
+          font-size: 1.1rem;
           min-height: 100vh;
           min-height: -webkit-fill-available;
         }
 
+        #sidebar,
         main {
-          padding: 1rem;
+          padding: 1.5rem;
+        }
+
+        main {
           width: 100%;
           max-width: 768px;
         }
 
-        main ul {
-          margin: 0 1rem;
-        }
-
-        li + li {
-          margin-top: 1rem;
-        }
-
-        blockquote {
-          padding: 2rem;
-          font-style: italic;
-          background: #eaeaea;
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .strap {
+          /* Change heading typefaces here */
+          font-family: sans-serif;
+          margin-top: 1.5rem;
+          margin-bottom: 0;
+          line-height: 1.5rem;
         }
 
         h1 {
-          font-size: 2rem;
+          font-size: 4.242rem;
+          line-height: 4.5rem;
+          margin-top: 3rem;
+        }
+
+        .strap {
+          font-size: 2.828rem;
+          line-height: 3rem;
+          margin-top: 3rem;
         }
 
         h2 {
-          font-size: 1.6rem;
-
-          margin: 2rem 0 1rem;
+          font-size: 1.414rem;
         }
-
-        h3 {
-          font-size: 1.1rem;
+        h4 {
+          font-size: 0.707rem;
+        }
+        h5 {
+          font-size: 0.4713333333333333rem;
+        }
+        h6 {
+          font-size: 0.3535rem;
         }
 
         p {
-          margin: 1rem 0;
+          line-height: 1.5rem;
+          margin: 1.5rem 0;
+        }
+
+        ul,
+        ol {
+          list-style-type: none;
+          margin: 1.5rem 0;
+        }
+
+        li {
+          line-height: 1.5rem;
+          margin: 1.5rem 0;
         }
 
         code {
@@ -124,7 +148,7 @@ export const documentTemplate = ({
           }
 
           #sidebar {
-            width: 280px;
+            max-width: 32vw;
             height: 100vh;
             position: sticky;
             top: 0;
@@ -136,24 +160,12 @@ export const documentTemplate = ({
             flex-direction: row;
             justify-content: initial;
           }
+
           a[href="/docs"] {
             display: none;
           }
         }
-      </style>
-      <style>
-        x-hero {
-          padding: 2rem 0;
-          display: block;
-          text-align: center;
-        }
-        ul {
-          padding: 1rem;
-          list-style-type: none;
-        }
-        li {
-          line-height: 2;
-        }
+
         strong {
           color: var(--primary);
         }
@@ -167,9 +179,10 @@ export const documentTemplate = ({
       <div class="wrapper">
         <div id="sidebar">
           <header>
-            <h1><a href="/">Synergy JS</a></h1>
-            <h2>The tiny runtime library for crafting Web Components.</h2>
-            <!--<a href="/docs" class="lso">docs</a>-->
+            <h1><a href="/">Synergy</a></h1>
+            <div class="strap">
+              The tiny runtime library for crafting Web Components.
+            </div>
           </header>
           ${mainNavigation}
         </div>
